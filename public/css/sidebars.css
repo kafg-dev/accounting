@@ -1,5 +1,5 @@
 body {
-    min-height: 100vh;
+    min-height: 100%;
     min-height: -webkit-fill-available;
   }
   
@@ -47,7 +47,8 @@ body {
   .nav-flush .nav-link {
     border-radius: 0;
   }
-  
+
+
   .btn-toggle {
     display: inline-flex;
     align-items: center;
@@ -57,6 +58,7 @@ body {
     background-color: transparent;
     border: 0;
   }
+  
   .btn-toggle:hover,
   .btn-toggle:focus {
     color: rgba(0, 0, 0, .85);
@@ -96,3 +98,14 @@ body {
   
   .fw-semibold { font-weight: 600; }
   .lh-tight { line-height: 1.25; }
+  
+    
+  .btn-color{
+    background-color: #d2f4ea;
+  }
+
+  footer{
+    position: fixed;
+    bottom: 0;
+    width:100%;
+  }

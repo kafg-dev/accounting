@@ -2,3 +2,21 @@
   padding-top: 1rem !important;
 }
 
+.main-box{
+  margin-top: 1rem;
+  margin-bottom: 10%;
+  padding-top: 1rem;
+}
+
+.desc{
+  margin-top: 2rem;
+}
+
+
+.nav{
+  margin-bottom: 2rem;
+}
+
+.icenter{
+  margin: 1rem auto 0 auto;
+}

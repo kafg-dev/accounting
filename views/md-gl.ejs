@@ -1,0 +1,275 @@
+<%- include("partials/header.ejs") -%>
+
+<%- include("partials/sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>Master Data</h2></div>
+    <div class="col-12 shadow-sm">GL Accounts</div>
+  </div>
+<!-- container -->
+<div class="container-fluid">
+    
+    <div class="row main-box bg-light rounded-3">
+      <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+          <button class="nav-link active" id="nav-list-tab" data-bs-toggle="tab" data-bs-target="#nav-list" type="button" role="tab" aria-controls="nav-list" aria-selected="true">List</button>
+          <button class="nav-link" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Create</button>
+          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Modify</button>
+        </div>
+      </nav>
+      <div class="tab-content " id="nav-tabContent">
+      <!-- first tab -->
+      <div class="tab-pane fade show active " id="nav-list" role="tabpanel" aria-labelledby="nav-list-tab">
+        <form action="" method="post">
+        <div class="row">
+            
+              <!-- 1st col -->
+              <div class="col-sm-6">
+                <div class="form-group row mb-3">
+                  <label class="col-sm-3 col-form-label">GL Account</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" name="gl_account" required>
+                  </div>
+                </div>
+              </div>
+              <!-- end of 1st col -->
+              <!-- 2nd col -->
+              <div class="col-sm-6">
+                <div class="form-group row mb-3">
+                  <label class="col-sm-3 col-form-label">GL Account Name</label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" name="gl_name" required>
+                  </div>
+                </div>
+              </div>
+              <!-- end of 2nd col -->
+              <!-- button -->
+              
+              <div class="container-fluid mb-3 d-flex flex-column">
+                <button type="button" class="btn btn-primary btn-lg icenter">Create</button>
+              </div> <!-- end of button -->
+            
+          </div>  <!-- end of row -->
+          </form>
+      </div>
+      <!-- end of first tab -->          
+         <!-- second tab -->
+         <div class="tab-pane fade show " id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+          <form action="" method="post">
+          <div class="row">
+              
+                <!-- 1st col -->
+                <div class="col-sm-6">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">GL Account</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="gl_account" required>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Company Code</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="c_code">
+                      <option selected disabled>Choose...</option>
+                    <%  companyCodes.forEach(function(code) { %>
+                          <option value="<%= code._id %>"><%= code.companyCode %></option>
+                      <% }); %>
+                    </select>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Type</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_type">
+                      <option selected disabled>Choose...</option>
+                      <option value="BS">Balance Sheet</option>
+                      <option value="PL">Profit and Loss</option>
+                    </select>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Group</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_group">
+                      <option selected>Choose...</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <p class="desc">Description</p>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Short Text</span>
+                    <input type="text" class="form-control" name="desc_short" required>
+                  </div>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Long Text</span>
+                    <input type="text" class="form-control" name="desc_long" required>
+                  </div>
+                </div>
+                <!-- end of 1st col -->
+                <!-- 2nd col -->
+                <div class="col-sm-6">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">GL Account Name</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="gl_name" required>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Currency</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_currency">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Tax Category</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="tax_category">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Recon Acct for Acct Type</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="tax_category">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div> 
+                </div>
+                <!-- end of 2nd col -->
+                <!-- button -->
+                
+                <div class="container-fluid mb-3 d-flex flex-column">
+                  <button type="button" class="btn btn-primary btn-lg icenter">Create</button>
+                </div> <!-- end of button -->
+               
+             </div>  <!-- end of row -->
+            </form>
+        </div>
+        <!-- end of second tab -->
+
+        <!-- third tab -->
+        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+          <form action="" method="post">
+          <div class="row">
+                <!-- 1st col -->
+                <div class="col-sm-6">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">GL Account</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="gl_account" required>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Company Code</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="c_code">
+                      <option selected>Choose...</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                    </select>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Type</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_type">
+                      <option selected disabled>Choose...</option>
+                      <option value="BS">Balance Sheet</option>
+                      <option value="PL">Profit and Loss</option>
+                    </select>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Group</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_group">
+                      <option selected>Choose...</option>
+                      <option value="1">One</option>
+                      <option value="2">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <p class="desc">Description</p>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Short Text</span>
+                    <input type="text" class="form-control" name="desc_short" required>
+                  </div>
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Long Text</span>
+                    <input type="text" class="form-control" name="desc_long" required>
+                  </div>
+                </div>
+                <!-- end of 1st col -->
+                <!-- 2nd col -->
+                <div class="col-sm-6">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">GL Account Name</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="gl_name" required>
+                    </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Account Currency</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="acc_currency">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Tax Category</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="tax_category">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-3 col-form-label">Recon Acct for Acct Type</label>
+                    <div class="col-sm-9">
+                    <select class="form-select" name="tax_category">
+                      <option selected>Choose...</option>
+                      <option value=""></option>
+                      <option value="">Two</option>
+                    </select>
+                  </div>
+                  </div> 
+                </div>
+                <!-- end of 2nd col -->
+                <!-- button -->
+                <div class="container-fluid mb-3 d-flex flex-column">
+                  <button type="button" class="btn btn-primary btn-lg icenter">Update</button>
+                </div> <!-- end of button -->
+             </div>  <!-- end of row -->
+            </form>
+        </div>
+        <!-- end of third tab -->
+      </div>
+
+        
+        
+
+
+</div> 
+<!-- end of container -->
+
+
+
+<%- include("partials/footer.ejs") -%>
