@@ -12,11 +12,26 @@
   margin-top: 2rem;
 }
 
-
 .nav{
   margin-bottom: 2rem;
 }
 
 .icenter{
-  margin: 1rem auto 0 auto;
+  margin: 0 auto 0 auto;
+}
+
+.centerline{
+  border-right: 1px solid rgb(115, 115, 117);
+}
+
+.btn-space{
+  margin: 0 1rem 0 1rem;
+}
+
+.error{
+  color:rgb(248, 63, 63);
+}
+
+footer{
+  z-index:10;
 }

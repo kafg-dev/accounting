@@ -1,0 +1,118 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>Account Group</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="accgroup">
+                        <div class="form-group row mb-3 d-none" id="onSelectDiv">
+                          <label class="col-sm-5 col-form-label">Selected Account Group</label>
+                          <div class="col-sm-6">
+                            <input type="text" class="form-control" name="selectedAccountGroup" id="selectedAccountGroup" disabled>
+                          </div>
+                          </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Account Type</label>
+                            <div class="col-sm-7">
+                              <select class="form-select" name="accGroup_typeID" id="accGroup_typeID" required>
+                                <%  accounts.forEach(function(account) { %>
+                                    <option value="<%= account._id %>"><%= account.accountType %> </option>
+                                <%  }); %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <input type="text" class="form-control d-none" name="accountGroupID" id="accountGroupID">
+                            <label class="col-sm-4 col-form-label">Account Group</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="accountGroupName" id="accountGroupName" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-sm-12 col-form-label">Range</label>
+                      </div>
+                      <div class="form-group row mb-3">
+                        <label class="col-sm-4 col-form-label">From</label>
+                        <div class="col-sm-5">
+                          <input type="number" class="form-control" name="accountGroupRangeFrom" id="accountGroupRangeFrom" required>
+                        </div>
+                      </div>
+                      <div class="form-group row mb-3">
+                        <label class="col-sm-4 col-form-label">To</label>
+                        <div class="col-sm-5">
+                          <input type="number" class="form-control" name="accountGroupRangeTo" id="accountGroupRangeTo" required>
+                        </div>
+                      </div>
+                     
+                     
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="accgroup-addbtn">Create</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="accgroup-updatebtn">Update</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="accgroup-deletebtn">Delete</button>
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="accgroup-clearbtn">Clear</button>
+                  </div> <!-- end of button -->
+                      <div id="accgroup-label" class="alert d-none"  role="alert">
+                      </div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of Account Groups</h4>
+            <div class="table-responsive-sm mb-5">
+                <table class="table table-hover" id="accountGroupTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col">Account Group</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col">Account Type</th>
+                          <th scope="col">Range From</th>
+                          <th scope="col">Range To</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% accounts.forEach(function(account) { %>
+                        <% account.accountGroup.forEach(function(group) { %>
+                        <tr>
+                          <th scope="row"><%= i++ %></th>
+                          <td hidden><%= group._id %></td>
+                          <td ><%= group.accountGroup %></td>
+                          <td hidden><%= account._id %></td>
+                          <td ><%= account.accountType %></td>
+                          <td ><%= group.rangeFrom %> </td>
+                          <td ><%= group.rangeTo %></td>
+                        </tr>
+                        <% }); %>
+                        <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

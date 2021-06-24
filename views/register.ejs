@@ -1,0 +1,33 @@
+<%- include("partials/header.ejs") -%>
+
+<link rel="stylesheet" href="css/login.css">
+<body class="text-center">
+    
+<main class="form-signin">
+  <form method="post" action="/register">
+    <img class="mb-4" src="images/accounting.png" alt="" width="250" height="80">
+    <h1 class="h3 mb-3 fw-normal">Register</h1>
+
+    <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Full Name" name="fullname">
+        <label for="floatingInput">Fullname</label>
+      </div>
+      <div class="form-floating">
+        <input type="text" class="form-control" id="floatingInput" placeholder="Full Name" name="position">
+        <label for="floatingInput">Position</label>
+      </div>
+    <div class="form-floating">
+      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="username">
+      <label for="floatingInput">Username</label>
+    </div>
+    <div class="form-floating">
+      <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+      <label for="floatingPassword">Password</label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+    <p class="mt-5 mb-3 text-muted">&copy; KAFG 2021</p>
+  </form>
+</main>
+  </body>
+</html>
