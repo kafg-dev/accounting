@@ -3,11 +3,15 @@
 const mongoose = require("mongoose");
 
 const glAccountSchema = new mongoose.Schema({
-    country:String,
-    companyCode:String,
-    currency:String
+    // glAccount:{
+    //     type:String,
+    //     index:{unique:true,sparse:true}
+    // },
+    // glName:
 })
 
 module.exports = mongoose.model("glAccount", glAccountSchema);
+
+
 
 

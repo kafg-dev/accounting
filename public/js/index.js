@@ -61,9 +61,9 @@ $(document).ready(function() {
 
     if(validateForm("ccode").form()){
          var companyCodeID = $('#company_codeID').val();
-            var companyCode = $('#company_code').val();
-            var companyCountry = $('#company_country').val();
-            var companyCurrency = $('#company_currency').val();
+         var companyCode = $('#company_code').val();
+         var companyCountry = $('#company_country').val();
+         var companyCurrency = $('#company_currency').val();
 
                 $.ajax({  
                   type: "POST",
@@ -90,8 +90,6 @@ $(document).ready(function() {
                       }  
                 });
 
-
-
     } else {
      
     
@@ -99,7 +97,6 @@ $(document).ready(function() {
     
   });
 
-  
   ////////////// update --------------------------------------------------------
   $('#ccode-updatebtn').click(function(e){ 
 
@@ -348,6 +345,12 @@ $('#acctype-deletebtn').click(function(e){
   $("#accgroup #accountGroupRangeTo").val($(this).find("td")[5].innerText);
 });
 
+ //// clear button
+ $('#accgroup-clearbtn').click(function(e){ 
+  clearForm("accgroup");
+  hideDiv("#accgroup #onSelectDiv");
+});
+
 //////// create
 $('#accgroup-addbtn').click(function(e){ 
 
@@ -440,6 +443,135 @@ $('#accgroup-updatebtn').click(function(e){
   }
         
 });
+
+////////////// delete --------------------------------------------------------
+$('#accgroup-deletebtn').click(function(e){ 
+
+  if(validateForm("accgroup").form()){
+    var accountGroupID= $('#accountGroupID').val();
+    var accountGrouptypeID = $('#accGroup_typeID').val();
+
+      if (accountGroupID == "")
+      {
+      showLabel("accgroup-label", "Error! Select account type from table.","alert-danger");
+      }
+
+
+        else {
+            $.ajax({  
+              type: "DELETE",
+              url:'/gl-accountgroup', 
+              data: {accountGroupID:accountGroupID,accountGrouptypeID:accountGrouptypeID},
+              success:function(response){ 
+                
+                if(response.redirect) {
+                    showLabel("accgroup-label",response.message,"alert-success");
+                    window.setTimeout(function() {
+                      window.location = response.redirectURL;}, 1000);
+                
+                } else {
+                  if(response.error){
+                    showLabel("accgroup-label", "error " + response.errorMessage,"alert-danger");
+                  }
+              }
+              },  
+              error:function(response){  
+                console.log(response); 
+              }  
+            });  
+
+          }
+  }
+        else{
+
+        }
+
+});
+
+
+/////////////////////////////////////// main pages
+
+////////////////////////////////////////////// GL -MASTER DATA
+
+ $("#gl-create #acc_group").click(function(e) {
+   var selectedAcc_type = $("#gl-create #acc_type").val(); 
+   if (selectedAcc_type){
+  
+        $.ajax({  
+          type: "GET",
+          url:'/gl-list', 
+          data: {},
+          success:function(response){ 
+              var foundAccountType_list = response.accountType_list;
+              $('#acc_group1').empty();
+              $('#acc_group1').append('<option selected disabled> Choose... </option>');
+              foundAccountType_list.forEach(function(foundAccountType){
+                if(foundAccountType._id==selectedAcc_type){
+                  foundAccountType.accountGroup.forEach(function(accountGroup) {
+                    $('#acc_group1').append('<option value="' + accountGroup._id + '">' + accountGroup.accountGroup + '</option>');
+                  })
+                }
+              });
+          },  
+          error:function(response){  
+            console.log(response); 
+          }  
+        });  
+   }
+ });
+
+
+//////// create
+$('#gl-create #create-btn').click(function(e){ 
+
+  if(validateForm("gl-create").form()){
+          // var accountGrouptypeID = $('#accGroup_typeID').val();
+          // var accountGroupName = $('#accountGroupName').val();
+          // var accountGroupRangeFrom = $('#accountGroupRangeFrom').val();
+          // var accountGroupRangeTo = $('#accountGroupRangeTo').val();
+
+          //     $.ajax({  
+          //       type: "POST",
+          //       url:'/gl-accountgroup', 
+          //       data: {accountGrouptypeID:accountGrouptypeID,accountGroupName:accountGroupName,accountGroupRangeFrom:accountGroupRangeFrom,accountGroupRangeTo:accountGroupRangeTo},
+          //       success:function(response){ 
+                  
+          //         if(response.redirect) {
+          //             showLabel("accgroup-label",response.message,"alert-success");
+          //             window.setTimeout(function() {
+          //               window.location = response.redirectURL;}, 1000);
+                  
+          //         } else {
+          //             if(response.error){
+          //               showLabel("accgroup-label", response.errorMessage,"alert-danger");
+          //             }
+          //             else {
+          //               showLabel("accgroup-label", response.message,"alert-danger");
+          //             }
+          //         }
+          //       },  
+          //           error:function(response){  
+          //             console.log(response); 
+          //           }  
+          //     });
+
+
+
+  } else {
+   
+  
+  }
+  
+});
+
+
+
+
+
+
+
+
+
 
 });
     

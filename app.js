@@ -6,14 +6,18 @@ const _lodash =require("lodash");
 const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
+
+//models
+const companyCode = require(__dirname + "/models/companycode.js");
+const accType = require(__dirname + "/models/gl-accounttype.js");
+
 const flash = require('connect-flash');
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const companyCode = require(__dirname + "/models/companycode.js");
-const accType = require(__dirname + "/models/gl-accounttype.js");
-// const accGroup = require(__dirname + "/models/gl-accountgroup.js");
+
+
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -32,8 +36,9 @@ app.use(passport.session());
 
 app.use(flash());
 
-mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false})
+mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
 mongoose.set("useCreateIndex",true);
+mongoose.set('runValidators', true)
 
 const userSchema = new mongoose.Schema({
     username:String,
@@ -55,11 +60,8 @@ passport.serializeUser(function(user, done) {
     done(null, user);
   });
 
-
 let returnTo = "";
-
 let country_names = country.getNames();
-
 let currency_list = currency.codes();
 
 app.get('/ajax', function(req, res){
@@ -100,9 +102,12 @@ app.get("/register", function(req,res) {
     } 
 });
 
+
 app.get("/login", function(req,res) {
     const errors = req.flash().error || [];
     res.render("login", {errors});
+
+    
 
 });
 
@@ -175,14 +180,12 @@ app.route("/ud-dashboard")
 
 app.route("/gn-companycode")
 
-.get(function(req,res) {
+.get(async function(req,res) {
     if(req.isAuthenticated()) {
         if (req.user.position === "admin")
         {
-            companyCode.getCompanyCode(function(result) {
-                res.render("companycode", {countries:country_names,currencies:currency_list,comcodes:result,user:req.user});
-            });
-
+            let companyCode_list= await companyCode.getCompanyCode();
+            res.render("companycode", {countries:country_names,currencies:currency_list,companyCodes:companyCode_list,user:req.user});
         } else {
             res.send("Unauthorized!");
         }
@@ -322,13 +325,12 @@ app.route("/gn-companycode")
 
 app.route("/gl-accounttype")
 
-.get(function(req,res) {
+.get(async function(req,res) {
     if(req.isAuthenticated()) {
         if (req.user.position === "admin")
         {
-           accType.getAccountType(function(result) {
-                res.render("accounttype", {accountTypes:result,user:req.user});
-            });
+            let accountType_list= await accType.getAccountType();   
+            res.render("accounttype", {accountTypes:accountType_list,user:req.user});
 
         } else {
             res.send("Unauthorized!");
@@ -366,6 +368,7 @@ app.route("/gl-accounttype")
         {
             accType.addAccountType(newAccountType, function(callback){
                 var servResp = {};
+                // console.log(callback);
                 if (callback=="1"){
                     servResp.redirect = true;
                     servResp.redirectURL = "http://localhost:3000/gl-accounttype";
@@ -395,8 +398,8 @@ app.route("/gl-accounttype")
 
 .patch(function(req,res) {
 
-    let updateAccountTypeID = req.body. account_typeID;
-    let updateAccountType = req.body. account_type;
+    let updateAccountTypeID = req.body.account_typeID;
+    let updateAccountType = req.body.account_type;
 
     const newUpdateAccountType = {
         _id:updateAccountTypeID,
@@ -508,7 +511,6 @@ app.route("/gl-accountgroup")
         {
             accType.addAccountGroup(newAccountGroup, function(callback){
                 var servResp = {};
-                // console.log(callback);
                 if (callback=="1"){
                     servResp.redirect = true;
                     servResp.redirectURL = "http://localhost:3000/gl-accountgroup";
@@ -543,11 +545,6 @@ app.route("/gl-accountgroup")
 })
 
 .patch(function(req,res) {
-    var accountGroupID= req.body.accountGroupID;
-    var accountGrouptypeID = req.body.accountGrouptypeID;
-    var accountGroupName = req.body.accountGroupName;
-    var accountGroupRangeFrom = req.body.accountGroupRangeFrom;
-    var accountGroupRangeTo = req.body.accountGroupRangeTo;
 
     const toUpdateAccountGroup = {
         accountGrouptypeID : req.body.accountGrouptypeID,
@@ -564,7 +561,6 @@ app.route("/gl-accountgroup")
         {
             accType.updateAccountGroup(toUpdateAccountGroup, function(callback){
                 var servResp = {};
-                console.log(callback);
                 if (callback=="1"){
                     servResp.redirect = true;
                     servResp.redirectURL = "http://localhost:3000/gl-accountgroup";
@@ -601,16 +597,80 @@ app.route("/gl-accountgroup")
 
 })
 
-.delete();
+.delete(function(req,res) {
+ 
 
-/////////////////////////    main pages   ///////////////////////
+    const toDeleteAccountGroup = {
+        accountGrouptypeID : req.body.accountGrouptypeID,
+        accountGroupID:req.body.accountGroupID
+    }
+    
 
-app.get("/md-gl", function(req,res) {
-    // comCode.getCompanyCode(function(result){
-    //     res.render('md-gl',{companyCodes:result});
-    //   });
-    console.log();
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            accType.deleteAccountGroup(toDeleteAccountGroup, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gl-accountgroup";
+                    servResp.message = "Account Group deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+
 });
+
+/////////////////////////    main pages   //////////////////////
+app.route("/gl-list")
+
+.get(async function(req,res) {
+    // if(req.isAuthenticated()) {
+        
+        var gl_List = {};
+        gl_List.companyCode_list= await companyCode.getCompanyCode(); 
+        gl_List.accountType_list= await accType.getAccountType();  
+        res.send(gl_List);
+
+
+    // }else {
+    //     returnTo = req.url;
+    //     res.redirect("/login");
+    // }    
+
+});
+
+app.route("/md-gl")
+
+.get(async function(req,res) {
+   
+    if(req.isAuthenticated()) {
+ 
+        companyCode_list= await companyCode.getCompanyCode(); 
+        accountType_list= await accType.getAccountType();  
+        res.render('md-gl',{companyCodes:companyCode_list,user:req.user,accType:accountType_list});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+   
+ 
+}).post().patch().delete();
+
 
 app.get("/md-vendor", function(req,res) {
     res.render('md-vendor',{countries:country_names});

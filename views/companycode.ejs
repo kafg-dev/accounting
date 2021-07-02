@@ -82,14 +82,14 @@
                       </thead>
                       <tbody>
                         <% var i= 1;%>
-                        <% comcodes.forEach(function(comcodes) { %>
+                        <% companyCodes.forEach(function(companyCode) { %>
                             
                                 <tr>
                                 <th scope="row"><%= i++ %></th>
-                                <td hidden><%= comcodes.id %></td>
-                                <td><%= comcodes.code %></td>
-                                <td><%= comcodes.country %></td>
-                                <td><%= comcodes.currency %></td>
+                                <td hidden><%= companyCode.id %></td>
+                                <td><%= companyCode.code %></td>
+                                <td><%= companyCode.country %></td>
+                                <td><%= companyCode.currency %></td>
                               </tr>
                            <% }); %>
                       </tbody>

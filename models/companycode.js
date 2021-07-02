@@ -14,26 +14,16 @@ const companyCodeSchema = new mongoose.Schema({
       }
 })
 
+
 exports.cCode = mongoose.model("companycode", companyCodeSchema);
 
-exports.getCompanyCode = function(callback) {
-
-     ////////////////////////////////////////////////////////////////////------find--------/////////////
-    exports.cCode.find({},function(err,codes) {
-        if (err) {
-            return callback(err);
-        }
-        else{
-            return callback(codes);
-        }
-    });
-    ////////////////////////////////////////////////////////////////////------find end--------/////////////
-
-};
+exports.getCompanyCode = async function () {
+    const  companyCodeList = await exports.cCode.find({});
+    return companyCodeList;
+}
 
 exports.addCompanyCode = function(companyCode,callback) {
 
-   
     ////////////////////////////////////////////////////////////////////------save--------////////////////
         exports.cCode.findOne({code:companyCode.code},function(err,codes) {
             if (codes) {
