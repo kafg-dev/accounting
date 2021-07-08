@@ -13,15 +13,15 @@
     <div class="row main-box bg-light rounded-3">
       <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Create</button>
-          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Modify</button>
+          <button class="nav-link active" id="nav-gl-create-tab" data-bs-toggle="tab" data-bs-target="#nav-gl-create" type="button" role="tab" aria-controls="nav-gl-create" aria-selected="true">Create</button>
+          <button class="nav-link" id="nav-gl-modify-tab" data-bs-toggle="tab" data-bs-target="#nav-gl-modify" type="button" role="tab" aria-controls="nav-gl-create" aria-selected="false">Modify</button>
         </div>
       </nav>
       <div class="tab-content " id="nav-tabContent">
           
          <!-- second tab -->
-         <div class="tab-pane fade show active " id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-          <form action="" method="post" id="gl-create">
+         <div class="tab-pane fade show active " id="nav-gl-create" role="tabpanel" aria-labelledby="nav-gl-create">
+          <form action="#" method="post" id="gl-create">
           <div class="row">
                 <!-- 1st col -->
                 <div class="col-sm-6">
@@ -61,15 +61,6 @@
                     </select>
                   </div>
                   </div>
-                  <p class="desc">Description</p>
-                  <div class="input-group mb-3">
-                    <span class="input-group-text" id="">Short Text</span>
-                    <input type="text" class="form-control" name="desc_short" id="desc_short" required>
-                  </div>
-                  <div class="input-group mb-3">
-                    <span class="input-group-text" id="">Long Text</span>
-                    <input type="text" class="form-control" name="desc_long" id="desc_long" required>
-                  </div>
                 </div>
                 <!-- end of 1st col -->
                 <!-- 2nd col -->
@@ -99,68 +90,79 @@
                   </div>
                   </div>
                 </div>
+                <!-- desc  -->
+                <p class="desc">Description</p>
+                <div class="col-sm-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Short Text</span>
+                    <input type="text" class="form-control" name="desc_short" id="desc_short" required>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                <div class="input-group mb-3">
+                  <span class="input-group-text" id="">Long Text</span>
+                  <input type="text" class="form-control" name="desc_long" id="desc_long" required>
+                </div>
+              </div>
+                <!-- end of desc -->
                 <!-- end of 2nd col -->
-                <!-- button -->
-                
-                <div class="container-fluid mb-3 d-flex flex-column">
-                  <button type="button" class="btn btn-primary btn-lg icenter" id="create-btn">Create</button>
-                </div> <!-- end of button -->
-               
              </div>  <!-- end of row -->
             </form>
+              <!-- button -->
+              <div class="mb-3 mt-5 d-flex justify-content-center">
+                <button type="button" class="btn btn-primary btn-sm " id="gl-create-btn">Create</button>
+              </div> <!-- end of button -->
+              <div id="gl-create-label" class="alert d-none"  role="alert"></div>
         </div>
         <!-- end of second tab -->
 
         <!-- third tab -->
-        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-          <form action="" method="post">
+        <div class="tab-pane fade" id="nav-gl-modify" role="tabpanel" aria-labelledby="nav-gl-modify">
+          <form action="" method="post" id="gl-modify">
           <div class="row">
                 <!-- 1st col -->
                 <div class="col-sm-6">
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">GL Account</label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" name="gl_account" required>
+                      <select class="form-select" name="gl_account" id="gl_account" required>
+                        <option selected disabled>Choose...</option>
+                        <% glAccounts.forEach(function(glAccount) { %>
+                            <option value="<%= glAccount._id %>"><%= glAccount.glAccount %></option>
+                        <% }); %>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Company Code</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="c_code">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
+                      <select class="form-select" name="c_code" id="c_code" required>
+                        <option selected disabled>Choose...</option>
+                        <% companyCodes.forEach(function(code) { %>
+                            <option value="<%= code._id %>"><%= code.code %></option>
+                        <% }); %>
+                      </select>
                     </select>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Account Type</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="acc_type">
-                      <option selected disabled>Choose...</option>
-                      <option value="BS">Balance Sheet</option>
-                      <option value="PL">Profit and Loss</option>
+                      <select class="form-select" name="acc_type" id="acc_type" required>
+                        <option selected disabled>Choose...</option>
+                        <% accType.forEach(function(acc) { %>
+                          <option value="<%= acc._id %>"><%= acc.accountType %></option>
+                      <% }); %>
+                      </select>
                     </select>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Account Group</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="acc_group">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
+                    <select class="form-select" name="acc_group" id="acc_group" required>
                     </select>
                   </div>
-                  </div>
-                  <p class="desc">Description</p>
-                  <div class="input-group mb-3">
-                    <span class="input-group-text" id="">Short Text</span>
-                    <input type="text" class="form-control" name="desc_short" required>
-                  </div>
-                  <div class="input-group mb-3">
-                    <span class="input-group-text" id="">Long Text</span>
-                    <input type="text" class="form-control" name="desc_long" required>
                   </div>
                 </div>
                 <!-- end of 1st col -->
@@ -169,47 +171,52 @@
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">GL Account Name</label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" name="gl_name" required>
+                      <input type="text" class="form-control" name="gl_name" id="gl_name" required>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Account Currency</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="acc_currency">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
+                    <select class="form-select" name="acc_currency" id="acc_currency" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="PHP">PHP</option>
+                      <option value="MYR">MYR</option>
                     </select>
                   </div>
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Tax Category</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
+                    <select class="form-select" name="tax_category" id="tax_category">
                     </select>
                   </div>
                   </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Recon Acct for Acct Type</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
-                    </select>
-                  </div>
-                  </div> 
                 </div>
+                  <!-- desc  -->
+                  <p class="desc">Description</p>
+                  <div class="col-sm-6">
+                    <div class="input-group mb-3">
+                      <span class="input-group-text" id="">Short Text</span>
+                      <input type="text" class="form-control" name="desc_short" id="desc_short" required>
+                    </div>
+                  </div>
+                  <div class="col-sm-6">
+                  <div class="input-group mb-3">
+                    <span class="input-group-text" id="">Long Text</span>
+                    <input type="text" class="form-control" name="desc_long" id="desc_long" required>
+                  </div>
+                </div>
+              </form>
+                  <!-- end of desc -->
                 <!-- end of 2nd col -->
                 <!-- button -->
-                <div class="container-fluid mb-3 d-flex flex-column">
-                  <button type="button" class="btn btn-primary btn-lg icenter">Update</button>
+                <div class="mb-3 mt-5 d-flex justify-content-center">
+                  <button type="button" class="btn btn-primary btn-sm btn-space" id="update-btn">Update</button>
+                  <button type="button" class="btn btn-primary btn-sm btn-space" id="delete-btn">Delete</button>
                 </div> <!-- end of button -->
+                <div id="gl-modify-label" class="alert d-none"  role="alert"></div>
              </div>  <!-- end of row -->
-            </form>
+            
         </div>
         <!-- end of third tab -->
       </div>

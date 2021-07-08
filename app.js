@@ -10,12 +10,16 @@ const currency = require("currency-codes");
 //models
 const companyCode = require(__dirname + "/models/companycode.js");
 const accType = require(__dirname + "/models/gl-accounttype.js");
+const glAcc = require(__dirname + "/models/glAccount.js");
+const vendor = require(__dirname + "/models/vendor.js");
+const customer = require(__dirname + "/models/customer.js");
 
 const flash = require('connect-flash');
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const { glAccount } = require('./models/glAccount');
 
 
 
@@ -345,20 +349,10 @@ app.route("/gl-accounttype")
 
 .post(function(req,res) {
 
-    // const item = {
-    //     accountGroup:"current assets",
-    //     rangeFrom:20,
-    //     rangeTo:5
-    // };
-
-    // const item2 = new accGroup.accountGroup({
-    //     accountGroup:"current liabilities",
-    //     rangeFrom:500,
-    //     rangeTo:50
-    // });
-
     const newAccountType = new accType.accountType ({
         accountType:req.body.account_type,
+        rangeFrom:req.body.accountTypeRangeFrom,
+        rangeTo:req.body.accountTypeRangeTo,
         accountGroup:[]
     });
 
@@ -374,8 +368,13 @@ app.route("/gl-accounttype")
                     servResp.redirectURL = "http://localhost:3000/gl-accounttype";
                     servResp.message = "Account Type created!";
                     res.send(servResp);  
-                } else if (callback=="0"){
+                }else if (callback=="0"){
                     servResp.redirect = false;
+                    servResp.message = "Account Type exists!";
+                    res.send(servResp);
+                }else if (callback=="01"){
+                    servResp.redirect = false;
+                    servResp.message = "Range already in use.";
                     res.send(servResp);
                 }
                 else {
@@ -400,10 +399,16 @@ app.route("/gl-accounttype")
 
     let updateAccountTypeID = req.body.account_typeID;
     let updateAccountType = req.body.account_type;
+    let rangeFrom = req.body.accountTypeRangeFrom;
+    let rangeTo = req.body.accountTypeRangeTo;
 
     const newUpdateAccountType = {
         _id:updateAccountTypeID,
-        accountType:updateAccountType
+        accountTypeValues:{
+            accountType:updateAccountType,
+            rangeFrom:rangeFrom,
+            rangeTo:rangeTo
+        }
     };
 
     if(req.isAuthenticated()) {
@@ -419,6 +424,10 @@ app.route("/gl-accounttype")
                 } else if (callback=="0"){
                     servResp.redirect = false;
                     servResp.message = "Account Type exists!";
+                    res.send(servResp);
+                }else if (callback=="01"){
+                    servResp.redirect = false;
+                    servResp.message = "Range already in use.";
                     res.send(servResp);
                 }
                 else {
@@ -494,15 +503,16 @@ app.route("/gl-accountgroup")
 
     let accountGrouptypeID = req.body.accountGrouptypeID;
     let accountGroupName = req.body.accountGroupName;
-    let accountGroupRangeFrom = req.body.accountGroupRangeFrom;
-    let accountGroupRangeTo = req.body.accountGroupRangeTo;
+    // let accountGroupRangeFrom = req.body.accountGroupRangeFrom;
+    // let accountGroupRangeTo = req.body.accountGroupRangeTo;
 
     const newAccountGroup = {
         accountTypeID:accountGrouptypeID,
+        accountGroup: accountGroupName,
         accountGroupValues: {
-            accountGroup: accountGroupName,
-            rangeFrom: accountGroupRangeFrom,
-            rangeTo:accountGroupRangeTo
+            accountGroup: accountGroupName
+            // rangeFrom: accountGroupRangeFrom,
+            // rangeTo:accountGroupRangeTo
         }
     };
 
@@ -522,11 +532,7 @@ app.route("/gl-accountgroup")
                     servResp.message = "Account Group Exists!";
                     res.send(servResp);
                 }
-                else if (callback=="01"){
-                    servResp.redirect = false;
-                    servResp.message = "Range already in use.";
-                    res.send(servResp);
-                }
+                
                 else {
                     servResp.redirect = false;
                     servResp.error = true;
@@ -550,9 +556,9 @@ app.route("/gl-accountgroup")
         accountGrouptypeID : req.body.accountGrouptypeID,
         accountGroupID:req.body.accountGroupID,
         accountGroupValues : {
-            accountGroup: req.body.accountGroupName,
-            rangeFrom: req.body.accountGroupRangeFrom,
-            rangeTo:req.body.accountGroupRangeTo
+            accountGroup: req.body.accountGroupName
+            // rangeFrom: req.body.accountGroupRangeFrom,
+            // rangeTo:req.body.accountGroupRangeTo
         }
     }
 
@@ -571,11 +577,11 @@ app.route("/gl-accountgroup")
                     servResp.message = "Account Group Exists!";
                     res.send(servResp);
                 }
-                else if (callback=="01"){
-                    servResp.redirect = false;
-                    servResp.message = "Range already in use.";
-                    res.send(servResp);
-                }
+                // else if (callback=="01"){
+                //     servResp.redirect = false;
+                //     servResp.message = "Range already in use.";
+                //     res.send(servResp);
+                // }
                 else {
                     servResp.redirect = false;
                     servResp.error = true;
@@ -598,14 +604,12 @@ app.route("/gl-accountgroup")
 })
 
 .delete(function(req,res) {
- 
 
     const toDeleteAccountGroup = {
         accountGrouptypeID : req.body.accountGrouptypeID,
         accountGroupID:req.body.accountGroupID
     }
     
-
     if(req.isAuthenticated()) {
         if (req.user.position === "admin")
         {
@@ -635,15 +639,18 @@ app.route("/gl-accountgroup")
 });
 
 /////////////////////////    main pages   //////////////////////
-app.route("/gl-list")
+app.route("/main-list")
 
 .get(async function(req,res) {
     // if(req.isAuthenticated()) {
         
-        var gl_List = {};
-        gl_List.companyCode_list= await companyCode.getCompanyCode(); 
-        gl_List.accountType_list= await accType.getAccountType();  
-        res.send(gl_List);
+        var main_list = {};
+        main_list.companyCode_list= await companyCode.getCompanyCode(); 
+        main_list.accountType_list= await accType.getAccountType(); 
+        main_list.glAccount_list= await glAcc.getGlAccount(); 
+        main_list.vendor_List = await vendor.getVendor();
+        main_list.customer_List = await customer.getCustomer();
+        res.send(main_list);
 
 
     // }else {
@@ -661,7 +668,8 @@ app.route("/md-gl")
  
         companyCode_list= await companyCode.getCompanyCode(); 
         accountType_list= await accType.getAccountType();  
-        res.render('md-gl',{companyCodes:companyCode_list,user:req.user,accType:accountType_list});
+        glAccount_list = await glAcc.getGlAccount();
+        res.render('md-gl',{companyCodes:companyCode_list,user:req.user,accType:accountType_list,glAccounts:glAccount_list});
 
     }else {
         returnTo = req.url;
@@ -669,18 +677,431 @@ app.route("/md-gl")
     }    
    
  
-}).post().patch().delete();
+})
+.post(function(req,res) {
+
+        const newGlAccount = new glAcc.glAccount ({
+            glAccount:req.body.glAccount,
+            glName: req.body.glName,
+            companyCode:req.body.companyCode,
+            accountCurrency:req.body.accountCurrency,
+            accountType:req.body.accountType,
+            taxCategory:req.body.taxCategory,
+            accountGroup:req.body.accountGroup,
+            descShort:req.body.descShort,
+            descLong:req.body.descLong
+
+        });
+
+        if(req.isAuthenticated()) {
+            if (req.user.position === "admin")
+            {
+                glAcc.addGlAccount(newGlAccount, function(callback) {
+                    var servResp = {};
+                    console.log(callback);
+                    if (callback=="1"){
+                        servResp.redirect = true;
+                        servResp.redirectURL = "http://localhost:3000/md-gl";
+                        servResp.message = "GL Account Created!";
+                        res.send(servResp);  
+                    } else {
+                        servResp.redirect = false;
+                        servResp.error = true;
+                        servResp.errorMessage = "GL Account Exists!";
+                        res.send(servResp);
+                    }
+                });
+    
+            } else {
+                res.send("Unauthorized!");
+            }
+        } else {
+            returnTo = req.url;
+            res.redirect("/login");
+        } 
 
 
-app.get("/md-vendor", function(req,res) {
-    res.render('md-vendor',{countries:country_names});
-   
+
+
+})
+
+.patch(function(req,res) {
+
+    const toUpdateGlAccount = {
+        glAccount:req.body.glAccount,
+        glAccountValues :{
+            glName: req.body.glName,
+            companyCode:req.body.companyCode,
+            accountCurrency:req.body.accountCurrency,
+            accountType:req.body.accountType,
+            taxCategory:req.body.taxCategory,
+            accountGroup:req.body.accountGroup,
+            descShort:req.body.descShort,
+            descLong:req.body.descLong
+        }   
+    };
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            glAcc.updateGlAccount(toUpdateGlAccount, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-gl";
+                    servResp.message = "GL Account updated!";
+                    res.send(servResp);  
+                }else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+        
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }   
+})
+
+.delete(function(req,res) {
+    const toDeleteGlAccount = req.body.glAccount;
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            glAcc.deleteGlAccount(toDeleteGlAccount, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-gl";
+                    servResp.message = "GL Account deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+
 });
 
-app.get("/md-customer", function(req,res) {
-    res.render('md-customer',{countries:country_names});
+
+app.route("/md-vendor")
+
+.get(async function(req,res) {
+
+    if(req.isAuthenticated()) {
+ 
+        companyCode_list= await companyCode.getCompanyCode(); 
+        accountType_list= await accType.getAccountType();  
+        vendor_list = await vendor.getVendor();
+        res.render('md-vendor',{vendors:vendor_list,countries:country_names,currencies:currency_list,companyCodes:companyCode_list,user:req.user});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
    
-}); 
+})
+
+.post(function(req,res) {
+
+    const newVendor = new vendor.vendor ({
+       vendorCode: req.body.vendorCode,
+       vendorName: req.body.vendorName,
+       vendorCompanyCode: req.body.vendorCompanyCode,
+       vendorCurrency: req.body.vendorCurrency,
+       vendorTaxCategory: req.body.vendorTaxCategory,
+       vendorPaymentTerm: req.body.vendorPaymentTerm,
+       vendorTax: req.body.vendorTax,
+       vendorRecon: req.body.vendorRecon,
+       vendorStreet: req.body.vendorStreet,
+       vendorCity: req.body.vendorCity,
+       vendorCountry: req.body.vendorCountry,
+       vendorPostalCode: req.body.vendorPostalCode,
+       vendorTelephone: req.body.vendorTelephone,
+       vendorEmail: req.body.vendorEmail,
+       vendorWebsite: req.body.vendorWebsite
+    });
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            vendor.addVendor(newVendor, function(callback) {
+                var servResp = {};
+                console.log(callback);
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-vendor";
+                    servResp.message = "Vendor Created!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Vendor Code Exists!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+
+})
+.patch(function(req,res) {
+
+    const toUpdateVendor = {
+        vendorCode: req.body.vendorCode,
+        vendorValues:{
+            vendorName: req.body.vendorName,
+            vendorCompanyCode: req.body.vendorCompanyCode,
+            vendorCurrency: req.body.vendorCurrency,
+            vendorTaxCategory: req.body.vendorTaxCategory,
+            vendorPaymentTerm: req.body.vendorPaymentTerm,
+            vendorTax: req.body.vendorTax,
+            vendorRecon: req.body.vendorRecon,
+            vendorStreet: req.body.vendorStreet,
+            vendorCity: req.body.vendorCity,
+            vendorCountry: req.body.vendorCountry,
+            vendorPostalCode: req.body.vendorPostalCode,
+            vendorTelephone: req.body.vendorTelephone,
+            vendorEmail: req.body.vendorEmail,
+            vendorWebsite: req.body.vendorWebsite
+        }
+       
+     };
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            vendor.updateVendor(toUpdateVendor, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-vendor";
+                    servResp.message = "Vendor updated!";
+                    res.send(servResp);  
+                }else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+        
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }   
+})
+
+.delete(function(req,res) {
+    const toDeleteVendor = req.body.vendorCode;
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            vendor.deleteVendor(toDeleteVendor, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-vendor";
+                    servResp.message = "Vendor deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+});
+
+app.route("/md-customer").
+
+get(async function(req,res){
+
+    if(req.isAuthenticated()) {
+ 
+        companyCode_list= await companyCode.getCompanyCode(); 
+        customer_list= await customer.getCustomer(); 
+        res.render('md-customer',{countries:country_names,currencies:currency_list,companyCodes:companyCode_list,customers:customer_list,user:req.user});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }  
+    
+   
+
+})
+
+.post(function(req,res) {
+
+    const newCustomer = new customer.customer({
+
+        customerCode:req.body.customerCode,
+        customerName:req.body.customerName,
+        customerCompanyCode:req.body.customerCompanyCode, 
+        customerCurrency :req.body.customerCurrency,
+        customerTaxCategory :req.body.customerTaxCategory,
+        customerPaymentTerm:req.body.customerPaymentTerm,
+        customerTax :req.body.customerTax,
+        customerRecon :req.body.customerRecon,
+        customerStreet:req.body.customerStreet,
+        customerCity:req.body.customerCity,
+        customerCountry :req.body.customerCountry,
+        customerPostalCode :req.body.customerPostalCode,
+        customerTelephone :req.body.customerTelephone,
+        customerEmail :req.body.customerEmail,
+        customerWebsite :req.body.customerWebsite
+       
+    });
+    
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            customer.addCustomer(newCustomer, function(callback) {
+                var servResp = {}
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-customer";
+                    servResp.message = "Customer Created!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Customer Code Exists!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+}).patch(function(req,res){
+
+    const toUpdateCustomer = {
+    customerCode:req.body.customerCode,
+     customerValues : {
+        customerName:req.body.customerName,
+        customerCompanyCode:req.body.customerCompanyCode, 
+        customerCurrency :req.body.customerCurrency,
+        customerTaxCategory :req.body.customerTaxCategory,
+        customerPaymentTerm:req.body.customerPaymentTerm,
+        customerTax :req.body.customerTax,
+        customerRecon :req.body.customerRecon,
+        customerStreet:req.body.customerStreet,
+        customerCity:req.body.customerCity,
+        customerCountry :req.body.customerCountry,
+        customerPostalCode :req.body.customerPostalCode,
+        customerTelephone :req.body.customerTelephone,
+        customerEmail :req.body.customerEmail,
+        customerWebsite :req.body.customerWebsite
+     }
+    };
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            customer.updateCustomer(toUpdateCustomer, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-customer";
+                    servResp.message = "Customer updated!";
+                    res.send(servResp);  
+                }else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+        
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }   
+
+
+
+}).delete(function(req,res){
+
+    const toDeleteCustomer = req.body.customerCode;
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            customer.deleteCustomer(toDeleteCustomer, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/md-customer";
+                    servResp.message = "Customer deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+});
+
+
+
+
+
 
 app.get("/md-taxrate", function(req,res) {
     res.render('md-gl');

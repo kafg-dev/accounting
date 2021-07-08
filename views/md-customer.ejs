@@ -10,230 +10,309 @@
 <!-- container -->
 <div class="container-fluid">
     
-    <div class="row main-box bg-light rounded-3 p-3">
+    <div class="row main-box bg-light rounded-3">
       <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-          <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Create</button>
-          <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Modify</button>
+          <button class="nav-link active" id="nav-customer-create-tab" data-bs-toggle="tab" data-bs-target="#nav-customer-create" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Create</button>
+          <button class="nav-link" id="nav-customer-modify-tab" data-bs-toggle="tab" data-bs-target="#nav-customer-modify" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Modify</button>
         </div>
       </nav>
       <div class="tab-content " id="nav-tabContent">
          <!-- first tab -->
-         <div class="tab-pane fade show active " id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-          <form action="" method="post">
+         <div class="tab-pane fade show active " id="nav-customer-create" role="tabpanel" aria-labelledby="nav-customer-create">
+          <form action="" method="post" id="ct-create">
           <div class="row">
               
                 <!-- 1st col -->
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Customer Code</label>
+                    <label class="col-sm-4 col-form-label">Customer Code</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="ct_code" required>
+                      <input type="text" class="form-control" name="ct_code" id="ct_code" required>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Customer Name</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="cs_name" required>
+                    <label class="col-sm-4 col-form-label">Customer Name</label>
+                    <div class="col-sm-7">
+                      <input type="text" class="form-control" name="ct_name" id="ct_name" required>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Company Code</label>
+                    <label class="col-sm-4 col-form-label">Company Code</label>
                     <div class="col-sm-4">
-                    <select class="form-select" name="c_code">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                    </select>
-                    </div>
-                  </div>
-
-                  <p class="desc border-bottom">Address</p>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Street</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="ct_street" required>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Postal Code</label>
-                    <div class="col-sm-3">
-                      <input type="text" class="form-control" name="ct_postalcode" required>
-                    </div>
-                    <label class="col-sm-1 col-form-label">City</label>
-                    <div class="col-sm-5">
-                      <input type="text" class="form-control" name="ct_postalcode" required>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Country</label>
-                    <div class="col-sm-4">
-                    <select class="form-select" name="ct_country">
+                    <select class="form-select" name="ct_companycode" id="ct_companycode" required>
                       <option selected disabled>Choose...</option>
-                     <%  countries.forEach(function(country) { %>
-                        <option value="<%= country %> "><%= country %> </option>
-                     <%  }); %>
-                    </select>
+                        <% companyCodes.forEach(function(code) { %>
+                            <option value="<%= code._id %>"><%= code.code %></option>
+                        <% }); %>
+                      </select>
                     </div>
                   </div>
+                  
                 </div>
                 <!-- end of 1st col -->
                 <!-- 2nd col -->
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tax</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="ct_tax" required>
+                    <label class="col-sm-5 col-form-label">Account Currency</label>
+                    <div class="col-sm-6">
+                    <select class="form-select" name="ct_currency" id="ct_currency" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="PHP">PHP</option>
+                      <option value="MYR">MYR</option>
+                    </select>
+                  </div>
+                  </div>
+                 
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-5 col-form-label">Tax Category</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" name="ct_taxcategory" id="ct_taxcategory" >
+                    </div>
+                  </div>
+
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-5 col-form-label">Payment Terms</label>
+                    <div class="col-sm-6">
+                    <select class="form-select" name="ct_term" id="ct_term" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="Z07">Z07</option>
+                      <option value="Z15">Z15</option>
+                      <option value="Z30">Z30</option>
+                      <option value="Z45">Z45</option>
+                    </select>
+                    </div>
+                  </div>
+                  
+                </div>
+                <!-- end of 2nd col -->
+                 <!-- 3nd col -->
+                 <div class="col-sm-4">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-4 col-form-label">Tax</label>
+                    <div class="col-sm-7">
+                      <input type="text" class="form-control" name="ct_tax" id="ct_tax" >
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Account Currency</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="acc_currency">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
-                    </select>
-                  </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tax Category</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
-                    </select>
-                  </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Recon Acct for Acct Type</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
+                    <label class="col-sm-4 col-form-label">Recon Acct for Acct Type</label>
+                    <div class="col-sm-7">
+                    <select class="form-select" name="ct_recon" id="ct_recon" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="Accounts Receivable - Trade">Accounts Receivable - Trade</option>
+                      <option value="Accounts Receivable - Non-Trade">Accounts Receivable - Non-Trade</option>
                     </select>
                   </div>
                   </div> 
                 </div>
-                <!-- end of 2nd col -->
+                <!-- end of 3nd col -->
+                <!-- 2ND LAYER -->
+                <div class="col-sm-12">
+                  <p class="desc border-bottom">Address</p>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-1 col-form-label">Street</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_street" id="ct_street" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">City Name</label>
+                    <div class="col-sm-2">
+                      <input type="text" class="form-control" name="ct_city" id="ct_city" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Country</label>
+                    <div class="col-sm-2">
+                      <select class="form-select" name="ct_country" id="ct_country" required>
+                        <option selected disabled>Choose...</option>
+                       <%  countries.forEach(function(country) { %>
+                          <option value="<%= country %> "><%= country %> </option>
+                       <%  }); %>
+                      </select>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Postal Code</label>
+                    <div class="col-sm-1">
+                      <input type="text" class="form-control" name="ct_postalcode" id="ct_postalcode" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- end of 2ND LAYER -->
+                <!-- 3rd LAYER -->
+                <div class="col-sm-12">
+                  <p class="desc border-bottom">Communication</p>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-1 col-form-label">Telephone</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_telephone" id="ct_telephone" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Email</label>
+                    <div class="col-sm-3">
+                      <input type="email" class="form-control" name="ct_email" id="ct_email" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Website</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_website" id="ct_website" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- end of 3rd LAYER -->
+                
+              </form>
                 <!-- button -->
                 
-                <div class="container-fluid mb-3 d-flex flex-column">
-                  <button type="button" class="btn btn-primary btn-lg icenter">Create</button>
+                <div class="mb-3 mt-5 d-flex justify-content-center">
+                  <button type="button" class="btn btn-primary btn-sm" id="ct-create-btn">Create</button>
                 </div> <!-- end of button -->
-               
-             </div>  <!-- end of row -->
-            </form>
+                <div id="ct-create-label" class="alert d-none"  role="alert"></div>
+          </div> <!-- end of row --> 
         </div>
         <!-- end of first tab -->
 
         <!-- second tab -->
-        <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-          <form action="" method="post">
+        <div class="tab-pane fade" id="nav-customer-modify" role="tabpanel" aria-labelledby="nav-customer-modify">
+          <form action="" method="post" id="ct-modify">
           <div class="row">
                 <!-- 1st col -->
-                <div class="col-sm-6">
+                <div class="col-sm-4">
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Customer Code</label>
+                    <label class="col-sm-4 col-form-label">Customer Code</label>
                     <div class="col-sm-4">
-                      <input type="text" class="form-control" name="ct_code" required>
+                      <select class="form-select" name="ct_code" id="ct_code">
+                      <option selected disabled>Choose</option>
+                       <% customers.forEach(function(customer) { %>
+                        <option value="<%= customer._id %>"><%= customer.customerCode %></option>
+                       <% }); %>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Customer Name</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="cs_name" required>
+                    <label class="col-sm-4 col-form-label">Customer Name</label>
+                    <div class="col-sm-7">
+                      <input type="text" class="form-control" name="ct_name" id="ct_name" required>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Company Code</label>
+                    <label class="col-sm-4 col-form-label">Company Code</label>
                     <div class="col-sm-4">
-                    <select class="form-select" name="c_code">
-                      <option selected>Choose...</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
-                    </select>
-                    </div>
-                  </div>
-
-                  <p class="desc border-bottom">Address</p>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Street</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="ct_street" required>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Postal Code</label>
-                    <div class="col-sm-3">
-                      <input type="text" class="form-control" name="ct_postalcode" required>
-                    </div>
-                    <label class="col-sm-1 col-form-label">City</label>
-                    <div class="col-sm-5">
-                      <input type="text" class="form-control" name="ct_postalcode" required>
-                    </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-2 col-form-label">Country</label>
-                    <div class="col-sm-4">
-                    <select class="form-select" name="ct_country">
+                    <select class="form-select" name="ct_companycode" id="ct_companycode" required>
                       <option selected disabled>Choose...</option>
-                     <%  countries.forEach(function(country) { %>
-                        <option value="<%= country %> "><%= country %> </option>
-                     <%  }); %>
-                    </select>
+                        <% companyCodes.forEach(function(code) { %>
+                            <option value="<%= code._id %>"><%= code.code %></option>
+                        <% }); %>
+                      </select>
                     </div>
                   </div>
+                  
                 </div>
                 <!-- end of 1st col -->
                 <!-- 2nd col -->
-                <div class="col-sm-6">
+                <div class="col-sm-3">
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tax</label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" name="ct_tax" required>
+                    <label class="col-sm-5 col-form-label">Account Currency</label>
+                    <div class="col-sm-6">
+                    <select class="form-select" name="ct_currency" id="ct_currency" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="PHP">PHP</option>
+                      <option value="MYR">MYR</option>
+                    </select>
+                  </div>
+                  </div>
+                 
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-5 col-form-label">Tax Category</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" name="ct_taxcategory" id="ct_taxcategory" >
+                    </div>
+                  </div>
+
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-5 col-form-label">Payment Terms</label>
+                    <div class="col-sm-6">
+                    <select class="form-select" name="ct_term" id="ct_term" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="Z07">Z07</option>
+                      <option value="Z15">Z15</option>
+                      <option value="Z30">Z30</option>
+                      <option value="Z45">Z45</option>
+                    </select>
+                    </div>
+                  </div>
+                  
+                </div>
+                <!-- end of 2nd col -->
+                 <!-- 3nd col -->
+                 <div class="col-sm-4">
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-4 col-form-label">Tax</label>
+                    <div class="col-sm-7">
+                      <input type="text" class="form-control" name="ct_tax" id="ct_tax" >
                     </div>
                   </div>
                   <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Account Currency</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="acc_currency">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
-                    </select>
-                  </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Tax Category</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
-                    </select>
-                  </div>
-                  </div>
-                  <div class="form-group row mb-3">
-                    <label class="col-sm-3 col-form-label">Recon Acct for Acct Type</label>
-                    <div class="col-sm-9">
-                    <select class="form-select" name="tax_category">
-                      <option selected>Choose...</option>
-                      <option value=""></option>
-                      <option value="">Two</option>
+                    <label class="col-sm-4 col-form-label">Recon Acct for Acct Type</label>
+                    <div class="col-sm-7">
+                    <select class="form-select" name="ct_recon" id="ct_recon" required>
+                      <option selected disabled>Choose...</option>
+                      <option value="Accounts Receivable - Trade">Accounts Receivable - Trade</option>
+                      <option value="Accounts Receivable - Non-Trade">Accounts Receivable - Non-Trade</option>
                     </select>
                   </div>
                   </div> 
                 </div>
-                <!-- end of 2nd col -->
+                <!-- end of 3nd col -->
+                <!-- 2ND LAYER -->
+                <div class="col-sm-12">
+                  <p class="desc border-bottom">Address</p>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-1 col-form-label">Street</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_street" id="ct_street" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">City Name</label>
+                    <div class="col-sm-2">
+                      <input type="text" class="form-control" name="ct_city" id="ct_city" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Country</label>
+                    <div class="col-sm-2">
+                      <select class="form-select" name="ct_country" id="ct_country" required>
+                        <option selected disabled>Choose...</option>
+                       <%  countries.forEach(function(country) { %>
+                          <option value="<%= country %> "><%= country %> </option>
+                       <%  }); %>
+                      </select>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Postal Code</label>
+                    <div class="col-sm-1">
+                      <input type="text" class="form-control" name="ct_postalcode" id="ct_postalcode" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- end of 2ND LAYER -->
+                <!-- 3rd LAYER -->
+                <div class="col-sm-12">
+                  <p class="desc border-bottom">Communication</p>
+                  <div class="form-group row mb-3">
+                    <label class="col-sm-1 col-form-label">Telephone</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_telephone" id="ct_telephone" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Email</label>
+                    <div class="col-sm-3">
+                      <input type="email" class="form-control" name="ct_email" id="ct_email" required>
+                    </div>
+                    <label class="col-sm-1 col-form-label">Website</label>
+                    <div class="col-sm-3">
+                      <input type="text" class="form-control" name="ct_website" id="ct_website" required>
+                    </div>
+                  </div>
+                </div>
+                <!-- end of 3rd LAYER -->
+              </form>
                 <!-- button -->
-                <div class="container-fluid mb-3 d-flex flex-column">
-                  <button type="button" class="btn btn-primary btn-lg icenter">Update</button>
+                <div class="mb-3 mt-5 d-flex justify-content-center">
+                  <button type="button" class="btn btn-primary btn-sm btn-space" id="update-btn">Update</button>
+                  <button type="button" class="btn btn-primary btn-sm btn-space" id="delete-btn">Delete</button>
                 </div> <!-- end of button -->
+                <div id="ct-modify-label" class="alert d-none"  role="alert"></div>
              </div>  <!-- end of row -->
-            </form>
+          
         </div>
         <!-- end of second tab -->
       </div>

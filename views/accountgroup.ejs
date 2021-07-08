@@ -38,21 +38,6 @@
                               <input type="text" class="form-control" name="accountGroupName" id="accountGroupName" required>
                             </div>
                         </div>
-                        <div class="form-group row">
-                          <label class="col-sm-12 col-form-label">Range</label>
-                      </div>
-                      <div class="form-group row mb-3">
-                        <label class="col-sm-4 col-form-label">From</label>
-                        <div class="col-sm-5">
-                          <input type="number" class="form-control" name="accountGroupRangeFrom" id="accountGroupRangeFrom" required>
-                        </div>
-                      </div>
-                      <div class="form-group row mb-3">
-                        <label class="col-sm-4 col-form-label">To</label>
-                        <div class="col-sm-5">
-                          <input type="number" class="form-control" name="accountGroupRangeTo" id="accountGroupRangeTo" required>
-                        </div>
-                      </div>
                      
                      
                     </form>
@@ -82,8 +67,7 @@
                           <th scope="col">Account Group</th>
                           <th scope="col" hidden>id</th>
                           <th scope="col">Account Type</th>
-                          <th scope="col">Range From</th>
-                          <th scope="col">Range To</th>
+                          
                         </tr>
                       </thead>
                       <tbody>
@@ -96,8 +80,8 @@
                           <td ><%= group.accountGroup %></td>
                           <td hidden><%= account._id %></td>
                           <td ><%= account.accountType %></td>
-                          <td ><%= group.rangeFrom %> </td>
-                          <td ><%= group.rangeTo %></td>
+                          <!-- <td ><%= group.rangeFrom %> </td>
+                          <td ><%= group.rangeTo %></td> -->
                         </tr>
                         <% }); %>
                         <% }); %>

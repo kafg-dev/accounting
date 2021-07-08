@@ -28,6 +28,21 @@
                               <input type="text" class="form-control" name="account_type" id="account_type" required>
                             </div>
                         </div>
+                        <div class="form-group row">
+                          <label class="col-sm-12 col-form-label">Range</label>
+                      </div> 
+                      <div class="form-group row mb-3">
+                        <label class="col-sm-4 col-form-label">From</label>
+                        <div class="col-sm-5">
+                          <input type="number" class="form-control" name="accountTypeRangeFrom" id="accountTypeRangeFrom" required>
+                        </div>
+                      </div>
+                      <div class="form-group row mb-3">
+                        <label class="col-sm-4 col-form-label">To</label>
+                        <div class="col-sm-5">
+                          <input type="number" class="form-control" name="accountTypeRangeTo" id="accountTypeRangeTo" required>
+                        </div>
+                      </div>
                     
                     </form>
                      <!-- button -->
@@ -54,7 +69,8 @@
                           <th scope="col">#</th>
                           <th scope="col" hidden>id</th>
                           <th scope="col">Account Type</th>
-                          <th scope="col">Account Group/s</th>
+                          <th scope="col">Range From</th>
+                          <th scope="col">Range To</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -64,11 +80,8 @@
                           <th scope="row"><%= i++ %></th>
                           <td hidden><%= accountType.id %></td>
                           <td ><%= accountType.accountType %></td>
-                          <td>
-                            <% accountType.accountGroup.forEach(function(group){ %>
-                              <%= group.accountGroup %> <br>
-                              <%});%>
-                          </td>
+                          <td ><%= accountType.rangeFrom %></td>
+                          <td ><%= accountType.rangeTo %></td>
 
                         </tr>
                         <% }); %>
