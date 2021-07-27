@@ -8,7 +8,7 @@ const customerSchema = new mongoose.Schema({
         index:{unique:true,sparse:true}
     },
    customerName:String,
-   customerCompanyCode:String,
+   customerCompanyCode:[String],
    customerCurrency:String,
    customerTaxCategory:String,
    customerPaymentTerm:String,

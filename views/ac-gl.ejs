@@ -1,0 +1,185 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>General Ledger</h2></div>
+    <div class="col-12 shadow-sm">G/L Accounts</div>
+  </div>
+<!-- container -->
+<div class="container-fluid">
+    
+    <div class="row ">
+          <div class="row">
+                <!-- 1st col -->
+                <div class="col-12 box-top bg-light rounded-3 shadow-sm">
+                    <form action="" method="post" id="acgl-create">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class=row>
+                                    <div class="col-sm-6">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Document Date</label>
+                                            <div class="col-sm-7">
+                                            <input type="date" class="form-control" name="documentDate" id="documentDate" data-date-format="mm/dd/yyyy" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Posting Date</label>
+                                            <div class="col-sm-7">
+                                            <input type="date" class="form-control" name="postingDate" id="postingDate" data-date-format="mm/dd/yyyy" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Reference</label>
+                                            <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="reference" id="reference" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Amount</label>
+                                            <div class="col-sm-7">
+                                            <input type="number" class="form-control" name="amount" id="amount" required>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    
+                                    <div class="col-sm-6">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Company Code</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-select" name="companyCode" id="companyCode" required>
+                                                    <option selected disabled>Choose.. </option>
+                                                      <% companyCodes.forEach(function(code) { %>
+                                                        <% if ((user.position != "admin") && (user.companyCode.toString()==code._id.toString())) { %> 
+                                                            <option value="<%= code._id %>"><%= code.code %></option>
+                                                        <% } else if (user.position == "admin") { %> 
+                                                            <option value="<%= code._id %>"><%= code.code %></option>
+                                                          <% } %> 
+                                                        <% }); %>
+                                                    </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Company Name</label>
+                                            <div class="col-sm-8">
+                                            <select class="form-select" name="companyName" id="companyName" required>
+                                                <option selected disabled>Choose...</option>
+                                              </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Currency</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-select" name="currency" id="currency" required>
+                                                    <option selected disabled>Choose...</option>
+                                                    <option value="PHP">PHP</option>
+                                                    <option value="MYR">MYR</option>
+                                                  </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   <div class="col-sm-12">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-2 col-form-label">Text</label>
+                                            <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="text" id="text" required>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 "></div>
+                            <div class="col-sm-3 shadow-sm">
+                                <div class="form-group mb-3">
+                                    <label class="col-sm-4 col-form-label">Total Debit</label>
+                                    <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="totalDebit" id="totalDebit" readonly > 
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 ">
+                                    <label class="col-sm-4 col-form-label">Total Credit</label>
+                                    <div class="col-sm-8">
+                                    <input type="number" class="form-control" name="totalCredit" id="totalCredit" readonly>
+                                    </div>
+                                </div>
+                            </form>
+                                <div class="mb-3 mt-5 d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm" id="acgl-save-btn">Park</button>
+                                </div>
+                                <div id="acgl-create-label" class="alert d-none"  role="alert"></div>
+                            </div>
+                           
+                    </div>
+                </div> 
+                <!-- end of 1st col -->
+                
+                <!-- 2nd col -->
+                <div class="col-12 main-box bg-light rounded-3 shadow-sm">
+                    <div class="table-responsive-sm mb-5" >
+                        <table class="table table-hover table-bordered" id="accTable">
+                            <thead>
+                                <tr class="table-primary">
+                                  <th scope="col">GL Account</th>
+                                  <th scope="col">Short Text</th>
+                                  <th scope="col">Debit/Credit</th>
+                                  <th scope="col">Amount</th>
+                                  <th scope="col">Cost Center</th>
+                                </tr>
+                              </thead>
+                              <tbody id="acgl-tbody"> 
+                                        <tr id="1">
+                                        <td class='row-gl'>
+                                            <select name=""  class="gl_Account">
+                                                <option selected disabled>Choose..</option>
+                                                <% glAccounts.forEach(function(account) { %>
+                                                   <% if(user.position=="admin") { %>
+                                                      <option value="<%= account._id %>"><%= account.glAccount %></option>
+                                                   <%  } else { %>
+                                                      <% account.companyCode.forEach(function(accCompanyCode) { %>
+                                                        <% if(user.companyCode.toString() == accCompanyCode.toString()) { %>
+                                                             <option value="<%= account._id %>"><%= account.glAccount %></option>
+                                                <% } }); } }); %>
+                                            </select>
+                                        </td>
+                                        <td class="row-index"><input type="text" name="" readonly/></td>
+                                        <!-- <td class="row-index"><p></p></td> -->
+                                        <td class="row-dc">
+                                            <select name="" class="dc">
+                                                <option value="debit" selected>Debit</option>
+                                                <option value="credit">Credit</option>
+                                            </select>
+                                        </td>
+                                        <td class="row-amount"><input type="text" name="" class="gl_Amount"/></td>
+                                        <td class="row-cost"><input type="text" name="" /></td>
+                                        </tr>
+
+                              </tbody>
+                        </table>
+                        <button type="button" class="btn btn-primary btn-sm " id="acgl-addItem" >Add item</button>
+                        
+                      </div> 
+                </div>
+                <!-- end of 2nd col -->
+             
+                <!-- button -->
+                
+                <!-- <div class="mb-3 mt-5 d-flex justify-content-center">
+                  <button type="button" class="btn btn-primary btn-sm" id="ct-create-btn">Create</button>
+                </div>  -->
+                <!-- end of button -->
+               
+          </div> <!-- end of row --> 
+   
+
+        
+        
+
+
+</div> 
+<!-- end of container -->
+
+
+
+<%- include("partials/footer.ejs") -%>

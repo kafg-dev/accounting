@@ -1,0 +1,242 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>Reports</h2></div>
+    <div class="col-12 shadow-sm">View Document</div>
+  </div>
+<!-- container -->
+<div class="container-fluid">
+    
+    <div class="row ">
+          <div class="row">
+
+                <div class="col-7 box-top bg-light rounded-3 shadow-sm" id="searchForm" >
+                    
+                        <div class="row">
+                            <div class="col-sm-7" > 
+                                <form action="" method="post" id="rp-searchDocKeys">
+                                <p>Search using key entries:</p>
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-5 col-form-label">Document Number</label>
+                                    <div class="col-sm-7">
+                                    <input type="text" class="form-control" name="searchdocumentNumber" id="searchdocumentNumber" required>
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-5 col-form-label">Company Code</label>
+                                    <div class="col-sm-4">
+                                        <% if (user.position=="encoder") { %>
+                                        <% companyCodes.forEach(function(companyCode) { %>
+                                               <% if (user.companyCode.toString()==companyCode._id) { %>
+                                                    <input type="text" class="form-control d-none" name="companyCode" id="searchcompanyCode" value="<%= companyCode._id %>" required>
+                                                    <input type="text" class="form-control"  value="<%= companyCode.code %>" readonly required>
+                                        <% } }); } else { %>
+                                            <select class="form-select" name="companyCode" id="searchcompanyCode">
+                                                <option selected disabled>Choose..</option>
+                                                <% companyCodes.forEach(function(companyCode) { %>
+                                                    <option value="<%= companyCode._id %>"><%= companyCode.code %> </option>
+                                                <% }); %>
+                                            </select>
+                                       <% } %>
+                                                
+                                        
+                                        
+                                    <!-- <input type="text" class="form-control" name="companyCode" id="companyCode" required> -->
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-5 col-form-label">Fiscal Year</label>
+                                    <div class="col-sm-4">
+                                    <input type="text" class="form-control" name="year" id="searchyear" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3 mt-5 d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm" id="search-btn">Search</button>
+                                </div>
+                                <div id="rp-searchDocKeys-label" class="alert d-none"  role="alert"></div>
+                                </form>
+                            </div>
+                            <div class="col-sm-5 border-start">
+                                <form action="" method="post" id="rp-searchDocRef">
+                                <p>Search using:</p>
+                                <div class="form-group row mb-3">
+                                    <label class="col-sm-4 col-form-label">Reference</label>
+                                    <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="documentReference" id="documentReference" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3 mt-5 d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm" id="refsearch-btn">Search</button>
+                                </div>
+                                <div id="rp-searchDocRef-label" class="alert d-none"  role="alert"></div>
+                                </form>
+                            </div>
+                        </div>
+                    
+                </div>
+
+
+                <!-- 1st col -->
+                <div class="col-12 box-top bg-light rounded-3 shadow-sm d-none" id="showTransaction">
+                    
+                    <form action="" method="post" id="rp-viewDoc">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <div class=row>
+                                    <div class="col-sm-6">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Document Number</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" name="documentNumber" id="documentNumber" required>
+                                                <input type="text" class="form-control" name="documentID" id="documentID" hidden>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Posting Date</label>
+                                            <div class="col-sm-7">
+                                            <input type="date" class="form-control" name="postingDate" id="postingDate" data-date-format="mm/dd/yyyy" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Reference</label>
+                                            <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="reference" id="reference" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Amount</label>
+                                            <div class="col-sm-7">
+                                            <input type="number" class="form-control" name="amount" id="amount"  required>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                    
+                                    <div class="col-sm-6">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Document Date</label>
+                                            <div class="col-sm-7">
+                                            <input type="date" class="form-control" name="documentDate" id="documentDate" data-date-format="mm/dd/yyyy" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Company Code</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-select" name="companyCode" id="companyCode" required>
+                                                    <option selected disabled>Choose...</option>
+                                                      <% companyCodes.forEach(function(code) { %>
+                                                          <option value="<%= code._id %>"><%= code.code %></option>
+                                                      <% }); %>
+                                                    </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Company Name</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-select" name="companyName" id="companyName" required>
+                                                    <option selected disabled>Choose...</option>
+                                                    <% customers.forEach(function(customer) { %>
+                                                        <option value="<%= customer._id %>"><%= customer.customerName %></option>
+                                                    <% }); %>
+                                                    <% vendors.forEach(function(vendor) { %>
+                                                        <option value="<%= vendor._id %>"><%= vendor.vendorName %></option>
+                                                    <% }); %>
+
+                                                  </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-4 col-form-label">Currency</label>
+                                            <div class="col-sm-7">
+                                                <select class="form-select" name="currency" id="currency" required>
+                                                    <option selected disabled>Choose...</option>
+                                                    <option value="PHP">PHP</option>
+                                                    <option value="MYR">MYR</option>
+                                                  </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   <div class="col-sm-12">
+                                        <div class="form-group row mb-3">
+                                            <label class="col-sm-2 col-form-label">Text</label>
+                                            <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="text" id="text" required>
+                                            </div>
+                                        </div>
+                                   </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-1 "></div>
+                            </form>
+                            <div class="col-sm-3 shadow-sm d-none" id="dcForm">
+                                <div class="text-end">
+                                    <button type="button" class="btn btn-primary btn-sm " id="rpvd-back-btn">Back</button>
+                                </div>
+                                <div class="form-group mb-3 ">
+                                    <label class="col-sm-4 col-form-label">Total Debit</label>
+                                    <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="totalDebit" id="totalDebit" readonly > 
+                                    </div>
+                                </div>
+                                <div class="form-group mb-3 ">
+                                    <label class="col-sm-4 col-form-label">Total Credit</label>
+                                    <div class="col-sm-8">
+                                    <input type="text" class="form-control" name="totalCredit" id="totalCredit" readonly>
+                                    </div>
+                                </div>
+                                <div id="rpvd-parked" class="badge bg-primary text-wrap" style="width: 12rem;">Parked</div>
+                                <div id="rpvd-posted" class="badge bg-info text-wrap d-none"  style="width: 12rem;">Posted</div>
+                                <div class="mb-3 mt-5 d-flex">
+                                    <button type="button" class="btn btn-primary btn-sm btn-space d-none" id="rpvd-save-btn">Update</button>
+                                    <button type="button" class="btn btn-primary btn-sm btn-space d-none" id="rpvd-approve-btn">Post</button> 
+                                </div>
+                                
+                                <div id="rpvd-label" class="alert d-none"  role="alert"></div>
+                            </div>
+                           
+                    </div>
+                </div> 
+                <!-- end of 1st col -->
+                
+                <!-- 2nd col -->
+                <div class="col-12 main-box bg-light rounded-3 shadow-sm d-none" id="vdTable-form">
+                    <div class="table-responsive-sm mb-5" >
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr class="table-primary">
+                                  <th scope="col">GL Account</th>
+                                  <th scope="col">Short Text</th>
+                                  <th scope="col">Debit/Credit</th>
+                                  <th scope="col">Amount</th>
+                                  <th scope="col">Cost Center</th>
+                                </tr>
+                              </thead>
+                              <tbody id="vdTable-tbody"> 
+                              </tbody>
+                        </table>
+                      </div> 
+                </div>
+                <!-- end of 2nd col -->
+             
+                <!-- button -->
+                
+                <!-- <div class="mb-3 mt-5 d-flex justify-content-center">
+                  <button type="button" class="btn btn-primary btn-sm" id="ct-create-btn">Create</button>
+                </div>  -->
+                <!-- end of button -->
+               
+          </div> <!-- end of row --> 
+   
+
+        
+        
+
+
+</div> 
+<!-- end of container -->
+
+
+
+<%- include("partials/footer.ejs") -%>

@@ -9,12 +9,13 @@
           <div class="ms-auto">
             <div class="flex-shrink-0 dropdown">
               <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                <img src="https://cahsi.utep.edu/wp-content/uploads/kisspng-computer-icons-user-clip-art-user-5abf13db5624e4.1771742215224718993529.png" alt="mdo" width="32" height="30" class="rounded-circle">
               </a>
               <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
                 <li><a class="dropdown-item" href="#"><%= user.fullname %></a></li>
                 <% if (user.position =="admin"){ %>
-                  <li><a class="dropdown-item" href="#">Settings</a></li>
+                  <li><a class="dropdown-item" href="/gn-companycode">Settings</a></li>
+                  <li><a class="dropdown-item" href="/">Dashboard</a></li>
                 <%}%>
                 <li><a class="dropdown-item" href="#">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>

@@ -2,6 +2,8 @@
 
 const mongoose = require("mongoose");
 
+const docSequence = require(__dirname + "/documentSequence.js");
+
 const companyCodeSchema = new mongoose.Schema({
     code:String,
     country:{
@@ -24,16 +26,24 @@ exports.getCompanyCode = async function () {
 
 exports.addCompanyCode = function(companyCode,callback) {
 
+    // const seqGL = new docSequence.docSequence({
+    //     account:"GL",
+    //     companyCode:String,
+    //     docNum:Number,
+    //     docYear:Number
+    // });
+
     ////////////////////////////////////////////////////////////////////------save--------////////////////
         exports.cCode.findOne({code:companyCode.code},function(err,codes) {
             if (codes) {
                 return callback("0");
             } else {
-                companyCode.save(function(err) {
+                companyCode.save(function(err,result) {
                     if (err) {
                         return callback(err);
                     }
                     else{
+                        
                         return callback("1");
                     }
                     }); 

@@ -4,8 +4,14 @@
 
 .main-box{
   margin-top: 1rem;
-  margin-bottom: 10%;
+  margin-bottom: 15%;
   padding-top: 1rem;
+}
+
+.box-top{
+  padding-top: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 2%;
 }
 
 .desc{
@@ -25,11 +31,42 @@
 }
 
 .btn-space{
-  margin: 0 1rem 0 1rem;
+  margin: 0 1rem 0 0;
 }
 
 .error{
   color:rgb(248, 63, 63);
+}
+
+#accTable td {
+  position: relative;
+}
+
+table td input {
+  /* position: absolute; */
+  display: block;
+  top:0;
+  left:0;
+  margin: 0;
+  height: 2rem;
+  width: 100%;
+  border: 1px solid rgb(146, 144, 144);
+  border-radius: 3px;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+table td select {
+  /* position: absolute; */
+  display: block;
+  top:0;
+  left:0;
+  margin: 0;
+  height: 2rem;
+  width: 100%;
+  border: 1px solid rgb(146, 144, 144);
+  border-radius: 3px;
+  box-sizing: border-box;
 }
 
 footer{

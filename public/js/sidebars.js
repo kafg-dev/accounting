@@ -47,6 +47,12 @@ function checkLink (shortL, longL) {
         $("#mtab-2-sub3").attr("aria-expanded", "true");
       break;
 
+      case "rp":
+        $("a[href$="+longL+"]").addClass("btn-color");
+        $("#mtab-3").addClass("btn-color").attr("aria-expanded", "true");
+        $("#encoder-report-collapse").addClass("show");
+      break;
+
       case "gn":
         $("a[href$="+longL+"]").addClass("btn-color");
         $("#utab-1").addClass("btn-color").attr("aria-expanded", "true");
@@ -57,7 +63,15 @@ function checkLink (shortL, longL) {
         $("a[href$="+longL+"]").addClass("btn-color");
         $("#utab-2").addClass("btn-color").attr("aria-expanded", "true");
         $("#gl-collapse").addClass("show");
-        break;
+      break;
+
+      case "us":
+        $("a[href$="+longL+"]").addClass("btn-color");
+        $("#utab-3").addClass("btn-color").attr("aria-expanded", "true");
+        $("#users-collapse").addClass("show");
+      break;
+
+      
         
       default :
             console.log(mainLink);

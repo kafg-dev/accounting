@@ -1,0 +1,127 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>User Account</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="users-create">
+                        <div class="form-group row mb-3 d-none" id="onSelectDiv">
+                          <label class="col-sm-12 col-form-label text-primary">Type 'retain' in the password fields if you are not changing the password.</label>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <input type="text" class="form-control d-none" name="userID" id="userID" required>
+                            <label class="col-sm-4 col-form-label">Fullname</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="fullname" id="fullname" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Position</label>
+                            <div class="col-sm-7">
+                              <select class="form-select" name="position" id="position" required>
+                                  <option selected disabled>Choose...</option>
+                                  <% privilegeList.forEach(function(privilege) { %> 
+                                     <option value="<%= privilege.position  %>"><%= privilege.position %></option>
+                                  <%  }) %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                          <label class="col-sm-4 col-form-label">Company Code</label>
+                          <div class="col-sm-7">
+                            <select class="form-select" multiple name="userCompanyCode" id="userCompanyCode" required>
+                              <option selected disabled>List of Company Codes</option>
+                                <% companyCodes.forEach(function(code) { %>
+                                    <option value="<%= code._id %>"><%= code.code %></option>
+                                <% }); %>
+                            </select>
+                          </select>
+                          </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Username</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="username" id="username" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Password</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="password" id="password" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Retype Password</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="retypepassword" id="retypepassword" required>
+                            </div>
+                        </div>
+                       
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="users-addbtn">Create</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="users-updatebtn">Update</button>
+                      <!-- <button type="button" class="btn btn-primary btn-sm btn-space" id="users-deletebtn">Delete</button> -->
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="users-clearbtn">Clear</button>
+                  </div> <!-- end of button -->
+                      <div id="users-label" class="alert d-none"  role="alert"></div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of Users</h4>
+            <div class="table-responsive-sm mb-5" >
+                <table class="table table-hover" id="usersTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col" hidden>companycodeid</th>
+                          <th scope="col">Fullname</th>
+                          <th scope="col">Username</th>
+                          <th scope="col">Position</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% userList.forEach(function(users) { %>
+                            <% if (users.position != "admin") { %> 
+                                <tr>
+                                    <th scope="row"><%= i++ %></th>
+                                    <td hidden ><%= users._id %></td>
+                                    <td hidden><%= users.companyCode %></td>
+                                    <td><%= users.fullname %></td>
+                                    <td><%= users.username %></td>
+                                    <td><%= users.position %></td>
+                                </tr>
+                            <% } %> 
+                           <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

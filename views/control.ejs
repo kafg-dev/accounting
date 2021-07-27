@@ -1,0 +1,157 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>Control : Opening and Closing Period</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="controlPeriod">
+                        <!-- <div class="form-group row mb-3 d-none" id="onSelectDiv">
+                          <label class="col-sm-5 col-form-label">Selected Company Code</label>
+                          <div class="col-sm-6">
+                            <input type="text" class="form-control" name="selectedCompanyCode" id="selectedCompanyCode" disabled>
+                          </div>
+                      </div> -->
+                        <div class="form-group row mb-3">
+                            <input type="text" class="form-control d-none" name="periodID" id="periodID">
+                            <label class="col-sm-4 col-form-label">Account Type</label>
+                            <div class="col-sm-7">
+                             <select class="form-select" name="accountType" id="period_accountType" required>
+                                 <option selected disabled>Choose..</option>
+                                 <option value="GL">GL</option>
+                                 <option value="Customer">Customer</option>
+                                 <option value="Vendor">Vendor</option>
+                             </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Company Code</label>
+                            <div class="col-sm-7">
+                              <select class="form-select" name="period_companycode" id="period_companycode" required>
+                                  <option selected disabled>Choose...</option>
+                                <%  companyCodes.forEach(function(companyCode) { %>
+                                    <option value="<%= companyCode._id %>"><%= companyCode.code %> </option>
+                                <%  }); %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">From Account:</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="period_fromAccount" id="period_fromAccount" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">To Account:</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="period_toAccount" id="period_toAccount" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">From Period:</label>
+                            <div class="col-sm-7">
+                                <input type="date" class="form-control" name="period_fromPeriod" id="period_fromPeriod" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">To Period:</label>
+                            <div class="col-sm-7">
+                                <input type="date" class="form-control" name="period_toPeriod" id="period_toPeriod" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Year:</label>
+                            <div class="col-sm-7">
+                                <input type="number" class="form-control" name="period_year" id="period_year" required>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Status:</label>
+                            <div class="col-sm-7">
+                                <select class="form-select" name="period_status" id="period_status" required>
+                                    <option selected disabled>Choose..</option>
+                                    <option value="open">Open</option>
+                                    <option value="close">Close</option>
+                                </select>
+                            </div>
+                        </div>
+                       
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="period-addbtn">Create</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="period-updatebtn">Update</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="period-deletebtn">Delete</button>
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="period-clearbtn">Clear</button>
+                  </div> <!-- end of button -->
+                      <div id="period-label" class="alert d-none"  role="alert">
+                      </div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of Periods</h4>
+            <div class="table-responsive-sm mb-5" >
+                <table class="table table-hover" id="periodTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col">Type</th>
+                          <th scope="col">Company Code</th>
+                          <th scope="col" hidden>code id</th>
+                          <th scope="col">From</th>
+                          <th scope="col">To</th>
+                          <th scope="col">Period 1</th>
+                          <th scope="col">Period 2</th>
+                          <th scope="col">Year</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% controlPeriods.forEach(function(period) { %>
+                                <tr>
+                                <th scope="row"><%= i++ %></th>
+                                <td hidden><%= period._id %></td>
+                                <td><%= period.accountType %></td>
+                                <% companyCodes.forEach(function(companyCode) { %>
+                                   <%    if(companyCode._id==period.companyCode) { %>
+                                        <td><%= companyCode.code %></td>
+                                    <% } }) %> 
+                                <td hidden><%= period.companyCode %></td>
+                                <td><%= period.fromAccount %></td>
+                                <td><%= period.toAccount %></td>
+                                <td><%= period.fromPeriod %></td>
+                                <td><%= period.toPeriod %></td>
+                                <td><%= period.controlYear %></td>
+                                <td><%= period.status %></td>
+                              </tr>
+                           <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

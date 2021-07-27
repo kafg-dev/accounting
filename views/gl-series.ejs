@@ -1,0 +1,97 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>GL Series</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="glSeries">
+                        <div class="form-group row mb-3 d-none" id="onSelectDiv">
+                          <label class="col-sm-5 col-form-label">Selected Account</label>
+                          <div class="col-sm-6">
+                            <input type="text" class="form-control" name="selectedGlSeries" id="selectedGlSeries" disabled>
+                          </div>
+                          </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Account</label>
+                            <input type="text" class="form-control d-none" name="glSeries_id" id="glSeries_id">
+                            <div class="col-sm-7">
+                              <select class="form-select" name="accountGL" id="accountGL" required>
+                                <option selected disabled>Choose...</option>
+                                <option value="Vendor">Vendor</option>
+                                <option value="Customer">Customer</option>
+                                <option value="GL">GL</option>
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Starting Series</label>
+                            <div class="col-sm-7">
+                              <input type="number" class="form-control" name="seriesGL" id="seriesGL" required>
+                            </div>
+                        </div>
+                     
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="glSeries-addbtn">Create</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="glSeries-updatebtn">Update</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="glSeries-deletebtn">Delete</button>
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="glSeries-clearbtn">Clear</button>
+                  </div> <!-- end of button -->
+                      <div id="glSeries-label" class="alert d-none"  role="alert">
+                      </div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of GL Series</h4>
+            <div class="table-responsive-sm mb-5">
+                <table class="table table-hover" id="glSeriesTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Starting Series</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% glSeriesList.forEach(function(glSeries) { %>
+                                <tr>
+                                <th scope="row"><%= i++ %></th>
+                                <td hidden><%= glSeries._id %></td>
+                                <td><%= glSeries.account %></td>
+                                <td><%= glSeries.series %></td>
+                              </tr>
+                           <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

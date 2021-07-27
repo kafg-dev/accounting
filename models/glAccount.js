@@ -8,13 +8,14 @@ const glAccountSchema = new mongoose.Schema({
         index:{unique:true,sparse:true}
     },
     glName:String,
-    companyCode:String,
+    companyCode:[String],
     accountCurrency:String,
     accountType:String,
     taxCategory:String,
     accountGroup:String,
     descShort:String,
     descLong:String
+    
 })
 
 exports.glAccount = mongoose.model("glAccount", glAccountSchema);

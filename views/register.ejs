@@ -13,8 +13,12 @@
         <label for="floatingInput">Fullname</label>
       </div>
       <div class="form-floating">
-        <input type="text" class="form-control" id="floatingInput" placeholder="Full Name" name="position">
-        <label for="floatingInput">Position</label>
+        <select class="form-select" id="floatingSelect" name="position">
+          <option value="admin">Admin</option>
+          <option value="approver">Approver</option>
+          <option value="encoder">Encoder</option>
+        </select>
+        <label for="floatingSelect">Choose</label>
       </div>
     <div class="form-floating">
       <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="username">

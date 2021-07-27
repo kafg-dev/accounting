@@ -127,7 +127,13 @@ exports.addAccountType = function(newAccountType,callback) {
 };
 
 exports.updateAccountType = function(accountType,callback) {
-    
+
+    let passedValues = accountType.accountTypeValues;
+    let rangeFrom = passedValues.rangeFrom;
+    let rangeTo = passedValues.rangeTo;
+    let accountTypeId= passedValues.accountType;
+    let vals = {rangeFrom,rangeTo,accountTypeId};
+
     ////////////////////////////////////////////////////////////////////------update--------////////////////
     exports.accountType.findOne({accountType: accountType.accountType,_id: { $ne:accountType._id } },function(err,accountTypeRes) {
         if (accountTypeRes) {

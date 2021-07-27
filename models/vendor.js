@@ -8,7 +8,7 @@ const vendorSchema = new mongoose.Schema({
         index:{unique:true,sparse:true}
     },
    vendorName:String,
-   vendorCompanyCode:String,
+   vendorCompanyCode:[String],
    vendorCurrency:String,
    vendorTaxCategory:String,
    vendorPaymentTerm:String,

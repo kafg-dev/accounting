@@ -1,0 +1,108 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>User Privileges</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="privileges-form">
+                        <div class="form-group row mb-3">
+                            <input type="text" class="form-control d-none" name="positionID" id="positionID" required>
+                            <label class="col-sm-4 col-form-label">Position</label>
+                            <div class="col-sm-7">
+                              <input type="text" class="form-control" name="privPosition" id="privPosition" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">Privileges</div>
+                        <div class="form-group row mb-3">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-7">
+                                <input class="form-check-input" type="checkbox" value="park" id="parkPriv">
+                                <label class="form-check-label" for="parkPriv">Park</label>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-3">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-7">
+                                <input class="form-check-input" type="checkbox" value="post" id="postPriv">
+                                <label class="form-check-label" for="parkPriv">Post</label>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group row mb-3">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-7">
+                                <input class="form-check-input" type="checkbox" value="approve" id="approvePriv">
+                                <label class="form-check-label" for="parkPriv">Approve</label>
+                            </div>
+                        </div> -->
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex justify-content-center">
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="priv-addbtn">Create</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="priv-updatebtn">Update</button>
+                      <!-- <button type="button" class="btn btn-primary btn-sm btn-space" id="users-deletebtn">Delete</button> -->
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="priv-clearbtn">Clear</button>
+                  </div> <!-- end of button -->
+                      <div id="privilege-label" class="alert d-none"  role="alert"></div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of Positions and privileges</h4>
+            <div class="table-responsive-sm mb-5" >
+                <table class="table table-hover" id="privTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col" hidden>id</th>
+                          <th scope="col">Position</th>
+                          <th scope="col">Park</th>
+                          <th scope="col">Post</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% privilegeList.forEach(function(privilege) { %>
+                            <tr>
+                                <th scope="row"><%= i++ %></th>
+                                <td hidden ><%= privilege._id %></td>
+                                <td><%= privilege.position %></td>
+                                <% if (privilege.park == 1) { %> 
+                                    <td>Yes</td>
+                                    <% }  else {%>
+                                    <td>No</td>   
+                                <% }  %>
+                                <% if (privilege.post == 1) { %> 
+                                    <td>Yes</td>
+                                    <% }  else {%>
+                                    <td>No</td>   
+                                <% }  %>
+                            </tr>
+                           <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

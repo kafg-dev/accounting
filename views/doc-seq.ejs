@@ -1,0 +1,92 @@
+<%- include("partials/header.ejs") -%>
+<%- include("partials/body-top.ejs") -%>
+<%- include("partials/ud-sidebar.ejs") -%>
+
+<div class="col-sm-10">
+  <div class="row">
+    <div class="col-12 shadow-sm"><h2>Document Sequence</h2></div>
+  </div>
+<!-- container fluid -->
+<div class="container-fluid">
+
+    <!-- <div class="row main-box bg-light rounded-3 p-3"> -->
+        <!-- <div class=""> -->
+        <div class="row">
+          <div class="col-md-12 col-lg-4 p-3 mt-3">
+           <div class="bg-light rounded-3 p-3 mt-3 shadow-sm">
+                      <form id="genDocSeq">
+                        <div class="form-group row mb-3">
+                            <label class="col-sm-12 col-form-label">Generate document sequence for year:</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="genYear" id="genYear">
+                            </div>
+                        </div>
+                        <!-- <div class="form-group row mb-3">
+                            <label class="col-sm-4 col-form-label">Starting Series</label>
+                            <div class="col-sm-7">
+                              <input type="number" class="form-control" name="seriesGL" id="seriesGL" required>
+                            </div>
+                        </div> -->
+                     
+                    </form>
+                     <!-- button -->
+                     <div class="mb-3 mt-5 d-flex">
+                      <button type="button" class="btn btn-primary btn-sm" id="genDocSeq-btn">Generate</button>
+                      <!-- <button type="button" class="btn btn-primary btn-sm btn-space" id="glSeries-updatebtn">Update</button>
+                      <button type="button" class="btn btn-primary btn-sm btn-space" id="glSeries-deletebtn">Delete</button>
+                      <button type="button" class="btn btn-success btn-sm btn-space" id="glSeries-clearbtn">Clear</button> -->
+                  </div> <!-- end of button -->
+                      <div id="docSeq-label" class="alert d-none"  role="alert">
+                      </div>
+                  
+          </div>
+        </div>
+
+          <div class="col-sm-1"></div> 
+
+          <div class="col-md-12 col-lg-7 p-3 mt-3">
+            <h4>List of GL Series</h4>
+            <div class="table-responsive-sm mb-5">
+                <table class="table table-hover" id="glSeriesTable">
+                    <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Year</th>
+                          <th scope="col">Company Code</th>
+                          <th scope="col">Account</th>
+                          <th scope="col">Current Sequence Number</th>
+                          
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% var i= 1;%>
+                        <% docSequenceList.forEach(function(sequence) { %>
+                                <tr>
+                                <th scope="row"><%= i++ %></th>
+                                <td><%= sequence.docYear %></td>
+                                <% companycodeList.forEach(function(companyCode) { %>
+                                  <%  if(companyCode._id==sequence.companyCode)  { %>
+                                    <td ><%= companyCode.code %></td>
+                                   <%}%>
+                                <% }) %>
+                                <td><%= sequence.account %></td>
+                                <td><%= sequence.docNum %></td>
+                                
+                              </tr>
+                           <% }); %>
+                      </tbody>
+                </table>
+              </div>
+
+          </div>  
+          
+        </div>
+        
+        <!-- </div> -->
+    <!-- </div>  -->
+<!-- end of container fluid -->
+
+
+
+<%- include("partials/footer.ejs") -%>

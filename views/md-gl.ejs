@@ -34,12 +34,12 @@
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Company Code</label>
                     <div class="col-sm-9">
-                    <select class="form-select" name="c_code" id="c_code" required>
-                      <option selected disabled>Choose...</option>
-                      <% companyCodes.forEach(function(code) { %>
-                          <option value="<%= code._id %>"><%= code.code %></option>
-                      <% }); %>
-                    </select>
+                      <select class="form-select" multiple name="c_code" id="c_code" required>
+                        <option selected disabled>List of Company Codes</option>
+                        <% companyCodes.forEach(function(code) { %>
+                            <option value="<%= code._id %>"><%= code.code %></option>
+                        <% }); %>
+                      </select>
                     </div>
                   </div>
                   <div class="form-group row mb-3">
@@ -136,8 +136,8 @@
                   <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label">Company Code</label>
                     <div class="col-sm-9">
-                      <select class="form-select" name="c_code" id="c_code" required>
-                        <option selected disabled>Choose...</option>
+                      <select class="form-select" multiple name="c_code" id="c_code" required>
+                        <option selected disabled>List of Company Codes</option>
                         <% companyCodes.forEach(function(code) { %>
                             <option value="<%= code._id %>"><%= code.code %></option>
                         <% }); %>

@@ -39,8 +39,8 @@
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-4 col-form-label">Company Code</label>
-                    <div class="col-sm-4">
-                    <select class="form-select" name="vd_companycode" id="vd_companycode" required>
+                    <div class="col-sm-7">
+                    <select class="form-select" multiple name="vd_companycode" id="vd_companycode" required>
                       <option selected disabled>Choose...</option>
                         <% companyCodes.forEach(function(code) { %>
                             <option value="<%= code._id %>"><%= code.code %></option>
@@ -48,7 +48,6 @@
                       </select>
                     </div>
                   </div>
-                  
                 </div>
                 <!-- end of 1st col -->
                 <!-- 2nd col -->
@@ -190,8 +189,8 @@
                   </div>
                   <div class="form-group row mb-3">
                     <label class="col-sm-4 col-form-label">Company Code</label>
-                    <div class="col-sm-4">
-                    <select class="form-select" name="vd_companycode" id="vd_companycode" required>
+                    <div class="col-sm-7">
+                    <select class="form-select" multiple name="vd_companycode" id="vd_companycode" required>
                       <option selected disabled>Choose...</option>
                         <% companyCodes.forEach(function(code) { %>
                             <option value="<%= code._id %>"><%= code.code %></option>
@@ -271,7 +270,7 @@
                     </div>
                     <label class="col-sm-1 col-form-label">Country</label>
                     <div class="col-sm-2">
-                      <select class="form-select" name="vd_country" id="vd_country" required>
+                      <select class="form-select"  name="vd_country" id="vd_country" required>
                         <option selected disabled>Choose...</option>
                        <%  countries.forEach(function(country) { %>
                           <option value="<%= country %> "><%= country %> </option>

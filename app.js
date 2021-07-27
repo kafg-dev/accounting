@@ -6,24 +6,29 @@ const _lodash =require("lodash");
 const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
+var compression = require('compression');
 
 //models
+const usersDB =require(__dirname + "/models/users.js");
 const companyCode = require(__dirname + "/models/companycode.js");
 const accType = require(__dirname + "/models/gl-accounttype.js");
 const glAcc = require(__dirname + "/models/glAccount.js");
 const vendor = require(__dirname + "/models/vendor.js");
 const customer = require(__dirname + "/models/customer.js");
+const glSeries = require(__dirname + "/models/gl-series.js");
+const glTransaction = require(__dirname + "/models/glTransaction.js");
+const docSequence = require(__dirname + "/models/documentSequence.js");
+const userPrivilege =require(__dirname + "/models/privilege.js");
+const controlPeriod = require(__dirname + "/models/control.js");
 
 const flash = require('connect-flash');
 const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
-const { glAccount } = require('./models/glAccount');
-
-
+// const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
+app.use(compression());
 app.set('view engine', 'ejs');
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended:true}));
@@ -44,25 +49,7 @@ mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,
 mongoose.set("useCreateIndex",true);
 mongoose.set('runValidators', true)
 
-const userSchema = new mongoose.Schema({
-    username:String,
-    password:String,
-    fullname:String,
-    position:String
-});
 
-userSchema.plugin(passportLocalMongoose);
-
-const User = mongoose.model("User",userSchema);
-
-passport.use(User.createStrategy());
-passport.serializeUser(function(user, done) {
-    done(null, user);
-  });
-  
-  passport.deserializeUser(function(user, done) {
-    done(null, user);
-  });
 
 let returnTo = "";
 let country_names = country.getNames();
@@ -96,45 +83,14 @@ app.get("/", function(req,res) {
 });
 
 /////////////////////////   authentication    ///////////////////////
-
-app.get("/register", function(req,res) {
-    if(req.isAuthenticated()) {
-        res.render("register");
-    } else {
-        returnTo = req.url;
-        res.redirect("/login");
-    } 
-});
-
-
 app.get("/login", function(req,res) {
     const errors = req.flash().error || [];
     res.render("login", {errors});
-
-    
-
-});
-
-app.post("/register", function(req,res) {
-    User.register({username:req.body.username},req.body.password, function(err,user) {
-        if(err){
-            console.log(err);
-            res.redirect("/register");
-        } else {
-            passport.authenticate("local")(req,res, function() {
-                user.fullname = req.body.fullname;
-                user.position = req.body.position;
-                user.save(function() {
-                    res.redirect("/");
-                }); 
-            });
-        }
-    });
 });
 
 app.post("/login", function(req,res) {
     
-    const user = new User ({
+    const user = new usersDB.User ({
         username:req.body.username,
         password:req.body.password
     });
@@ -179,6 +135,210 @@ app.route("/ud-dashboard")
         res.redirect("/login");
     } 
 }).post().delete();
+
+/* create user */
+app.route("/us-create")
+
+.get(async function (req,res) {
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin") {
+            user_List= await usersDB.getUser();
+            privilege_List= await userPrivilege.getPrivilege();
+            companyCode_list= await companyCode.getCompanyCode();
+            res.render("user", {companyCodes:companyCode_list,privilegeList:privilege_List,userList:user_List,user:req.user});
+        } else {
+            res.send("Unauthorized!");
+        }
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+   
+})
+.post(function (req,res) {
+
+    if(req.isAuthenticated()) {
+      if (req.user.position === "admin") {
+         usersDB.User.register({username:req.body.username},req.body.password, function(err,user) {
+                if(err){
+                    console.log(err);
+                    res.redirect("/us-create");
+                } else {
+                        user.fullname = req.body.fullname;
+                        user.position = req.body.position;
+                        user.companyCode = req.body.companyCode;
+                        user.save(function(err) {
+                            var servResp = {};
+                            if(err) {
+                                servResp.redirect = false;
+                                servResp.errorMessage = err;
+                                res.send(servResp); 
+                            } else {
+                                servResp.redirect = true;
+                                servResp.redirectURL = "http://localhost:3000/us-create";
+                                servResp.message = "User created!";
+                                res.send(servResp);  
+                            }
+                        }); 
+                }
+            });
+      } else {
+        res.send("Unauthorized!");
+    }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+   
+
+})
+.patch(function (req,res) {
+    
+    const toUpdateUser = {
+        id:req.body.userId,
+        password:req.body.password,
+        userValues:{
+            fullname:req.body.fullname,
+            position:req.body.position,
+            companyCode:req.body.companyCode
+            }
+        }
+
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            usersDB.updateUser(toUpdateUser, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/us-create";
+                    servResp.message = "User updated!";
+                    res.send(servResp);  
+                } 
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }
+
+
+
+}).delete();
+
+/* user privileges */
+
+app.route("/us-privilege")
+
+.get(async function (req,res) {
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin") {
+            let privilege_List= await userPrivilege.getPrivilege();
+            res.render("privileges", {privilegeList:privilege_List,user:req.user});
+        } else {
+            res.send("Unauthorized!");
+        }
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+})
+
+.post(function (req,res){
+    const newPrivilege = new userPrivilege.privilege ({
+        position:req.body.position,
+        park:req.body.park,
+        post:req.body.post
+    });
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            userPrivilege.addPrivilege(newPrivilege, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/us-privilege";
+                    servResp.message = "Position Privilege created!";
+                    res.send(servResp);  
+                } else if (callback=="0"){
+                    servResp.redirect = false;
+                    servResp.errorMessage = "Duplication error!";
+                    res.send(servResp);
+                }
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }
+
+
+}).patch(function (req,res) {
+
+    const toUpdatePrivilege = {
+        id : req.body.positionID,
+        privilegeValues :{
+            position:req.body.position,
+            park:req.body.park,
+            post:req.body.post
+        }
+    }
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            userPrivilege.updatePrivilege(toUpdatePrivilege, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/us-privilege";
+                    servResp.message = "Position Privilege updated!";
+                    res.send(servResp);  
+                } else if (callback=="0"){
+                    servResp.redirect = false;
+                    servResp.errorMessage = "Duplication Error!";
+                    res.send(servResp);
+                }
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }
+}).delete();
+
 
 /* companycode */
 
@@ -322,6 +482,150 @@ app.route("/gn-companycode")
         returnTo = req.url;
         res.redirect("/login");
     }    
+
+});
+
+/* control on closing and opening */
+
+app.route("/gn-control")
+
+.get(async function (req,res) {
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            controlPeriod_List = await controlPeriod.getControlPeriod();
+            companyCode_list= await companyCode.getCompanyCode();
+            res.render("control", {controlPeriods:controlPeriod_List,companyCodes:companyCode_list,user:req.user});
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+})
+.post(function (req,res) {
+
+    const newControlPeriod = new controlPeriod.controlPeriod({
+        accountType:req.body.accountType,
+        companyCode:req.body.companyCode,
+        fromAccount:req.body.fromAccount,
+        toAccount:req.body.toAccount,
+        fromPeriod:req.body.fromPeriod,
+        toPeriod:req.body.toPeriod,
+        controlYear:req.body.controlYear,
+        status:req.body.status
+    })
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            controlPeriod.addControlPeriod(newControlPeriod, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gn-control";
+                    servResp.message = "Control created!";
+                    res.send(servResp);  
+                } else if (callback=="0"){
+                    servResp.redirect = false;
+                    res.send(servResp);
+                }
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }
+
+
+
+}).patch(function (req,res) {
+    const toUpdatePeriod = {
+        periodId : req.body.periodID,
+        periodValues : {
+            accountType:req.body.accountType,
+            companyCode:req.body.companyCode,
+            fromAccount:req.body.fromAccount,
+            toAccount:req.body.toAccount,
+            fromPeriod:req.body.fromPeriod,
+            toPeriod:req.body.toPeriod,
+            controlYear:req.body.controlYear,
+            status:req.body.status
+        }
+    }
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            controlPeriod.updateControlPeriod(toUpdatePeriod, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gn-control";
+                    servResp.message = "Control updated!";
+                    res.send(servResp);  
+                } else if (callback=="0"){
+                    servResp.redirect = false;
+                    servResp.message = "Control already exist!";
+                    res.send(servResp);
+                }
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+
+})
+.delete(function (req,res) {
+
+    const toDeletePeriod = req.body.periodID;
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            controlPeriod.deleteControlPeriod(toDeletePeriod, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gn-control";
+                    servResp.message = "Control deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+
 
 });
 
@@ -638,6 +942,198 @@ app.route("/gl-accountgroup")
 
 });
 
+/* gl series */
+
+app.route("/gl-series")
+
+.get(async function(req,res) {
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            var glSeries_List = await glSeries.getGlSeries();
+            res.render("gl-series", {glSeriesList:glSeries_List,user:req.user});
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+})
+.post(function(req,res){
+
+    const newGlSeries = new glSeries.glSeries ({
+        account:req.body.accountGl,
+        series:req.body.seriesGl
+    });
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            glSeries.addGlSeries(newGlSeries, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gl-series";
+                    servResp.message = "GL Series created!";
+                    res.send(servResp);  
+                }
+                else if (callback=="0"){
+                    servResp.redirect = false;
+                    servResp.message = "Series already in use/Account series exists!";
+                    res.send(servResp);
+                }
+                
+                else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = callback;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }
+
+
+})
+.patch(function (req,res){
+
+    const toUpdateGlSeries = {
+        account:req.body.accountGl,
+        series:req.body.seriesGl
+    }
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            glSeries.updateGlSeries(toUpdateGlSeries, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gl-series";
+                    servResp.message = "GL Series updated!";
+                    res.send(servResp);  
+                } else if (callback=="0"){
+                    servResp.redirect = false;
+                    servResp.message = "Series already in use/Account series exists!";
+                    res.send(servResp);
+                }
+                // // else if (callback=="01"){
+                // //     servResp.redirect = false;
+                // //     servResp.message = "Range already in use.";
+                // //     res.send(servResp);
+                // // }
+                // else {
+                //     servResp.redirect = false;
+                //     servResp.error = true;
+                //     servResp.errorMessage = callback;
+                //     res.send(servResp);
+                // }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }   
+
+})
+
+.delete(function(req,res) {
+
+    const glSeries_id = req.body.glSeries_id;
+    
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            glSeries.deleteGlSeries(glSeries_id, function(callback){
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gl-series";
+                    servResp.message = "GL Series deleted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = err;
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }    
+});
+
+/* gl sequence */
+
+app.route("/gl-sequence")
+
+.get(async function (req,res) {
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            var companyCode_list= await companyCode.getCompanyCode();
+            var docSequence_List= await docSequence.getDocSequence();
+            res.render("doc-seq", {docSequenceList:docSequence_List,companycodeList:companyCode_list,user:req.user});
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+})
+
+.post(function (req,res) {
+    
+    var docYear = req.body.year;
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin")
+        {
+            docSequence.addDocSequence(docYear, function(callback) {
+                var servResp = {};
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/gl-sequence";
+                    servResp.message = "Document Sequence generated!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+}).delete();
+
+
+
 /////////////////////////    main pages   //////////////////////
 app.route("/main-list")
 
@@ -650,6 +1146,13 @@ app.route("/main-list")
         main_list.glAccount_list= await glAcc.getGlAccount(); 
         main_list.vendor_List = await vendor.getVendor();
         main_list.customer_List = await customer.getCustomer();
+        main_list.glSeries_List = await glSeries.getGlSeries();
+        main_list.glTransaction_List = await glTransaction.getGlTransaction();
+        main_list.docSequence_List= await docSequence.getDocSequence();
+        main_list.privilege_List= await userPrivilege.getPrivilege();
+        main_list.controlPeriod_List = await controlPeriod.getControlPeriod();
+        main_list.user_List= await usersDB.getUser();
+        main_list.user=req.user;
         res.send(main_list);
 
 
@@ -1099,19 +1602,331 @@ get(async function(req,res){
 });
 
 
-
-
-
-
 app.get("/md-taxrate", function(req,res) {
-    res.render('md-gl');
+    res.send("Under maintenance");
    
 });
 
-app.get("/ac-gl", function(req,res) {
-    res.render('md-gl');
-   
+////// TRANSACTIONS
+
+app.route("/ac-gl")
+
+.get(async function(req,res) {
+
+    if(req.isAuthenticated()) {
+        companyCode_list= await companyCode.getCompanyCode(); 
+        glAccount_list = await glAcc.getGlAccount();
+        customer_list = await customer.getCustomer();
+        res.render('ac-gl',{user:req.user,companyCodes:companyCode_list,glAccounts:glAccount_list,customers:customer_list});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }  
+    
+  
+})
+.post(async function (req,res) {
+
+    const docValues = {
+        account:req.body.account,
+        companyCode:req.body.companyCode,
+        docYear:2021
+    };
+
+    const docNum = await docSequence.getDocNumber(docValues);
+    
+    const newGlTransaction = new glTransaction.glTransaction({
+        documentNumber : docNum,
+        documentDate : req.body.documentDate,
+        postingDate : req.body.postingDate,
+        reference :req.body.reference ,
+        amount :req.body.amount ,
+        text :req.body.text,
+        companyCode :req.body.companyCode ,
+        companyName :req.body.companyName,
+        currency : req.body.currency,
+        debit : req.body.debit, 
+        credit : req.body.credit,
+        transactionType:req.body.transactionType,
+        status: "parked",
+        parker:req.user._id,
+        poster:"",
+        jEntry:req.body.jlEntry
+        
+    });
+    
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin" || "encoder")
+        {
+            glTransaction.addGLTransaction(newGlTransaction, function(callback) {
+                var servResp = {}
+                if (callback.status=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/ac-gl";
+                    servResp.message = "Document Number: " +callback.docNumber+ " saved!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+
+}).patch().delete();
+
+app.route("/ar-ci")
+
+.get(async function(req,res) {
+
+    if(req.isAuthenticated()) {
+        companyCode_list= await companyCode.getCompanyCode(); 
+        glAccount_list = await glAcc.getGlAccount();
+        res.render('ar-ci',{user:req.user,companyCodes:companyCode_list,glAccounts:glAccount_list});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }  
+
+
+}).post(async function(req,res) {
+    const docValues = {
+        account:req.body.account,
+        companyCode:req.body.companyCode,
+        docYear:2021
+    };
+
+    const docNum = await docSequence.getDocNumber(docValues);
+    
+    const newGlTransaction = new glTransaction.glTransaction({
+        documentNumber : docNum,
+        documentDate : req.body.documentDate,
+        postingDate : req.body.postingDate,
+        reference :req.body.reference ,
+        amount :req.body.amount ,
+        text :req.body.text,
+        companyCode :req.body.companyCode ,
+        companyName :req.body.companyName,
+        currency : req.body.currency,
+        debit : req.body.debit, 
+        credit : req.body.credit,
+        transactionType:req.body.transactionType,
+        status: "parked",
+        parker:req.user._id,
+        poster:"",
+        jEntry:req.body.jlEntry
+        
+    });
+    
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin" || "encoder")
+        {
+            glTransaction.addGLTransaction(newGlTransaction, function(callback) {
+                var servResp = {}
+                if (callback.status=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/ar-ci";
+                    servResp.message = "Document Number: " +callback.docNumber+ " saved!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+}).patch().delete();
+
+app.route("/ap-vi")
+
+.get(async function(req,res) {
+    if(req.isAuthenticated()) {
+        companyCode_list= await companyCode.getCompanyCode(); 
+        glAccount_list = await glAcc.getGlAccount();
+        res.render('ap-vi',{user:req.user,companyCodes:companyCode_list,glAccounts:glAccount_list});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }  
+})
+
+.post(async function (req,res) {
+    const docValues = {
+        account:req.body.account,
+        companyCode:req.body.companyCode,
+        docYear:2021
+    };
+
+    const docNum = await docSequence.getDocNumber(docValues);
+    
+    const newGlTransaction = new glTransaction.glTransaction({
+        documentNumber : docNum,
+        documentDate : req.body.documentDate,
+        postingDate : req.body.postingDate,
+        reference :req.body.reference ,
+        amount :req.body.amount ,
+        text :req.body.text,
+        companyCode :req.body.companyCode ,
+        companyName :req.body.companyName,
+        currency : req.body.currency,
+        debit : req.body.debit, 
+        credit : req.body.credit,
+        transactionType:req.body.transactionType,
+        status: "parked",
+        parker:req.user._id,
+        poster:"",
+        jEntry:req.body.jlEntry
+        
+    });
+    
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin" || "encoder")
+        {
+            glTransaction.addGLTransaction(newGlTransaction, function(callback) {
+                var servResp = {}
+                if (callback.status=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/ap-vi";
+                    servResp.message = "Document Number: " +callback.docNumber+ " saved!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+}).patch().delete();
+
+app.route("/rp-vd")
+
+.get(async function (req,res) {
+    if(req.isAuthenticated()) {
+        companyCode_list= await companyCode.getCompanyCode(); 
+        glAccount_list = await glAcc.getGlAccount();
+        glTransaction_List = await glTransaction.getGlTransaction();
+        vendor_List = await vendor.getVendor();
+        customer_List = await customer.getCustomer();
+        res.render('rp-vd',{user:req.user,companyCodes:companyCode_list,glAccounts:glAccount_list,transactionList:glTransaction_List,customers:customer_List,vendors:vendor_List});
+
+    }else {
+        returnTo = req.url;
+        res.redirect("/login");
+    }  
+})
+
+.post(function (req,res) {
+
+    const toUpdateValues = {
+        documentID:req.body.documentID,
+        documentValues: {
+            reference:req.body.reference,
+            currency:req.body.currency,
+            jEntry:req.body.glTransaction
+        }
+    }
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin" || "encoder")
+        {
+            glTransaction.updateGLTransaction(toUpdateValues, function(callback) {
+                var servResp = {}
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/rp-vd";
+                    servResp.message = "Transaction Updated!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+})
+
+.patch(function (req,res) {
+
+    const toUpdateValues = {
+        documentID:req.body.documentID,
+        documentValues: {
+            poster:req.user._id
+        }
+    }
+
+    if(req.isAuthenticated()) {
+        if (req.user.position === "admin" || "encoder")
+        {
+            glTransaction.updateGLTransaction(toUpdateValues, function(callback) {
+                var servResp = {}
+                if (callback=="1"){
+                    servResp.redirect = true;
+                    servResp.redirectURL = "http://localhost:3000/rp-vd";
+                    servResp.message = "Transaction Posted!";
+                    res.send(servResp);  
+                } else {
+                    servResp.redirect = false;
+                    servResp.error = true;
+                    servResp.errorMessage = "Error!";
+                    res.send(servResp);
+                }
+            });
+
+        } else {
+            res.send("Unauthorized!");
+        }
+    } else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+    
+
+
+})
+.delete();
+
+app.route("/down")
+.get(function(req,res){
+    res.render('down',{user:req.user});
 });
+
 
 app.listen(3000, function() {
     console.log("Server started on port 3000");
