@@ -6,7 +6,7 @@ const _lodash =require("lodash");
 const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
-var compression = require('compression');
+
 
 //models
 const usersDB =require(__dirname + "/models/users.js");
@@ -28,7 +28,6 @@ const passport = require("passport");
 // const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = express();
-app.use(compression());
 app.set('view engine', 'ejs');
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended:true}));
@@ -45,7 +44,8 @@ app.use(passport.session());
 
 app.use(flash());
 
-mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
+// mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
+mongoose.connect(process.env.DATABASE_URI,{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
 mongoose.set("useCreateIndex",true);
 mongoose.set('runValidators', true)
 
@@ -157,6 +157,7 @@ app.route("/us-create")
    
 })
 .post(function (req,res) {
+  
 
     if(req.isAuthenticated()) {
       if (req.user.position === "admin") {
@@ -363,12 +364,14 @@ app.route("/gn-companycode")
 
     let newCodeID = req.body.company_codeID;
     let newCode = req.body.company_code;
+    let newName = req.body.company_name;
     let newCountry = req.body.company_country; 
     let newCurrency = req.body.company_currency;
 
      const newCompanyCode = new companyCode.cCode ({
         code:newCode,
         country:newCountry,
+        company:newName,
         currency:newCurrency
     });
     
@@ -409,6 +412,7 @@ app.route("/gn-companycode")
 
     let updateCodeID = req.body.company_codeID;
     let updateCode = req.body.company_code;
+    let updateName = req.body.company_name;
     let updateCountry = req.body.company_country; 
     let updateCurrency = req.body.company_currency;
     // res.json({mess: req.body.company_code});
@@ -417,6 +421,7 @@ app.route("/gn-companycode")
     const newUpdateCompanyCode = new companyCode.cCode ({
         _id:updateCodeID,
         code:updateCode,
+        company:updateName,
         country:updateCountry,
         currency:updateCurrency
     });

@@ -74,7 +74,7 @@ function checkLink (shortL, longL) {
       
         
       default :
-            console.log(mainLink);
+            console.log();
 
     }
 }

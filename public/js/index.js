@@ -289,8 +289,9 @@ $(document).ready(function() {
     $("#ccode #selectedCompanyCode").val($(this).find("td")[1].innerText); 
     $("#ccode #company_codeID").val($(this).find("td")[0].innerText);
     $("#ccode #company_code").val($(this).find("td")[1].innerText); 
-    $("#ccode #company_country").val($(this).find("td")[2].innerText); 
-    $("#ccode #company_currency").val($(this).find("td")[3].innerText);
+    $("#ccode #company_name").val($(this).find("td")[2].innerText);
+    $("#ccode #company_country").val($(this).find("td")[3].innerText); 
+    $("#ccode #company_currency").val($(this).find("td")[4].innerText);
   });
 
   //// clear button
@@ -305,13 +306,14 @@ $(document).ready(function() {
     if(validateForm("ccode").form()){
          var companyCodeID = $('#company_codeID').val();
          var companyCode = $('#company_code').val();
+         var companyName = $('#company_name').val();
          var companyCountry = $('#company_country').val();
          var companyCurrency = $('#company_currency').val();
 
                 $.ajax({  
                   type: "POST",
                   url:'/gn-companycode', 
-                  data: {company_codeID:companyCodeID,company_code:companyCode,company_country:companyCountry,company_currency:companyCurrency},
+                  data: {company_codeID:companyCodeID,company_code:companyCode,company_name:companyName,company_country:companyCountry,company_currency:companyCurrency},
                   success:function(response){ 
                     
                     if(response.redirect) {
@@ -346,6 +348,7 @@ $(document).ready(function() {
     if(validateForm("ccode").form()){
       var companyCodeID = $('#company_codeID').val();
           var companyCode = $('#company_code').val();
+          var companyName = $('#company_name').val();
           var companyCountry = $('#company_country').val();
           var companyCurrency = $('#company_currency').val();
 
@@ -358,7 +361,7 @@ $(document).ready(function() {
                 $.ajax({  
                   type: "PATCH",
                   url:'/gn-companycode', 
-                  data: {company_codeID:companyCodeID,company_code:companyCode,company_country:companyCountry,company_currency:companyCurrency},
+                  data: {company_codeID:companyCodeID,company_code:companyCode,company_name:companyName,company_country:companyCountry,company_currency:companyCurrency},
                   success:function(response){ 
                     
                     if(response.redirect) {

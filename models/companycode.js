@@ -10,6 +10,10 @@ const companyCodeSchema = new mongoose.Schema({
         type: String,
         required: true
       },
+    company:{
+        type:String,
+        index:{unique:true,sparse:true}
+      },
     currency:{
         type: String,
         required: true
@@ -65,7 +69,7 @@ exports.updateCompanyCode = function(companyCode,callback) {
             let theID = companyCode._id; 
             exports.cCode.findByIdAndUpdate(
                  theID,
-                {code:companyCode.code,country:companyCode.country,currency:companyCode.currency},
+                {code:companyCode.code,company:companyCode.company,country:companyCode.country,currency:companyCode.currency},
                 { new: true },
                 function(err,modelY) {
                     if(err){

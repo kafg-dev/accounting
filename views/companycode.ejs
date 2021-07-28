@@ -29,6 +29,12 @@
                             </div>
                         </div>
                         <div class="form-group row mb-3">
+                          <label class="col-sm-4 col-form-label">Company Name</label>
+                          <div class="col-sm-7">
+                            <input type="text" class="form-control" name="company_name" id="company_name" required>
+                          </div>
+                      </div>
+                        <div class="form-group row mb-3">
                             <label class="col-sm-4 col-form-label">Country</label>
                             <div class="col-sm-7">
                               <select class="form-select" name="company_country" id="company_country" required>
@@ -76,6 +82,7 @@
                           <th scope="col">#</th>
                           <th scope="col" hidden>id</th>
                           <th scope="col">Company Code</th>
+                          <th scope="col">Company Name</th>
                           <th scope="col">Country</th>
                           <th scope="col">Currency</th>
                         </tr>
@@ -88,6 +95,7 @@
                                 <th scope="row"><%= i++ %></th>
                                 <td hidden><%= companyCode.id %></td>
                                 <td><%= companyCode.code %></td>
+                                <td><%= companyCode.company %></td>
                                 <td><%= companyCode.country %></td>
                                 <td><%= companyCode.currency %></td>
                               </tr>
