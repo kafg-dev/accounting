@@ -10,6 +10,61 @@
 <!-- container -->
 <div class="container-fluid">
     
+  <div class="row">
+    <!-- <div class="col-md-12 col-lg-4 p-3 mt-3">
+ 
+  </div> -->
+
+    <div class="col-sm-1"></div> 
+
+    <div class="col-md-12 p-3 mt-3">
+      <h4>List of Transactions</h4>
+      <div class="table-responsive-sm mb-5" >
+          <table class="table table-hover" id="reportTable">
+              <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Document Number</th>
+                    <th scope="col">Company Code</th>
+                    <th scope="col">Company Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% var i= 1;%>
+                        <% glTransactions.forEach(function(transaction) { %>
+                            
+                                <tr>
+                                <th scope="row"><%= i++ %></th>
+                                <td><%= transaction.documentNumber %></td>
+                                <% companyCodes.forEach(function(companyCode) { %>
+                                   <% if (companyCode._id==transaction.companyCode) {%> 
+                                      <td><%= companyCode.code%></td>
+                                <%} }); %> 
+                                <% vendors.forEach(function(vendor) { %>
+                                  <% if (vendor._id==transaction.companyName) {%> 
+                                     <td><%=vendor.vendorName%></td>
+                               <%} }); %>
+                               <% customers.forEach(function(customer) { %>
+                                <% if (customer._id==transaction.companyName) {%> 
+                                   <td><%= customer.customerName%></td>
+                             <%} }); %>
+                                <td><%= transaction.transactionType %></td>
+                                <td><%= transaction.amount %></td>
+                                <% if (transaction.status == "parked") { %>
+                                  <td><div class="badge bg-warning text-wrap text-dark"><%= transaction.status %></div></td>
+                                <% } else { %> 
+                                  <td><div class="badge bg-secondary text-wrap "><%= transaction.status %></div></td>
+                                  <% } %> 
+                              </tr>
+                          <% }); %>
+                </tbody>
+          </table>
+        </div>
+
+    </div> 
     
   
 

@@ -177,7 +177,7 @@ app.route("/us-create")
                                 res.send(servResp); 
                             } else {
                                 servResp.redirect = true;
-                                servResp.redirectURL = BASE_URL + "/us-create";
+                                servResp.redirectURL = process.env.BASE_URL + "/us-create";
                                 servResp.message = "User created!";
                                 res.send(servResp);  
                             }
@@ -214,7 +214,7 @@ app.route("/us-create")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/us-create";
+                    servResp.redirectURL = process.env.BASE_URL + "/us-create";
                     servResp.message = "User updated!";
                     res.send(servResp);  
                 } 
@@ -272,7 +272,7 @@ app.route("/us-privilege")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/us-privilege";
+                    servResp.redirectURL = process.env.BASE_URL + "/us-privilege";
                     servResp.message = "Position Privilege created!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -315,7 +315,7 @@ app.route("/us-privilege")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/us-privilege";
+                    servResp.redirectURL = process.env.BASE_URL + "/us-privilege";
                     servResp.message = "Position Privilege updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -382,7 +382,7 @@ app.route("/gn-companycode")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-companycode";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-companycode";
                     servResp.message = "Company Code created!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -433,7 +433,7 @@ app.route("/gn-companycode")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-companycode";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-companycode";
                     servResp.message = "Company Code updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -469,7 +469,7 @@ app.route("/gn-companycode")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-companycode";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-companycode";
                     servResp.message = "Company Code deleted!";
                     res.send(servResp);  
                 } else {
@@ -529,7 +529,7 @@ app.route("/gn-control")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-control";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-control";
                     servResp.message = "Control created!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -576,7 +576,7 @@ app.route("/gn-control")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-control";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-control";
                     servResp.message = "Control updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -612,7 +612,7 @@ app.route("/gn-control")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gn-control";
+                    servResp.redirectURL = process.env.BASE_URL + "/gn-control";
                     servResp.message = "Control deleted!";
                     res.send(servResp);  
                 } else {
@@ -674,7 +674,7 @@ app.route("/gl-accounttype")
                 // console.log(callback);
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accounttype";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accounttype";
                     servResp.message = "Account Type created!";
                     res.send(servResp);  
                 }else if (callback=="0"){
@@ -727,7 +727,7 @@ app.route("/gl-accounttype")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accounttype";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accounttype";
                     servResp.message = "Account Type updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -766,7 +766,7 @@ app.route("/gl-accounttype")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accounttype";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accounttype";
                     servResp.message = "Account Type deleted!";
                     res.send(servResp);  
                 } else {
@@ -832,7 +832,7 @@ app.route("/gl-accountgroup")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accountgroup";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accountgroup";
                     servResp.message = "Account Group created!";
                     res.send(servResp);  
                 }
@@ -878,7 +878,7 @@ app.route("/gl-accountgroup")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accountgroup";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accountgroup";
                     servResp.message = "Account Group updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -926,7 +926,7 @@ app.route("/gl-accountgroup")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-accountgroup";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-accountgroup";
                     servResp.message = "Account Group deleted!";
                     res.send(servResp);  
                 } else {
@@ -980,7 +980,7 @@ app.route("/gl-series")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-series";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-series";
                     servResp.message = "GL Series created!";
                     res.send(servResp);  
                 }
@@ -1022,7 +1022,7 @@ app.route("/gl-series")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-series";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-series";
                     servResp.message = "GL Series updated!";
                     res.send(servResp);  
                 } else if (callback=="0"){
@@ -1064,7 +1064,7 @@ app.route("/gl-series")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-series";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-series";
                     servResp.message = "GL Series deleted!";
                     res.send(servResp);  
                 } else {
@@ -1116,7 +1116,7 @@ app.route("/gl-sequence")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/gl-sequence";
+                    servResp.redirectURL = process.env.BASE_URL + "/gl-sequence";
                     servResp.message = "Document Sequence generated!";
                     res.send(servResp);  
                 } else {
@@ -1209,7 +1209,7 @@ app.route("/md-gl")
                     console.log(callback);
                     if (callback=="1"){
                         servResp.redirect = true;
-                        servResp.redirectURL = BASE_URL + "/md-gl";
+                        servResp.redirectURL = process.env.BASE_URL + "/md-gl";
                         servResp.message = "GL Account Created!";
                         res.send(servResp);  
                     } else {
@@ -1256,7 +1256,7 @@ app.route("/md-gl")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-gl";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-gl";
                     servResp.message = "GL Account updated!";
                     res.send(servResp);  
                 }else {
@@ -1287,7 +1287,7 @@ app.route("/md-gl")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-gl";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-gl";
                     servResp.message = "GL Account deleted!";
                     res.send(servResp);  
                 } else {
@@ -1355,7 +1355,7 @@ app.route("/md-vendor")
                 console.log(callback);
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-vendor";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-vendor";
                     servResp.message = "Vendor Created!";
                     res.send(servResp);  
                 } else {
@@ -1406,7 +1406,7 @@ app.route("/md-vendor")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-vendor";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-vendor";
                     servResp.message = "Vendor updated!";
                     res.send(servResp);  
                 }else {
@@ -1437,7 +1437,7 @@ app.route("/md-vendor")
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-vendor";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-vendor";
                     servResp.message = "Vendor deleted!";
                     res.send(servResp);  
                 } else {
@@ -1505,7 +1505,7 @@ get(async function(req,res){
                 var servResp = {}
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-customer";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-customer";
                     servResp.message = "Customer Created!";
                     res.send(servResp);  
                 } else {
@@ -1553,7 +1553,7 @@ get(async function(req,res){
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-customer";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-customer";
                     servResp.message = "Customer updated!";
                     res.send(servResp);  
                 }else {
@@ -1586,7 +1586,7 @@ get(async function(req,res){
                 var servResp = {};
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/md-customer";
+                    servResp.redirectURL = process.env.BASE_URL + "/md-customer";
                     servResp.message = "Customer deleted!";
                     res.send(servResp);  
                 } else {
@@ -1668,7 +1668,7 @@ app.route("/ac-gl")
                 var servResp = {}
                 if (callback.status=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/ac-gl";
+                    servResp.redirectURL = process.env.BASE_URL + "/ac-gl";
                     servResp.message = "Document Number: " +callback.docNumber+ " saved!";
                     res.send(servResp);  
                 } else {
@@ -1741,7 +1741,7 @@ app.route("/ar-ci")
                 var servResp = {}
                 if (callback.status=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/ar-ci";
+                    servResp.redirectURL = process.env.BASE_URL + "/ar-ci";
                     servResp.message = "Document Number: " +callback.docNumber+ " saved!";
                     res.send(servResp);  
                 } else {
@@ -1812,7 +1812,7 @@ app.route("/ap-vi")
                 var servResp = {}
                 if (callback.status=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/ap-vi";
+                    servResp.redirectURL = process.env.BASE_URL + "/ap-vi";
                     servResp.message = "Document Number: " +callback.docNumber+ " saved!";
                     res.send(servResp);  
                 } else {
@@ -1867,7 +1867,7 @@ app.route("/rp-vd")
                 var servResp = {}
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/rp-vd";
+                    servResp.redirectURL = process.env.BASE_URL + "/rp-vd";
                     servResp.message = "Transaction Updated!";
                     res.send(servResp);  
                 } else {
@@ -1892,7 +1892,8 @@ app.route("/rp-vd")
     const toUpdateValues = {
         documentID:req.body.documentID,
         documentValues: {
-            poster:req.user._id
+            poster:req.user._id,
+            status:"posted"
         }
     }
 
@@ -1903,7 +1904,7 @@ app.route("/rp-vd")
                 var servResp = {}
                 if (callback=="1"){
                     servResp.redirect = true;
-                    servResp.redirectURL = BASE_URL + "/rp-vd";
+                    servResp.redirectURL = process.env.BASE_URL + "/rp-vd";
                     servResp.message = "Transaction Posted!";
                     res.send(servResp);  
                 } else {
@@ -1926,6 +1927,23 @@ app.route("/rp-vd")
 
 })
 .delete();
+
+app.route("/rp-vr")
+
+.get(async function(req,res) {
+    if(req.isAuthenticated()) {
+    glTransaction_List = await glTransaction.getGlTransaction();
+    companyCode_list= await companyCode.getCompanyCode();
+    vendor_List = await vendor.getVendor();
+    customer_List = await customer.getCustomer();
+    res.render('rp-vr',{user:req.user,glTransactions:glTransaction_List,companyCodes:companyCode_list,vendors:vendor_List,customers:customer_List});
+    }
+    else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+}).post();
 
 app.route("/down")
 .get(function(req,res){

@@ -29,11 +29,15 @@
                                     <label class="col-sm-5 col-form-label">Company Code</label>
                                     <div class="col-sm-4">
                                         <% if (user.position=="encoder") { %>
+                                            <select class="form-select" name="companyCode" id="searchcompanyCode">
+                                                <option selected disabled>Choose..</option>
                                         <% companyCodes.forEach(function(companyCode) { %>
-                                               <% if (user.companyCode.toString()==companyCode._id) { %>
-                                                    <input type="text" class="form-control d-none" name="companyCode" id="searchcompanyCode" value="<%= companyCode._id %>" required>
-                                                    <input type="text" class="form-control"  value="<%= companyCode.code %>" readonly required>
-                                        <% } }); } else { %>
+                                               <% user.companyCode.forEach(function(ccode) { %>
+                                                <% if (ccode.toString()==companyCode._id) { %>
+                                                    <option value="<%= companyCode._id %>"><%= companyCode.code %> </option>
+                                               <% } }); }); %>
+                                            </select>
+                                        <% } else { %>
                                             <select class="form-select" name="companyCode" id="searchcompanyCode">
                                                 <option selected disabled>Choose..</option>
                                                 <% companyCodes.forEach(function(companyCode) { %>

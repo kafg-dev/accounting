@@ -1,4 +1,5 @@
 $(document).ready(function() {
+  
   //////tables
   $("#companyCodeTable").DataTable();
   $("#accountTypeTable").DataTable();
@@ -7,7 +8,20 @@ $(document).ready(function() {
   $("#usersTable").DataTable();
   $("#privTable").DataTable();
   $("#periodTable").DataTable();
+  $("#reportTable").DataTable();
 
+   //////dates
+   $(".documentDate").prop("max", new Date().toISOString().split("T")[0]);
+
+  //  var docDate = document.getElementsByClassName('documentDate');
+
+  //   for(var i=0; i< docDate.length; i++){
+  //       // docDate[i].prop("max", new Date().toISOString().split("T")[0]);
+  //       console.log(i);
+  //       console.log("gg");
+  //   }
+
+   
   ///// ALERTS
   function showLabel(alertId, message,alertType){
     var id = "#" + alertId;
@@ -1666,7 +1680,7 @@ $('#arci-create #totalDebit').val(parseFloat(0).toFixed(2));
 $('#arci-create #totalCredit').val(parseFloat(0).toFixed(2));
 
 function onChangeCompanyCode(details) {
-  
+
   var selectedCompanyCode = details.selectedCompanyCode;
   var formID = details.formID;
   var account = details.account;
@@ -1677,11 +1691,13 @@ function onChangeCompanyCode(details) {
          url:'/main-list', 
          data: {},
          success:function(response){ 
+           var foundGlAccount_list = response.glAccount_list;
            if(account=="customer"){
             var foundList = response.customer_List;
              $("#"+formID+" #companyName").empty();
              $("#"+formID+" #companyName").append('<option selected disabled> Choose... </option>');
              foundList.forEach(function(foundItem){
+              
                if(foundItem.customerCompanyCode==selectedCompanyCode){
                    $("#"+formID+" #companyName").append('<option value="' + foundItem._id + '">' + foundItem.customerCode + " -  "+ foundItem.customerName +'</option>');
                }
@@ -1702,6 +1718,7 @@ function onChangeCompanyCode(details) {
             var vendorfoundList = response.vendor_List;
              $("#"+formID+" #companyName").empty();
              $("#"+formID+" #companyName").append('<option selected disabled> Choose... </option>');
+             
              customerfoundList.forEach(function(cfoundItem){
                if(cfoundItem.customerCompanyCode==selectedCompanyCode){
                    $("#"+formID+" #companyName").append('<option value="' + cfoundItem._id + '">' + cfoundItem.customerCode + " -  "+ cfoundItem.customerName +'</option>');
@@ -1713,6 +1730,19 @@ function onChangeCompanyCode(details) {
               }
             });
            }
+           $("#"+formID+"-tbody").find("tr:gt(0)").remove();
+           $("#"+formID+"-table-form")[0].reset();
+           $('#'+formID+' #totalDebit').val(parseFloat(0).toFixed(2));
+           $('#'+formID+' #totalCredit').val(parseFloat(0).toFixed(2));
+           $("#"+formID+"-tbody #gl_Account_td").empty();
+           $("#"+formID+"-tbody #gl_Account_td").append('<option selected disabled>Choose..</option>');
+           foundGlAccount_list.forEach(function(glAccount){ 
+              glAccount.companyCode.forEach(function(accCompanyCode){
+                if(selectedCompanyCode.toString() == accCompanyCode.toString()) {
+                  $("#"+formID+"-tbody #"+formID+"-tbody_td").append("<option value='" + glAccount._id +"' >" + glAccount.glAccount + "</option>");
+                }
+              });
+          });
          },  
          error:function(response){  
            console.log(response); 
@@ -1731,6 +1761,7 @@ function onChangeCompanyCode(details) {
 // });
 
 $("#acgl-create #companyCode").change(function(e) {
+ 
   var details = {};
   details.formID = "acgl-create";
   details.selectedCompanyCode = $("#acgl-create #companyCode").val();
@@ -1744,6 +1775,7 @@ $("#arci-create #companyCode").change(function(e) {
   details.formID = "arci-create";
   details.selectedCompanyCode = $("#arci-create #companyCode").val();
   details.account = "customer";
+  
   // companyName
   onChangeCompanyCode(details);
 });
@@ -1762,17 +1794,19 @@ $("#apvi-create #companyCode").change(function(e) {
 ////FUNCTIONS
 
 // add item/row
-function addRow(formID) {
+function addRow(formID,selectedCompanyCode) {
 
   $.ajax({  
     type: "GET",
     url:'/main-list', 
     data: {},
     success:function(response){ 
-        var foundGlAccount_list = response.glAccount_list;
-        var user = response.user;
-        $("#"+formID+"-tbody").append(
-          buildGLTable(foundGlAccount_list,user));
+        var chunk = {};
+        chunk.selectedCompanyCode=selectedCompanyCode;
+        chunk.foundGlAccount_list = response.glAccount_list;
+        chunk.user = response.user;
+        $("#"+formID+"-create-tbody").append(
+          buildGLTable(chunk));
          
     },  
     error:function(response){  
@@ -1783,19 +1817,19 @@ function addRow(formID) {
 };
 
 // append row in table
-function buildGLTable (foundGlAccount_list,user) {
+function buildGLTable (chunk) {
   var tblRow="";
   tblRow +=  "<tr id='R'>";
   tblRow += "<td class='row-gl'>";
   tblRow += "<select name='' class='gl_Account' > ";
   tblRow += "<option selected disabled>Choose..</option>";
  
-  foundGlAccount_list.forEach(function(glAccount){ 
-    if(user.position == "admin") {
+  chunk.foundGlAccount_list.forEach(function(glAccount){ 
+    if(chunk.user.position == "admin") {
       tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + "</option>";
     } else {
       glAccount.companyCode.forEach(function(accCompanyCode){
-        if(user.companyCode.toString() == accCompanyCode.toString()) {
+        if(chunk.selectedCompanyCode.toString() == accCompanyCode.toString()) {
           tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + "</option>";
         }
       });
@@ -1929,7 +1963,7 @@ function tableAmountChange(formID){
   var debitTotal = parseFloat(0);
   var creditTotal = parseFloat(0);
 
-  $("#"+formID+"-tbody tr").each(async function(index, tr) {
+  $("#"+formID+"-create-tbody tr").each(async function(index, tr) {
       var dc = $(tr).find('td').children('.dc').val();
       var tdAmount = parseFloat($(tr).find('td').children('.gl_Amount').val());
         if (dc=="debit") {
@@ -1956,7 +1990,8 @@ function checkPeriod(details){
   var postingDate =new Date($("#"+formID+"-create #postingDate").val()); 
   var postingYear = postingDate.getFullYear();
   var companyCode = $("#"+formID+"-create #companyCode").val();
- 
+  var novalue = 0;
+
   $.ajax({  
     type: "GET",
     url:'/main-list', 
@@ -1964,7 +1999,6 @@ function checkPeriod(details){
     success:function(response){ 
 
       var controlPeriod_List = response.controlPeriod_List;
-
         controlPeriod_List.forEach(function(period) {
           if((accountVal==period.accountType) && (companyCode==period.companyCode) && (period.status=="open") && (period.controlYear==postingYear)) {
               var date1 = new Date(period.fromPeriod);
@@ -1972,8 +2006,6 @@ function checkPeriod(details){
               var dateFrom = date1.getTime();
               var dateTo = date2.getTime();
               var postDate = postingDate.getTime();
-
-
               if((postDate <= dateTo) && (postDate >= dateFrom)) {
                   saveTransaction(details);
               } else {
@@ -1981,6 +2013,8 @@ function checkPeriod(details){
               }
           } 
         });
+
+        
       
     },  
     error:function(response){  
@@ -2014,7 +2048,7 @@ function saveTransaction(details){
     var totalCredit= $("#"+formID+"-create #totalCredit").val();
 
     var glTransaction=[];
-    var child = $("#"+formID+"-tbody").children("tr");
+    var child = $("#"+formID+"-create-tbody").children("tr");
 
       child.each(function () {
           var items = {};
@@ -2127,7 +2161,7 @@ function fillViewedDocument(details,foundGLAccount_list){
 
 
 //////// onchange GL Account
-$('#acgl-tbody').on('change', '.gl_Account', function () {
+$('#acgl-create-tbody').on('change', '.gl_Account', function () {
   var formID ="acgl";
   var items = {};
   items.child = $(this).closest('tr');
@@ -2135,7 +2169,7 @@ $('#acgl-tbody').on('change', '.gl_Account', function () {
   onGlAccountChange(formID,items);
 });
 
-$('#arci-tbody').on('change', '.gl_Account', function () {
+$('#arci-create-tbody').on('change', '.gl_Account', function () {
   var formID ="arci";
   var items = {};
   items.child = $(this).closest('tr');
@@ -2143,7 +2177,7 @@ $('#arci-tbody').on('change', '.gl_Account', function () {
   onGlAccountChange(formID,items);
 });
 
-$('#apvi-tbody').on('change', '.gl_Account', function () {
+$('#apvi-create-tbody').on('change', '.gl_Account', function () {
   var formID ="apvi";
   var items = {};
   items.child = $(this).closest('tr');
@@ -2152,7 +2186,7 @@ $('#apvi-tbody').on('change', '.gl_Account', function () {
 });
 
 /////// on input in amount
-$('#acgl-tbody').on('keyup', '.gl_Amount', function () {
+$('#acgl-create-tbody').on('keyup', '.gl_Amount', function () {
   var formID = "acgl";
   tableAmountChange(formID);
 });
@@ -2170,17 +2204,20 @@ $('#apvi-tbody').on('keyup', '.gl_Amount', function () {
 //////// add row/item
 $('#acgl-addItem').on('click', function () {
   var formID = "acgl";
-  addRow(formID);
+  var selectedCompanyCode = $("#acgl-create #companyCode").val();
+  addRow(formID,selectedCompanyCode);
 });
 
 $('#arci-addItem').on('click', function () {
   var formID = "arci";
-  addRow(formID);
+  var selectedCompanyCode = $("#arci-create #companyCode").val();
+  addRow(formID,selectedCompanyCode);
 });
 
 $('#apvi-addItem').on('click', function () {
   var formID = "apvi";
-  addRow(formID);
+  var selectedCompanyCode = $("#apvi-create #companyCode").val();
+  addRow(formID,selectedCompanyCode);
 });
 
 //////// create GL transaction (GL)

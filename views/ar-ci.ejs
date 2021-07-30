@@ -22,7 +22,7 @@
                                         <div class="form-group row mb-3">
                                             <label class="col-sm-4 col-form-label">Document Date</label>
                                             <div class="col-sm-7">
-                                            <input type="date" class="form-control" name="documentDate" id="documentDate" data-date-format="mm/dd/yyyy" required>
+                                            <input type="date" class="form-control documentDate " name="documentDate" id="documentDate" data-date-format="mm/dd/yyyy" required>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-3">
@@ -50,15 +50,19 @@
                                             <label class="col-sm-4 col-form-label">Company Code</label>
                                             <div class="col-sm-7">
                                                 <select class="form-select" name="companyCode" id="companyCode" required>
-                                                    <option selected disabled>Choose...</option>
-                                                    <% companyCodes.forEach(function(code) { %>
-                                                        <% if ((user.position != "admin") && (user.companyCode.toString()==code._id.toString())) { %> 
-                                                            <option value="<%= code._id %>"><%= code.code %></option>
-                                                        <% } else if (user.position == "admin") { %> 
-                                                            <option value="<%= code._id %>"><%= code.code %></option>
-                                                          <% } %> 
+                                                    <option selected disabled>Choose.. </option>
+                                                    <% var ctr = Object.keys(user.companyCode).length%>
+                                                    <% for (i=0;i<=ctr;i++) { %>
+                                                        <% companyCodes.forEach(function(code) { %>
+                                                            <% if ((user.position != "admin") && (user.companyCode[i]==code._id.toString())) { %> 
+                                                                <option value="<%= code._id %>"><%= code.code %></option>
+                                                            <% } else if (user.position == "admin") { %> 
+                                                                <option value="<%= code._id %>"><%= code.code %></option>
+                                                              <% } %> 
                                                         <% }); %>
-                                                </select>
+                                                    <% } %> 
+                                                      
+                                                    </select>
                                             </div>
                                         </div>
                                         <div class="form-group row mb-3">
@@ -128,19 +132,13 @@
                                   <th scope="col">Cost Center</th>
                                 </tr>
                               </thead>
-                              <tbody id="arci-tbody"> 
+                              <tbody id="arci-create-tbody"> 
+                                <form id="arci-create-table-form">
                                         <tr id="1">
                                         <td class='row-gl'>
-                                            <select name=""  class="gl_Account">
+                                            <select name=""  class="gl_Account" id="arci-create-tbody_td">
                                                 <option selected disabled>Choose..</option>
-                                                <% glAccounts.forEach(function(account) { %>
-                                                    <% if(user.position=="admin") { %>
-                                                       <option value="<%= account._id %>"><%= account.glAccount %></option>
-                                                    <%  } else { %>
-                                                       <% account.companyCode.forEach(function(accCompanyCode) { %>
-                                                         <% if(user.companyCode.toString() == accCompanyCode.toString()) { %>
-                                                              <option value="<%= account._id %>"><%= account.glAccount %></option>
-                                                 <% } }); } }); %>
+                                               
                                             </select>
                                         </td>
                                         <td class="row-index"><input type="text" name="" readonly/></td>
@@ -154,7 +152,7 @@
                                         <td class="row-amount"><input type="text" name="" class="gl_Amount"/></td>
                                         <td class="row-cost"><input type="text" name="" /></td>
                                         </tr>
-
+                                </form>
                               </tbody>
                         </table>
                         <button type="button" class="btn btn-primary btn-sm " id="arci-addItem">Add item</button>
