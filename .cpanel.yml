@@ -1,5 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/einfnxfq/public_html/
+    - export DEPLOYPATH=/home/einfnxfq/demo-accounting/
     - /bin/cp -R * $DEPLOYPATH
