@@ -1,5 +1,6 @@
 //jshint esversion:6
 const dotenv = require('dotenv').config();
+const compression = require('compression');
 const express = require("express");
 const bodyParser = require("body-parser");
 const _lodash =require("lodash");
@@ -29,6 +30,8 @@ const passport = require("passport");
 
 const app = express();
 app.set('view engine', 'ejs');
+
+//Middleware
 app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
@@ -43,6 +46,28 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(flash());
+
+let setCache = function (req, res, next) {
+    // here you can define period in second, this one is 5 minutes
+    const period = 60
+  
+    // you only want to cache for GET requests
+    if (req.method == 'GET') {
+      res.set('Cache-control', `public, max-age=${period}`)
+    } else {
+      // for the other requests set strict no caching parameters
+      res.set('Cache-control', `no-store`)
+    }
+  
+    // remember to call next() to pass on the request
+    next()
+  }
+  
+  // now call the new middleware function in your app
+  
+
+app.use(compression());
+
 
 // mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
 mongoose.connect(process.env.DATABASE_URI,{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
@@ -84,6 +109,7 @@ app.get("/", function(req,res) {
 
 /////////////////////////   authentication    ///////////////////////
 app.get("/login", function(req,res) {
+    res.setHeader("Cache-control","no-store");
     const errors = req.flash().error || [];
     res.render("login", {errors});
 });
@@ -111,11 +137,17 @@ app.post("/login", function(req,res) {
 });
 
 app.get("/logout", function(req,res) {
+    res.setHeader("Cache-control","no-store");
     req.logout();
     res.redirect("/");
 });
 
 /////////////////////////   user-defined values   ///////////////////////
+app.get('/db',async function(req,res){
+    companyCode_list= await companyCode.getCompanyCode();
+    res.send(companyCode_list);
+});
+
 
 /* dashboard */
 
@@ -1617,7 +1649,7 @@ app.get("/md-taxrate", function(req,res) {
 app.route("/ac-gl")
 
 .get(async function(req,res) {
-
+    res.setHeader("Cache-control","private, max-age=60");
     if(req.isAuthenticated()) {
         companyCode_list= await companyCode.getCompanyCode(); 
         glAccount_list = await glAcc.getGlAccount();
@@ -1662,8 +1694,7 @@ app.route("/ac-gl")
     });
     
     if(req.isAuthenticated()) {
-        if (req.user.position === "admin" || "encoder")
-        {
+      
             glTransaction.addGLTransaction(newGlTransaction, function(callback) {
                 var servResp = {}
                 if (callback.status=="1"){
@@ -1679,9 +1710,6 @@ app.route("/ac-gl")
                 }
             });
 
-        } else {
-            res.send("Unauthorized!");
-        }
     } else {
         returnTo = req.url;
         res.redirect("/login");
@@ -1693,7 +1721,7 @@ app.route("/ac-gl")
 app.route("/ar-ci")
 
 .get(async function(req,res) {
-
+    res.setHeader("Cache-control","private");
     if(req.isAuthenticated()) {
         companyCode_list= await companyCode.getCompanyCode(); 
         glAccount_list = await glAcc.getGlAccount();
@@ -1735,8 +1763,7 @@ app.route("/ar-ci")
     });
     
     if(req.isAuthenticated()) {
-        if (req.user.position === "admin" || "encoder")
-        {
+      
             glTransaction.addGLTransaction(newGlTransaction, function(callback) {
                 var servResp = {}
                 if (callback.status=="1"){
@@ -1751,10 +1778,6 @@ app.route("/ar-ci")
                     res.send(servResp);
                 }
             });
-
-        } else {
-            res.send("Unauthorized!");
-        }
     } else {
         returnTo = req.url;
         res.redirect("/login");
@@ -1765,6 +1788,7 @@ app.route("/ar-ci")
 app.route("/ap-vi")
 
 .get(async function(req,res) {
+    res.setHeader("Cache-control","private");
     if(req.isAuthenticated()) {
         companyCode_list= await companyCode.getCompanyCode(); 
         glAccount_list = await glAcc.getGlAccount();
@@ -1806,8 +1830,7 @@ app.route("/ap-vi")
     });
     
     if(req.isAuthenticated()) {
-        if (req.user.position === "admin" || "encoder")
-        {
+      
             glTransaction.addGLTransaction(newGlTransaction, function(callback) {
                 var servResp = {}
                 if (callback.status=="1"){
@@ -1823,9 +1846,6 @@ app.route("/ap-vi")
                 }
             });
 
-        } else {
-            res.send("Unauthorized!");
-        }
     } else {
         returnTo = req.url;
         res.redirect("/login");
@@ -1852,17 +1872,29 @@ app.route("/rp-vd")
 .post(function (req,res) {
 
     const toUpdateValues = {
-        documentID:req.body.documentID,
+        documentID : req.body.docID,
         documentValues: {
-            reference:req.body.reference,
-            currency:req.body.currency,
-            jEntry:req.body.glTransaction
+        documentDate : req.body.documentDate,
+        postingDate : req.body.postingDate,
+        reference :req.body.reference ,
+        amount :req.body.amount ,
+        text :req.body.text,
+        companyCode :req.body.companyCode ,
+        companyName :req.body.companyName,
+        currency : req.body.currency,
+        debit : req.body.debit, 
+        credit : req.body.credit,
+        transactionType:req.body.transactionType,
+        status: "parked",
+        parker:req.user._id,
+        poster:"",
+        jEntry:req.body.jlEntry
         }
-    }
+        
+    };
 
     if(req.isAuthenticated()) {
-        if (req.user.position === "admin" || "encoder")
-        {
+      
             glTransaction.updateGLTransaction(toUpdateValues, function(callback) {
                 var servResp = {}
                 if (callback=="1"){
@@ -1873,14 +1905,11 @@ app.route("/rp-vd")
                 } else {
                     servResp.redirect = false;
                     servResp.error = true;
-                    servResp.errorMessage = "Error!";
+                    servResp.errorMessage = callback;
                     res.send(servResp);
                 }
             });
 
-        } else {
-            res.send("Unauthorized!");
-        }
     } else {
         returnTo = req.url;
         res.redirect("/login");
@@ -1898,8 +1927,7 @@ app.route("/rp-vd")
     }
 
     if(req.isAuthenticated()) {
-        if (req.user.position === "admin" || "encoder")
-        {
+      
             glTransaction.updateGLTransaction(toUpdateValues, function(callback) {
                 var servResp = {}
                 if (callback=="1"){
@@ -1915,9 +1943,6 @@ app.route("/rp-vd")
                 }
             });
 
-        } else {
-            res.send("Unauthorized!");
-        }
     } else {
         returnTo = req.url;
         res.redirect("/login");
@@ -1937,6 +1962,23 @@ app.route("/rp-vr")
     vendor_List = await vendor.getVendor();
     customer_List = await customer.getCustomer();
     res.render('rp-vr',{user:req.user,glTransactions:glTransaction_List,companyCodes:companyCode_list,vendors:vendor_List,customers:customer_List});
+    }
+    else {
+        returnTo = req.url;
+        res.redirect("/login");
+    } 
+
+}).post();
+
+app.route("/rp-md")
+
+.get(async function(req,res) {
+    if(req.isAuthenticated()) {
+    glTransaction_List = await glTransaction.getGlTransaction();
+    companyCode_list= await companyCode.getCompanyCode();
+    vendor_List = await vendor.getVendor();
+    customer_List = await customer.getCustomer();
+    res.render('rp-md',{user:req.user,glTransactions:glTransaction_List,companyCodes:companyCode_list,vendors:vendor_List,customers:customer_List});
     }
     else {
         returnTo = req.url;
