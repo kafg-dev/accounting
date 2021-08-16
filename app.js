@@ -7,7 +7,6 @@ const _lodash =require("lodash");
 const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
-const path = require("path");
 const cache = require("apicache").middleware;
 
 
@@ -34,20 +33,8 @@ const passport = require("passport");
 const app = express();
 app.set('view engine', 'ejs');
 
-var options = {
-    etag:true,
-    maxAge:3600000,
-    redirect:true,
-    setHeaders: function(res,path,stat){
-        res.set({
-            'x-timestamp': Date.now(),
-            'kaye':'hi'
-        });
-    }
-}
-
 //Middleware
-app.use(express.static(path.join(__dirname, "public"),options));
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
