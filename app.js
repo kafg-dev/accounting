@@ -1157,7 +1157,7 @@ app.route("/gl-sequence")
 /////////////////////////    main pages   //////////////////////
 app.route("/main-list")
 
-.get(cache('2 minutes'), async function(req,res) {
+.get(cache('1 minute'), async function(req,res) {
     // if(req.isAuthenticated()) {
         var main_list = {};
         main_list.companyCode_list= await companyCode.getCompanyCode(); 
