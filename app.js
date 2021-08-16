@@ -1,12 +1,13 @@
 //jshint esversion:6
 const dotenv = require('dotenv').config();
 const compression = require('compression');
-const express = require("express");
+const express, { Response } = require("express");
 const bodyParser = require("body-parser");
 const _lodash =require("lodash");
 const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
+const BUILD_PATH = "public";
 
 
 //models
@@ -28,8 +29,25 @@ const session = require("express-session");
 const passport = require("passport");
 // const passportLocalMongoose = require("passport-local-mongoose");
 
+
+
 const app = express();
 app.set('view engine', 'ejs');
+
+function setNoCache(res: Response) {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() - 1);
+    res.setHeader("Expires", date.toUTCString());
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Cache-Control", "public, no-cache");
+  }
+  
+  function setLongTermCache(res: Response) {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 1);
+    res.setHeader("Expires", date.toUTCString());
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  }
 
 //Middleware
 app.use(express.static("public"))
@@ -47,26 +65,22 @@ app.use(passport.session());
 
 app.use(flash());
 
-let setCache = function (req, res, next) {
-    // here you can define period in second, this one is 5 minutes
-    const period = 60
-  
-    // you only want to cache for GET requests
-    if (req.method == 'GET') {
-      res.set('Cache-control', `public, max-age=${period}`)
-    } else {
-      // for the other requests set strict no caching parameters
-      res.set('Cache-control', `no-store`)
-    }
-  
-    // remember to call next() to pass on the request
-    next()
-  }
-  
-  // now call the new middleware function in your app
-  
-
 app.use(compression());
+app.use(
+    express.static(BUILD_PATH, {
+      extensions: ["html"],
+      setHeaders(res, path) {
+        if (path.match(/(\.html|\/sw)$/)) {
+          setNoCache(res);
+          return;
+        }
+  
+        if (path.match(/\.(js|css|png|jpg|jpeg|gif|ico|json)$/)) {
+          setLongTermCache(res);
+        }
+      },
+    }),
+  );
 
 
 // mongoose.connect("mongodb://localhost:27017/accountingDB",{useNewUrlParser:true,useUnifiedTopology: true,useFindAndModify:false,autoIndex: true})
