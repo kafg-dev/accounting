@@ -30,13 +30,6 @@ exports.getCompanyCode = async function () {
 
 exports.addCompanyCode = function(companyCode,callback) {
 
-    // const seqGL = new docSequence.docSequence({
-    //     account:"GL",
-    //     companyCode:String,
-    //     docNum:Number,
-    //     docYear:Number
-    // });
-
     ////////////////////////////////////////////////////////////////////------save--------////////////////
         exports.cCode.findOne({code:companyCode.code},function(err,codes) {
             if (codes) {
