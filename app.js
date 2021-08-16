@@ -8,6 +8,8 @@ const ejs = require("ejs");
 const country= require("country-list");
 const currency = require("currency-codes");
 const path = require("path");
+const cache = require("apicache").middleware;
+
 
 
 //models
@@ -1168,9 +1170,8 @@ app.route("/gl-sequence")
 /////////////////////////    main pages   //////////////////////
 app.route("/main-list")
 
-.get(async function(req,res) {
+.get(cache('5 minutes'), async function(req,res) {
     // if(req.isAuthenticated()) {
-        
         var main_list = {};
         main_list.companyCode_list= await companyCode.getCompanyCode(); 
         main_list.accountType_list= await accType.getAccountType(); 
