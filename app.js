@@ -9,8 +9,6 @@ const country= require("country-list");
 const currency = require("currency-codes");
 const cache = require("apicache").middleware;
 
-
-
 //models
 const usersDB =require(__dirname + "/models/users.js");
 const companyCode = require(__dirname + "/models/companycode.js");
