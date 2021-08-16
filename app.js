@@ -90,7 +90,6 @@ app.get("/", function(req,res) {
 
 /////////////////////////   authentication    ///////////////////////
 app.get("/login", function(req,res) {
-    res.setHeader("Cache-control","no-store");
     const errors = req.flash().error || [];
     res.render("login", {errors});
 });
