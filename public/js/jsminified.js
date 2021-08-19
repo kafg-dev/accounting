@@ -1,1 +1,2732 @@
-$(document).ready(function(){function e(e,o,t){var a="#"+e;$(a).addClass(t).removeClass("d-none"),$(a).fadeIn(),$(a).text(o),window.setTimeout(function(){$(a).fadeOut("slow","swing"),$(a).addClass("d-none").removeClass(t).text("")},2e3)}function o(e,o){$("#"+o+" #"+e).removeClass("d-none")}function t(e){$(e).addClass("d-none")}function a(e){return $("#"+e).validate()}function c(e){$("#"+e)[0].reset()}function r(e){var o=e.selectedCompanyCode,t=e.formID,a=e.account;o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(c){var r=c.glAccount_list;if("customer"==a){var n=c.customer_List;$("#"+t+" #companyName").empty(),$("#"+t+" #companyName").append("<option selected disabled> Choose... </option>"),n.forEach(function(e){e.customerCompanyCode==o&&$("#"+t+" #companyName").append('<option value="'+e._id+'">'+e.customerCode+" -  "+e.customerName+"</option>")})}else if("vendor"==a){n=c.vendor_List;$("#"+t+" #companyName").empty(),$("#"+t+" #companyName").append("<option selected disabled> Choose... </option>"),n.forEach(function(e){e.vendorCompanyCode==o&&$("#"+t+" #companyName").append('<option value="'+e._id+'">'+e.vendorCode+" -  "+e.vendorName+"</option>")})}else if("gl"==a){var l=c.customer_List,i=c.vendor_List;$("#"+t+" #companyName").empty(),$("#"+t+" #companyName").append("<option selected disabled> Choose... </option>"),l.forEach(function(e){e.customerCompanyCode==o&&$("#"+t+" #companyName").append('<option value="'+e._id+'">'+e.customerCode+" -  "+e.customerName+"</option>")}),i.forEach(function(e){e.vendorCompanyCode==o&&$("#"+t+" #companyName").append('<option value="'+e._id+'">'+e.vendorCode+" -  "+e.vendorName+"</option>")})}e.companyName?$("#rpvd-create #companyName").val(e.companyName):($("#"+t+"-tbody").find("tr:first").find("input,select").val(""),$("#"+t+"-tbody").find("tr:gt(0)").remove(),$("#"+t+"-tbody").find("tr:first").find(".gl_Account").empty().append("<option selected disabled>Choose..</option>"),"rpvd-create"!=t&&($("#"+t+"-table-form")[0].reset(),$("#"+t+" #totalDebit").val(parseFloat(0).toFixed(2)),$("#"+t+" #totalCredit").val(parseFloat(0).toFixed(2)))),r.forEach(function(e){e.companyCode.forEach(function(a){o==a&&($("#"+t+"-tbody").find("tr:first").find(".gl_Account").append("<option value='"+e._id+"' >"+e.glAccount+" - "+e.glName+"</option>"),console.log("this "+e.glAccount))})})},error:function(e){console.log(e)}})}function n(e,o){$.ajax({type:"GET",url:"/main-list",data:{},success:function(t){var a={};a.selectedCompanyCode=o,a.foundGlAccount_list=t.glAccount_list,a.user=t.user,$("#"+e+"-create-tbody").append(function(e){var o="";return o+="<tr id='R'>",o+="<td class='row-gl'>",o+="<select name='' class='gl_Account' > ",o+="<option selected disabled>Choose..</option>",e.foundGlAccount_list.forEach(function(t){"admin"==e.user.position?o+="<option value='"+t._id+"' >"+t.glAccount+" - "+t.glName+"</option>":t.companyCode.forEach(function(a){e.selectedCompanyCode.toString()==a.toString()&&(o+="<option value='"+t._id+"' >"+t.glAccount+" - "+t.glName+"</option>")})}),o+="</td>",o+="<td class='row-index'><input type='text' readonly/></td>",o+="<td class='row-dc'> <select class='dc'>",o+="<option value='debit'>Debit</option> <option value='credit'>Credit</option>",o+="</select></td>",o+="<td class='row-amount'><input type='text' class='gl_Amount' /></td>",o+="<td class='row-cost'><input type='text' /></td>",o+="</tr>"}(a))},error:function(e){console.log(e)}})}function l(e,o){var t=o.child,a=o.theValue;$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){var o=e.glAccount_list;t.each(function(){var e=$(this).children(".row-index").children("input");o.forEach(function(o){o._id==a&&e.val(o.glName)})})},error:function(e){console.log(e)}})}function i(e,o){var t=parseFloat(0),a=parseFloat(0);$("#"+e+"-create-tbody tr").each(async function(e,o){var c=$(o).find("td").children(".dc").val(),r=parseFloat($(o).find("td").children(".gl_Amount").val());console.log(r),"debit"==c?r&&(t=parseFloat(t+r)):r&&(a=parseFloat(a+r))}),o?($("#"+o+" #totalDebit").val(parseFloat(t).toFixed(2)),$("#"+o+" #totalCredit").val(parseFloat(a).toFixed(2))):($("#"+e+"-create #totalDebit").val(parseFloat(t).toFixed(2)),$("#"+e+"-create #totalCredit").val(parseFloat(a).toFixed(2)))}function d(o){var t=o.formID,c=o.account,r=new Date($("#"+t+"-create #postingDate").val()),n=$("#"+t+"-create #companyCode").val(),l=r.getFullYear();$.ajax({type:"GET",url:"/main-list",data:{},success:function(i){i.controlPeriod_List.forEach(function(i){if(c==i.accountType&&n==i.companyCode&&"open"==i.status&&i.controlYear==l){var d=new Date(i.fromPeriod),s=new Date(i.toPeriod),u=d.getTime(),p=s.getTime(),m=r.getTime();m<=p&&m>=u?function(o){var t=o.formID,c=o.account,r=o.docID||"",n=t.substring(0,2),l=t.substring(2);if(a(t+"-create").form()){var i=$("#"+t+"-create #documentDate").val(),d=$("#"+t+"-create #postingDate").val(),s=$("#"+t+"-create #reference").val(),u=parseFloat($("#"+t+"-create #amount").val()).toFixed(2),p=$("#"+t+"-create #text").val(),m=$("#"+t+"-create #companyCode").val(),v=$("#"+t+"-create #companyName").val(),f=$("#"+t+"-create #currency").val(),y=$("#"+t+"-create #totalDebit").val(),g=$("#"+t+"-create #totalCredit").val(),b=[],_=$("#"+t+"-create-tbody").children("tr");_.each(function(){var e={};e.glID=$(this).children(".row-gl").children("select").val(),e.dcEntry=$(this).children(".row-dc").children("select").val(),e.jAmount=$(this).children(".row-amount").children("input").val(),e.costCenter=$(this).children(".row-cost").children("input").val(),e.jAmount&&(e.glID&&e.dcEntry&&e.costCenter?(console.log(e),b.push(e)):b=[])}),y==g&&g==u?b.length?$.ajax({type:"POST",url:"/"+n+"-"+l,data:{account:c,documentDate:i,postingDate:d,reference:s,amount:u,text:p,companyCode:m,companyName:v,currency:f,debit:y,credit:g,transactionType:c,jlEntry:b,docID:r},success:function(o){o.redirect?($("#"+t+"-create-label").removeClass("d-none").addClass("alert-success").fadeIn().text(o.message),$("#"+t+"-save-btn").addClass("d-none"),$("#"+t+"-back-btn").removeClass("d-none")):e(t+"-create-label",JSON.stringify(o.errorMessage),"alert-danger")},error:function(e){console.log(e)}}):e(t+"-create-label","Incomplete row found!","alert-danger"):(console.log("Not equal"),e(t+"-create-label","Total Amount, Debit and Credit Values are not equal","alert-danger"))}}(o):e(t+"-create-label","Posting for the period is close.","alert-danger")}})},error:function(e){console.log(e)}})}function s(e,o){$("#showTransaction").removeClass("d-none"),e.transaction.parker!=e.userDetails._id&&"admin"!=e.userDetails.position||""==e.transaction.poster&&$("#rpvd-update-btn").removeClass("d-none"),"approver"!=e.userDetails.position&&"admin"!=e.userDetails.position||""==e.transaction.poster&&$("#rpvd-approve-btn").removeClass("d-none"),""!=e.transaction.poster&&e.userList.forEach(function(o){o._id==e.transaction.poster&&$("#rpvd-posted").removeClass("d-none").text("Posted by: "+o.fullname)}),e.userList.forEach(function(o){o._id==e.transaction.parker&&$("#rpvd-parked").text("Parked by: "+o.fullname)}),$("#rpvd-create #transactionType").val(e.transaction.transactionType.toLowerCase()),$("#rpvd-create #reference").val(e.transaction.reference),$("#rpvd-create #currency").val(e.transaction.currency),$("#rpvd-create #documentDate").val(e.transaction.documentDate.substring(0,10)),$("#rpvd-create #postingDate").val(e.transaction.postingDate.substring(0,10)),$("#rpvd-create #amount").val(e.transaction.amount),$("#rpvd-create #text").val(e.transaction.text),$("#rpvd-create #documentNumber").val(e.transaction.documentNumber).prop("readonly",!0),$("#rpvd-create #documentID").val(e.transaction._id),$("#rpvd-create #companyCode").val(e.transaction.companyCode);var t={formID:"rpvd-create"};t.selectedCompanyCode=$("#rpvd-create #companyCode").val(),t.account=$("#rpvd-create #transactionType").val(),t.companyName=e.transaction.companyName,r(t),$("#vdTable-form").removeClass("d-none"),$("#dcForm").removeClass("d-none"),$("#dcForm #totalDebit").val(parseFloat(e.transaction.debit).toFixed(2)),$("#dcForm #totalCredit").val(parseFloat(e.transaction.credit).toFixed(2)),$("#rpvd-create-tbody").append(function(e,o){var t=e.transaction.jEntry,a=(t.length,[]),c=0;return t.forEach(function(t){var r="";r+="<tr>",r+="<td class='row-gl'>",r+="<select name='' class='gl_Account' > ",r+="<option selected disabled>Choose..</option>",o.forEach(function(o){"admin"==e.userDetails.position?(r+="<option value='"+o._id+"' >"+o.glAccount+" - "+o.glName+"</option>",t.glID==o._id&&(r+="<option selected  value='"+t.glID+"' >"+o.glAccount+" - "+o.glName+"</option>")):o.companyCode.forEach(function(a){e.transaction.companyCode.toString()==a.toString()&&(t.glID==o._id?r+="<option selected  value='"+t.glID+"' >"+o.glAccount+" - "+o.glName+"</option>":r+="<option value='"+o._id+"' >"+o.glAccount+" - "+o.glName+"</option>")})}),r+="</td>",o.forEach(function(e){e._id==t.glID&&(r+="<td class='row-index'><input type='text' value='"+e.glName+"' /></td>")}),r+="<td class='row-dc'> <select class='dc'>","debit"==t.dcEntry?r+="<option value='debit' selected>Debit</option> <option value='credit'>Credit</option></select></td>":"credit"==t.dcEntry&&(r+="<option value='debit' >Debit</option> <option value='credit' selected>Credit</option></select></td>"),r+="<td class='row-amount'><input type='text' class='gl_Amount' value='"+t.jAmount+"' /></td>",r+="<td class='row-cost'><input type='text' value='"+t.costCenter+"' /></td>",r+="</tr>",a[c]=r,c++}),a}(e,o))}function u(e){var o=[],t=0;return e.glAccount.forEach(function(a){t++;var c=[];a.companyCode.forEach(function(o){e.companyCode.forEach(async function(e){o==e._id&&c.push(e.code)})}),o.push([t,a.glAccount,a.glName,c])}),o}function p(e){var o=[],t=0;return e.vendor.forEach(function(a){t++;var c=[];a.vendorCompanyCode.forEach(function(o){e.companyCode.forEach(async function(e){o==e._id&&c.push(e.code)})}),o.push([t,a.vendorCode,a.vendorName,c])}),o}function m(e){var o=[],t=0;return e.customer.forEach(function(a){t++;var c=[];a.customerCompanyCode.forEach(function(o){e.companyCode.forEach(async function(e){o==e._id&&c.push(e.code)})}),o.push([t,a.customerCode,a.customerName,c])}),o}$("#companyCodeTable").DataTable(),$("#accountTypeTable").DataTable(),$("#accountGroupTable").DataTable(),$("#glSeriesTable").DataTable(),$("#usersTable").DataTable(),$("#privTable").DataTable(),$("#periodTable").DataTable(),$("#reportTable").DataTable(),$(".documentDate").prop("max",(new Date).toISOString().split("T")[0]),$("#usersTable").on("click","tr",function(){c("users-create"),o("onSelectDiv","users-create"),$("#users-create #userID").val($(this).find("td")[0].innerText),$("#users-create #userCompanyCode").val($(this).find("td")[1].innerText.split(",")),$("#users-create #fullname").val($(this).find("td")[2].innerText),$("#users-create #username").attr("readonly","readonly").val($(this).find("td")[3].innerText),$("#users-create #position").val($(this).find("td")[4].innerText)}),$("#users-clearbtn").click(function(e){c("users-create"),$("#users-create #onSelectDiv").addClass("d-none"),$("#users-create #username").removeAttr("readonly")}),$("#users-addbtn").click(function(o){if(a("users-create").form()){var t=$("#fullname").val(),c=$("#position").val(),r=$("#username").val(),n=$("#password").val(),l=$("#userCompanyCode").val();n===$("#retypepassword").val()?$.ajax({type:"POST",url:"/us-create",data:{username:r,fullname:t,position:c,password:n,companyCode:l},success:function(o){o.redirect?(e("users-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("users-label","Unauthorized!"==o?"Unauthorized user!":JSON.stringify(o.errorMessage),"alert-danger")},error:function(e){console.log(e)}}):e("users-label","Passwords does not match!","alert-danger")}}),$("#users-updatebtn").click(function(o){if(a("users-create").form()){var t=$("#userID").val(),c=$("#fullname").val(),r=$("#position").val(),n=$("#userCompanyCode").val(),l=$("#username").val(),i=$("#password").val(),d=$("#retypepassword").val();""==t?e("users-label","Error! Select a user from table.","alert-danger"):i==d?$.ajax({type:"PATCH",url:"/us-create",data:{userId:t,fullname:c,position:r,username:l,password:i,companyCode:n},success:function(o){o.redirect?(e("users-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("users-label","Unauthorized!"==o?"Unauthorized user!":JSON.stringify(o.errorMessage),"alert-danger")},error:function(e){console.log(e)}}):e("users-label","Passwords does not match!","alert-danger")}}),$("#privTable").on("click","tr",function(){c("privileges-form"),$("#privileges-form #positionID").val($(this).find("td")[0].innerText),$("#privileges-form #privPosition").val($(this).find("td")[1].innerText),"Yes"==$(this).find("td")[2].innerText?$("#privileges-form #parkPriv").prop("checked",!0):$("#privileges-form #parkPriv").prop("checked",!1),"Yes"==$(this).find("td")[3].innerText?$("#privileges-form #postPriv").prop("checked",!0):$("#privileges-form #postPriv").prop("checked",!1)}),$("#priv-clearbtn").click(function(e){c("privileges-form")}),$("#priv-addbtn").click(function(o){if(a("privileges-form").form()){var t=$("#privPosition").val().toLowerCase(),c=0,r=0;$("#postPriv").prop("checked")&&(c=1),$("#parkPriv").prop("checked")&&(r=1),$.ajax({type:"POST",url:"/us-privilege",data:{position:t,post:c,park:r},success:function(o){o.redirect?(e("privilege-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("privilege-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#priv-updatebtn").click(function(o){if(a("privileges-form").form()){var t=$("#privPosition").val().toLowerCase(),c=$("#positionID").val(),r=0,n=0;""==c?e("privilege-label","Error! Select a position from table.","alert-danger"):($("#postPriv").prop("checked")&&(r=1),$("#parkPriv").prop("checked")&&(n=1),$.ajax({type:"PATCH",url:"/us-privilege",data:{positionID:c,position:t,post:r,park:n},success:function(o){o.redirect?(e("privilege-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("privilege-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}}))}}),$("#companyCodeTable").on("click","tr",function(){o("onSelectDiv","ccode"),$("#ccode #selectedCompanyCode").val($(this).find("td")[1].innerText),$("#ccode #company_codeID").val($(this).find("td")[0].innerText),$("#ccode #company_code").val($(this).find("td")[1].innerText),$("#ccode #company_name").val($(this).find("td")[2].innerText),$("#ccode #company_country").val($(this).find("td")[3].innerText),$("#ccode #company_currency").val($(this).find("td")[4].innerText)}),$("#ccode-clearbtn").click(function(e){c("ccode"),t("#ccode #onSelectDiv")}),$("#ccode-addbtn").click(function(o){if(a("ccode").form()){var t=$("#company_codeID").val(),c=$("#company_code").val(),r=$("#company_name").val(),n=$("#company_country").val(),l=$("#company_currency").val();$.ajax({type:"POST",url:"/gn-companycode",data:{company_codeID:t,company_code:c,company_name:r,company_country:n,company_currency:l},success:function(o){o.redirect?(e("ccode-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("ccode-label",o.errorMessage,"alert-danger"):e("ccode-label","Company code exists!","alert-danger")},error:function(e){console.log(e)}})}}),$("#ccode-updatebtn").click(function(o){if(a("ccode").form()){var t=$("#company_codeID").val(),c=$("#company_code").val(),r=$("#company_name").val(),n=$("#company_country").val(),l=$("#company_currency").val();""==t?e("ccode-label","Error! Select company code from table.","alert-danger"):$.ajax({type:"PATCH",url:"/gn-companycode",data:{company_codeID:t,company_code:c,company_name:r,company_country:n,company_currency:l},success:function(o){o.redirect?(e("ccode-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("ccode-label","error "+o.errorMessage,"alert-danger"):e("ccode-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#ccode-deletebtn").click(function(o){if(a("ccode").form()){var t=$("#company_codeID").val();""==t?e("ccode-label","Error! Select company code from table.","alert-danger"):$.ajax({type:"DELETE",url:"/gn-companycode",data:{company_codeID:t},success:function(o){o.redirect?(e("ccode-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error&&e("ccode-label","error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#periodTable").on("click","tr",function(){$("#periodID").val($(this).find("td")[0].innerText),$("#period_accountType").val($(this).find("td")[1].innerText),$("#period_companycode").val($(this).find("td")[3].innerText),$("#period_fromAccount").val($(this).find("td")[4].innerText),$("#period_toAccount").val($(this).find("td")[5].innerText),$("#period_fromPeriod").val($(this).find("td")[6].innerText),$("#period_toPeriod").val($(this).find("td")[7].innerText),$("#period_year").val($(this).find("td")[8].innerText),$("#period_status").val($(this).find("td")[9].innerText)}),$("#period-clearbtn").click(function(e){c("controlPeriod")}),$("#period-addbtn").click(function(o){if(a("controlPeriod").form()){var t=$("#period_accountType").val(),c=$("#period_companycode").val(),r=$("#period_fromAccount").val(),n=$("#period_toAccount").val(),l=$("#period_fromPeriod").val(),i=$("#period_toPeriod").val(),d=$("#period_year").val(),s=$("#period_status").val();$.ajax({type:"POST",url:"/gn-control",data:{accountType:t,companyCode:c,fromAccount:r,toAccount:n,fromPeriod:l,toPeriod:i,controlYear:d,status:s},success:function(o){o.redirect?(e("period-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("period-label",o.errorMessage,"alert-danger"):e("period-label","Control exists!","alert-danger")},error:function(e){console.log(e)}})}}),$("#period-updatebtn").click(function(o){if(a("controlPeriod").form()){var t=$("#periodID").val(),c=$("#period_accountType").val(),r=$("#period_companycode").val(),n=$("#period_fromAccount").val(),l=$("#period_toAccount").val(),i=$("#period_fromPeriod").val(),d=$("#period_toPeriod").val(),s=$("#period_year").val(),u=$("#period_status").val();""==t?e("period-label","Error! Select period from table.","alert-danger"):$.ajax({type:"PATCH",url:"/gn-control",data:{periodID:t,accountType:c,companyCode:r,fromAccount:n,toAccount:l,fromPeriod:i,toPeriod:d,controlYear:s,status:u},success:function(o){o.redirect?(e("period-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("period-label","error "+o.errorMessage,"alert-danger"):e("period-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#period-deletebtn").click(function(o){if(a("controlPeriod").form()){var t=$("#periodID").val();""==t?e("period-label","Error! Select period from table.","alert-danger"):$.ajax({type:"DELETE",url:"/gn-control",data:{periodID:t},success:function(o){o.redirect?(e("period-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error&&e("period-label","error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#accountTypeTable").on("click","tr",function(){o("onSelectDiv","acctype"),$("#acctype #selectedAccountType").val($(this).find("td")[1].innerText),$("#acctype #accountTypeID").val($(this).find("td")[0].innerText),$("#acctype #account_type").val($(this).find("td")[1].innerText),$("#acctype #accountTypeRangeFrom").val($(this).find("td")[2].innerText),$("#acctype #accountTypeRangeTo").val($(this).find("td")[3].innerText)}),$("#acctype-clearbtn").click(function(e){c("acctype"),t("#acctype #onSelectDiv")}),$("#acctype-addbtn").click(function(o){if(a("acctype").form()){var t=$("#account_type").val(),c=$("#accountTypeRangeFrom").val(),r=$("#accountTypeRangeTo").val();$.ajax({type:"POST",url:"/gl-accounttype",data:{account_type:t,accountTypeRangeFrom:c,accountTypeRangeTo:r},success:function(o){o.redirect?(e("acctype-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("acctype-label",o.errorMessage,"alert-danger"):e("acctype-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#acctype-updatebtn").click(function(o){if(a("acctype").form()){var t=$("#account_type").val(),c=$("#accountTypeID").val(),r=$("#accountTypeRangeFrom").val(),n=$("#accountTypeRangeTo").val();""==c?e("acctype-label","Error! Select account type from table.","alert-danger"):$.ajax({type:"PATCH",url:"/gl-accounttype",data:{account_typeID:c,account_type:t,accountTypeRangeFrom:r,accountTypeRangeTo:n},success:function(o){o.redirect?(e("acctype-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("acctype-label","error "+o.errorMessage,"alert-danger"):e("acctype-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#acctype-deletebtn").click(function(o){if(a("acctype").form()){var t=$("#accountTypeID").val();""==t?e("acctype-label","Error! Select company code from table.","alert-danger"):$.ajax({type:"DELETE",url:"/gl-accounttype",data:{account_typeID:t},success:function(o){o.redirect?(e("acctype-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error&&e("acctype-label","error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#accountGroupTable").on("click","tr",function(){o("onSelectDiv","accgroup"),$("#accgroup #selectedAccountGroup").val($(this).find("td")[1].innerText),$("#accgroup #accountGroupID").val($(this).find("td")[0].innerText),$("#accgroup #accountGroupName").val($(this).find("td")[1].innerText),$("#accgroup #accGroup_typeID").val($(this).find("td")[2].innerText)}),$("#accgroup-clearbtn").click(function(e){c("accgroup"),t("#accgroup #onSelectDiv")}),$("#accgroup-addbtn").click(function(o){if(a("accgroup").form()){var t=$("#accGroup_typeID").val(),c=$("#accountGroupName").val();$.ajax({type:"POST",url:"/gl-accountgroup",data:{accountGrouptypeID:t,accountGroupName:c},success:function(o){o.redirect?(e("accgroup-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("accgroup-label",o.errorMessage,"alert-danger"):e("accgroup-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#accgroup-updatebtn").click(function(o){if(a("accgroup").form()){var t=$("#accountGroupID").val(),c=$("#accGroup_typeID").val(),r=$("#accountGroupName").val();""==t?e("accgroup-label","Error! Select account type from table.","alert-danger"):$.ajax({type:"PATCH",url:"/gl-accountgroup",data:{accountGroupID:t,accountGrouptypeID:c,accountGroupName:r},success:function(o){o.redirect?(e("accgroup-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("accgroup-label","error "+o.errorMessage,"alert-danger"):e("accgroup-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#accgroup-deletebtn").click(function(o){if(a("accgroup").form()){var t=$("#accountGroupID").val(),c=$("#accGroup_typeID").val();""==t?e("accgroup-label","Error! Select account type from table.","alert-danger"):$.ajax({type:"DELETE",url:"/gl-accountgroup",data:{accountGroupID:t,accountGrouptypeID:c},success:function(o){o.redirect?(e("accgroup-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error&&e("accgroup-label","error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#glSeriesTable").on("click","tr",function(){o("onSelectDiv","glSeries"),$("#glSeries #selectedGlSeries").val($(this).find("td")[1].innerText),$("#glSeries #glSeries_id").val($(this).find("td")[0].innerText),$("#glSeries #accountGL").val($(this).find("td")[1].innerText),$("#glSeries #seriesGL").val($(this).find("td")[2].innerText)}),$("#glSeries-clearbtn").click(function(e){c("glSeries"),t("#glSeries #onSelectDiv")}),$("#glSeries-addbtn").click(function(o){if(a("glSeries").form()){var t=$("#accountGL").val(),c=$("#seriesGL").val();$.ajax({type:"POST",url:"/gl-series",data:{accountGl:t,seriesGl:c},success:function(o){o.redirect?(e("glSeries-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("glSeries-label",o.errorMessage,"alert-danger"):e("glSeries-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#glSeries-updatebtn").click(function(o){if(a("glSeries").form()){var t=$("#accountGL").val(),c=$("#seriesGL").val();""==$("#glSeries_id").val()?e("glSeries-label","Error! Select account from table.","alert-danger"):$.ajax({type:"PATCH",url:"/gl-series",data:{accountGl:t,seriesGl:c},success:function(o){o.redirect?(e("glSeries-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error?e("glSeries-label","error "+o.errorMessage,"alert-danger"):e("glSeries-label",o.message,"alert-danger")},error:function(e){console.log(e)}})}}),$("#glSeries-deletebtn").click(function(o){if(a("glSeries").form()){var t=$("#glSeries_id").val();""==t?e("glSeries-label","Error! Select account from table.","alert-danger"):$.ajax({type:"DELETE",url:"/gl-series",data:{glSeries_id:t},success:function(o){o.redirect?(e("glSeries-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):o.error&&e("glSeries-label","error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#gl-create #acc_type").change(function(e){var o=$("#gl-create #acc_type").val();o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){var t=e.accountType_list;$("#gl-create #acc_group").empty(),$("#gl-create #acc_group").append("<option selected disabled> Choose... </option>"),t.forEach(function(e){e._id==o&&e.accountGroup.forEach(function(e){$("#gl-create #acc_group").append('<option value="'+e._id+'">'+e.accountGroup+"</option>")})})},error:function(e){console.log(e)}})}),$("#gl-create-btn").click(function(o){if(a("gl-create").form()){var t=$("#gl-create #gl_account").val(),c=$("#gl-create #c_code").val(),r=$("#gl-create #acc_type").val(),n=$("#gl-create #acc_group").val(),l=$("#gl-create #gl_name").val(),i=$("#gl-create #acc_currency").val(),d=$("#gl-create #tax_category").val(),s=$("#gl-create #desc_short").val(),u=$("#gl-create #desc_long").val();$.ajax({type:"POST",url:"/md-gl",data:{glAccount:t,companyCode:c,accountType:r,accountGroup:n,glName:l,accountCurrency:i,taxCategory:d,descShort:s,descLong:u},success:function(o){o.redirect?(e("gl-create-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("gl-create-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#gl-modify #gl_account").change(function(e){var o=$("#gl-modify #gl_account").val();o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){var t=e.glAccount_list,a=(e.companyCode_list,e.accountType_list);$("#gl-modify #acc_group").empty().append("<option selected disabled> Choose... </option>"),t.forEach(function(e){e._id==o&&($("#gl-modify #c_code").val(e.companyCode),$("#gl-modify #acc_type").val(e.accountType),a.forEach(function(o){e.accountType==o._id&&o.accountGroup.forEach(function(o){e.accountGroup==o._id?$("#gl-modify #acc_group").append('<option value="'+o._id+'" selected>'+o.accountGroup+"</option>"):$("#gl-modify #acc_group").append('<option value="'+o._id+'">'+o.accountGroup+"</option>")})}),$("#gl-modify #gl_name").val(e.glName),$("#gl-modify #acc_currency").val(e.accountCurrency),$("#gl-modify #desc_short").val(e.descShort),$("#gl-modify #desc_long").val(e.descLong))})},error:function(e){console.log(e)}})}),$("#gl-modify #acc_type").change(function(e){var o=$("#gl-modify #acc_type").val();o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){var t=e.accountType_list;$("#gl-modify #acc_group").empty(),$("#gl-modify #acc_group").append("<option selected disabled> Choose... </option>"),t.forEach(function(e){e._id==o&&e.accountGroup.forEach(function(e){$("#gl-modify #acc_group").append('<option value="'+e._id+'">'+e.accountGroup+"</option>")})})},error:function(e){console.log(e)}})}),$("#gl-modify #update-btn").click(function(o){if(a("gl-modify").form()){var t=$("#gl-modify #gl_account").val(),c=$("#gl-modify #c_code").val(),r=$("#gl-modify #acc_type").val(),n=$("#gl-modify #acc_group").val(),l=$("#gl-modify #gl_name").val(),i=$("#gl-modify #acc_currency").val(),d=$("#gl-modify #tax_category").val(),s=$("#gl-modify #desc_short").val(),u=$("#gl-modify #desc_long").val();$.ajax({type:"PATCH",url:"/md-gl",data:{glAccount:t,companyCode:c,accountType:r,accountGroup:n,glName:l,accountCurrency:i,taxCategory:d,descShort:s,descLong:u},success:function(o){o.redirect?(e("gl-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("gl-modify-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#gl-modify #delete-btn").click(function(o){var t=$("#gl-modify #gl_account").val();null===t?e("gl-modify-label","Error! Please select GL Account you want to delete.","alert-danger"):$.ajax({type:"DELETE",url:"/md-gl",data:{glAccount:t},success:function(o){o.redirect?(e("gl-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("gl-modify-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}),$("#vd-create-btn").click(function(o){if(a("vd-create").form()){var t=$("#vd-create #vd_code").val(),c=$("#vd-create #vd_name").val(),r=$("#vd-create #vd_companycode").val(),n=$("#vd-create #vd_currency").val(),l=$("#vd-create #vd_taxcategory").val(),i=$("#vd-create #vd_term").val(),d=$("#vd-create #vd_tax").val(),s=$("#vd-create #vd_recon").val(),u=$("#vd-create #vd_street").val(),p=$("#vd-create #vd_city").val(),m=$("#vd-create #vd_country").val(),v=$("#vd-create #vd_postalcode").val(),f=$("#vd-create #vd_telephone").val(),y=$("#vd-create #vd_email").val(),g=$("#vd-create #vd_website").val();$.ajax({type:"POST",url:"/md-vendor",data:{vendorCode:t,vendorName:c,vendorCompanyCode:r,vendorCurrency:n,vendorTaxCategory:l,vendorPaymentTerm:i,vendorTax:d,vendorRecon:s,vendorStreet:u,vendorCity:p,vendorCountry:m,vendorPostalCode:v,vendorTelephone:f,vendorEmail:y,vendorWebsite:g},success:function(o){o.redirect?(e("vd-create-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("vd-create-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#vd-modify #vd_code").change(function(e){var o=$("#vd-modify #vd_code").val();o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){e.vendor_List.forEach(function(e){e._id==o&&($("#vd-modify #vd_name").val(e.vendorName),$("#vd-modify #vd_companycode").val(e.vendorCompanyCode),$("#vd-modify #vd_currency").val(e.vendorCurrency),$("#vd-modify #vd_taxcategory").val(e.vendorTaxCategory),$("#vd-modify #vd_term").val(e.vendorPaymentTerm),$("#vd-modify #vd_tax").val(e.vendorTax),$("#vd-modify #vd_recon").val(e.vendorRecon),$("#vd-modify #vd_street").val(e.vendorStreet),$("#vd-modify #vd_city").val(e.vendorCity),$("#vd-modify #vd_country").val(e.vendorCountry),$("#vd-modify #vd_postalcode").val(e.vendorPostalCode),$("#vd-modify #vd_telephone").val(e.vendorTelephone),$("#vd-modify #vd_email").val(e.vendorEmail),$("#vd-modify #vd_website").val(e.vendorWebsite))})},error:function(e){console.log(e)}})}),$("#vd-modify #update-btn").click(function(o){if(a("vd-modify").form()){var t=$("#vd-modify #vd_code").val(),c=$("#vd-modify #vd_name").val(),r=$("#vd-modify #vd_companycode").val(),n=$("#vd-modify #vd_currency").val(),l=$("#vd-modify #vd_taxcategory").val(),i=$("#vd-modify #vd_term").val(),d=$("#vd-modify #vd_tax").val(),s=$("#vd-modify #vd_recon").val(),u=$("#vd-modify #vd_street").val(),p=$("#vd-modify #vd_city").val(),m=$("#vd-modify #vd_country").val(),v=$("#vd-modify #vd_postalcode").val(),f=$("#vd-modify #vd_telephone").val(),y=$("#vd-modify #vd_email").val(),g=$("#vd-modify #vd_website").val();$.ajax({type:"PATCH",url:"/md-vendor",data:{vendorCode:t,vendorName:c,vendorCompanyCode:r,vendorCurrency:n,vendorTaxCategory:l,vendorPaymentTerm:i,vendorTax:d,vendorRecon:s,vendorStreet:u,vendorCity:p,vendorCountry:m,vendorPostalCode:v,vendorTelephone:f,vendorEmail:y,vendorWebsite:g},success:function(o){o.redirect?(e("vd-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("vd-modify-label","Unauthorized!"==o?"Unauthorized user!":"error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#vd-modify #delete-btn").click(function(o){var t=$("#vd-modify #vd_code").val();""==t?e("vd-modify-label","Error! Please select Vendor Code you want to delete.","alert-danger"):$.ajax({type:"DELETE",url:"/md-vendor",data:{vendorCode:t},success:function(o){o.redirect?(e("vd-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("vd-modify-label","Unauthorized!"==o?"Unauthorized user!":"error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}),$("#ct-create-btn").click(function(o){if(a("ct-create").form()){var t=$("#ct-create #ct_code").val(),c=$("#ct-create #ct_name").val(),r=$("#ct-create #ct_companycode").val(),n=$("#ct-create #ct_currency").val(),l=$("#ct-create #ct_taxcategory").val(),i=$("#ct-create #ct_term").val(),d=$("#ct-create #ct_tax").val(),s=$("#ct-create #ct_recon").val(),u=$("#ct-create #ct_street").val(),p=$("#ct-create #ct_city").val(),m=$("#ct-create #ct_country").val(),v=$("#ct-create #ct_postalcode").val(),f=$("#ct-create #ct_telephone").val(),y=$("#ct-create #ct_email").val(),g=$("#ct-create #ct_website").val();$.ajax({type:"POST",url:"/md-customer",data:{customerCode:t,customerName:c,customerCompanyCode:r,customerCurrency:n,customerTaxCategory:l,customerPaymentTerm:i,customerTax:d,customerRecon:s,customerStreet:u,customerCity:p,customerCountry:m,customerPostalCode:v,customerTelephone:f,customerEmail:y,customerWebsite:g},success:function(o){o.redirect?(e("ct-create-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("ct-create-label","Unauthorized!"==o?"Unauthorized user!":o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#ct-modify #ct_code").change(function(e){var o=$("#ct-modify #ct_code").val();o&&$.ajax({type:"GET",url:"/main-list",data:{},success:function(e){e.customer_List.forEach(function(e){e._id==o&&($("#ct-modify #ct_name").val(e.customerName),$("#ct-modify #ct_companycode").val(e.customerCompanyCode),$("#ct-modify #ct_currency").val(e.customerCurrency),$("#ct-modify #ct_taxcategory").val(e.customerTaxCategory),$("#ct-modify #ct_term").val(e.customerPaymentTerm),$("#ct-modify #ct_tax").val(e.customerTax),$("#ct-modify #ct_recon").val(e.customerRecon),$("#ct-modify #ct_street").val(e.customerStreet),$("#ct-modify #ct_city").val(e.customerCity),$("#ct-modify #ct_country").val(e.customerCountry),$("#ct-modify #ct_postalcode").val(e.customerPostalCode),$("#ct-modify #ct_telephone").val(e.customerTelephone),$("#ct-modify #ct_email").val(e.customerEmail),$("#ct-modify #ct_website").val(e.customerWebsite))})},error:function(e){console.log(e)}})}),$("#ct-modify #update-btn").click(function(o){if(a("ct-modify").form()){var t=$("#ct-modify #ct_code").val(),c=$("#ct-modify #ct_name").val(),r=$("#ct-modify #ct_companycode").val(),n=$("#ct-modify #ct_currency").val(),l=$("#ct-modify #ct_taxcategory").val(),i=$("#ct-modify #ct_term").val(),d=$("#ct-modify #ct_tax").val(),s=$("#ct-modify #ct_recon").val(),u=$("#ct-modify #ct_street").val(),p=$("#ct-modify #ct_city").val(),m=$("#ct-modify #ct_country").val(),v=$("#ct-modify #ct_postalcode").val(),f=$("#ct-modify #ct_telephone").val(),y=$("#ct-modify #ct_email").val(),g=$("#ct-modify #ct_website").val();$.ajax({type:"PATCH",url:"/md-customer",data:{customerCode:t,customerName:c,customerCompanyCode:r,customerCurrency:n,customerTaxCategory:l,customerPaymentTerm:i,customerTax:d,customerRecon:s,customerStreet:u,customerCity:p,customerCountry:m,customerPostalCode:v,customerTelephone:f,customerEmail:y,customerWebsite:g},success:function(o){o.redirect?(e("ct-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("ct-modify-label","Unauthorized!"==o?"Unauthorized user!":"error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#ct-modify #delete-btn").click(function(o){var t=$("#ct-modify #ct_code").val();""==t?e("ct-modify-label","Error! Please select Customer Code you want to delete.","alert-danger"):$.ajax({type:"DELETE",url:"/md-customer",data:{customerCode:t},success:function(o){o.redirect?(e("ct-modify-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("ct-modify-label","Unauthorized!"==o?"Unauthorized user!":"error "+o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}),$("#acgl-create #totalDebit").val(parseFloat(0).toFixed(2)),$("#acgl-create #totalCredit").val(parseFloat(0).toFixed(2)),$("#apvi-create #totalDebit").val(parseFloat(0).toFixed(2)),$("#apvi-create #totalCredit").val(parseFloat(0).toFixed(2)),$("#arci-create #totalDebit").val(parseFloat(0).toFixed(2)),$("#arci-create #totalCredit").val(parseFloat(0).toFixed(2)),$("#acgl-create #companyCode").change(function(e){var o={formID:"acgl-create"};o.selectedCompanyCode=$("#acgl-create #companyCode").val(),o.account="gl",r(o)}),$("#arci-create #companyCode").change(function(e){var o={formID:"arci-create"};o.selectedCompanyCode=$("#arci-create #companyCode").val(),o.account="customer",r(o)}),$("#apvi-create #companyCode").change(function(e){var o={formID:"apvi-create"};o.selectedCompanyCode=$("#apvi-create #companyCode").val(),o.account="vendor",r(o)}),$("#rpvd-create #companyCode").change(function(e){var o={formID:"rpvd-create"};o.selectedCompanyCode=$("#rpvd-create #companyCode").val(),o.account=$("#rpvd-create #transactionType").val(),r(o)}),$("#acgl-create-tbody").on("change",".gl_Account",function(){var e={};e.child=$(this).closest("tr"),e.theValue=$(this).val(),l(0,e)}),$("#arci-create-tbody").on("change",".gl_Account",function(){var e={};e.child=$(this).closest("tr"),e.theValue=$(this).val(),l(0,e)}),$("#apvi-create-tbody").on("change",".gl_Account",function(){var e={};e.child=$(this).closest("tr"),e.theValue=$(this).val(),l(0,e)}),$("#rpvd-create-tbody").on("change",".gl_Account",function(){var e={};e.child=$(this).closest("tr"),e.theValue=$(this).val(),l(0,e)}),$("#acgl-create-tbody").on("keyup",".gl_Amount",function(){i("acgl")}),$("#arci-create-tbody").on("keyup",".gl_Amount",function(){i("arci")}),$("#apvi-create-tbody").on("keyup",".gl_Amount",function(){i("apvi")}),$("#rpvd-create-tbody").on("keyup",".gl_Amount",function(){i("rpvd","dcForm")}),$("#acgl-addItem").on("click",function(){n("acgl",$("#acgl-create #companyCode").val())}),$("#arci-addItem").on("click",function(){n("arci",$("#arci-create #companyCode").val())}),$("#apvi-addItem").on("click",function(){n("apvi",$("#apvi-create #companyCode").val())}),$("#rpvd-addItem").on("click",function(){n("rpvd",$("#rpvd-create #companyCode").val())}),$("#acgl-save-btn").click(function(e){var o={formID:"acgl",account:"gl"};a(o.formID+"-create").form()&&d(o)}),$("#arci-save-btn").click(function(e){var o={formID:"arci",account:"customer"};a(o.formID+"-create").form()&&d(o)}),$("#apvi-save-btn").click(function(e){var o={formID:"apvi",account:"vendor"};a(o.formID+"-create").form()&&d(o)}),$("#acgl-back-btn").click(function(e){location.reload()}),$("#arci-back-btn").click(function(e){location.reload()}),$("#apvi-back-btn").click(function(e){location.reload()}),$("#rp-searchDocKeys #search-btn").click(function(o){if(a("rp-searchDocKeys").form()){var t=$("#rp-searchDocKeys #searchdocumentNumber").val(),c=$("#rp-searchDocKeys #searchcompanyCode").val(),r=$("#rp-searchDocKeys #searchyear").val(),n=0,l={};$.ajax({type:"GET",url:"/main-list",data:{},success:function(o){console.log(o);var a=o.glTransaction_List,i=o.glAccount_list;l.userList=o.user_List,l.userDetails=o.user,a.forEach(function(e){t==e.documentNumber&&r==new Date(e.documentDate).getFullYear()&&c==e.companyCode&&(n=1,l.transaction=e)}),n?($("#searchForm").addClass("d-none"),s(l,i)):e("rp-searchDocKeys-label","No document found.","alert-danger")},error:function(e){console.log(e)}})}}),$("#rp-searchDocRef #refsearch-btn").click(function(o){if(a("rp-searchDocRef").form()){var t=$("#rp-searchDocRef #documentReference").val(),c=0,r={};$.ajax({type:"GET",url:"/main-list",data:{},success:function(o){var a=o.glTransaction_List,n=o.glAccount_list;r.userList=o.user_List,r.userDetails=o.user,a.forEach(function(e){t==e.reference&&(c++,r.transaction=e)}),1==c?($("#searchForm").addClass("d-none"),s(r,n)):e("rp-searchDocRef-label",c>1?"Duplicate reference found.Please try using other search method.":"No document found.","alert-danger")},error:function(e){console.log(e)}})}}),$("#rpvd-update-btn").click(function(e){var o={formID:"rpvd"};o.account=$("#rpvd-create #transactionType").val(),o.docID=$("#rpvd-create #documentID").val(),a(o.formID+"-create").form()&&d(o)}),$("#rpvd-approve-btn").click(function(o){var t=$("#rpvd-create #documentID").val();$.ajax({type:"PATCH",url:"/rp-vd",data:{documentID:t},success:function(o){o.redirect?(e("rpvd-create-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("rpvd-create-label",o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}),$("#genDocSeq-btn").click(function(o){if(a("genDocSeq").form()){var t=$("#genDocSeq #genYear").val();$.ajax({type:"POST",url:"/gl-sequence",data:{year:t},success:function(o){o.redirect?(e("docSeq-label",o.message,"alert-success"),window.setTimeout(function(){window.location=o.redirectURL},1e3)):e("docSeq-label",o.errorMessage,"alert-danger")},error:function(e){console.log(e)}})}}),$("#rpvd-back-btn").click(function(e){location.reload()}),$("#rpmd-select").change(function(e){var o=e.target.value,t={},a=[{title:"#"},{title:"GL Account"},{title:"GL Name"},{title:"Company Code"}],c=[{title:"#"},{title:"Vendor Code"},{title:"Vendor Name"},{title:"Company Code"}],r=[{title:"#"},{title:"Customer Code"},{title:"Customer Name"},{title:"Company Code"}];$.ajax({type:"GET",url:"/main-list",success:function(e){"GL"==o?($.fn.DataTable.isDataTable("#vendorReportTable")&&$("#vendorReportTable").DataTable().destroy(),$.fn.DataTable.isDataTable("#customerReportTable")&&$("#customerReportTable").DataTable().destroy(),$("#rpmd-table").removeClass("d-none"),$("#vendorReportTable").addClass("d-none"),$("#customerReportTable").addClass("d-none"),$("#glReportTable").removeClass("d-none"),t.glAccount=e.glAccount_list,t.companyCode=e.companyCode_list,$("#glReportTable").DataTable({columns:a,data:u(t),retrieve:!0})):"Vendor"==o?($.fn.DataTable.isDataTable("#glReportTable")&&$("#glReportTable").DataTable().destroy(),$.fn.DataTable.isDataTable("#customerReportTable")&&$("#customerReportTable").DataTable().destroy(),$("#rpmd-table").removeClass("d-none"),$("#glReportTable").addClass("d-none"),$("#customerReportTable").addClass("d-none"),$("#vendorReportTable").removeClass("d-none"),t.vendor=e.vendor_List,t.companyCode=e.companyCode_list,$("#vendorReportTable").DataTable({columns:c,data:p(t),retrieve:!0})):"Customer"==o&&($.fn.DataTable.isDataTable("#glReportTable")&&$("#glReportTable").DataTable().destroy(),$.fn.DataTable.isDataTable("#vendorReportTable")&&$("#vendorReportTable").DataTable().destroy(),$("#rpmd-table").removeClass("d-none"),$("#glReportTable").addClass("d-none"),$("#vendorReportTable").addClass("d-none"),$("#customerReportTable").removeClass("d-none"),t.customer=e.customer_List,t.companyCode=e.companyCode_list,$("#customerReportTable").DataTable({columns:r,data:m(t),retrieve:!0}))},error:function(e){console.log(e)}})})});
+
+// $(document).ready(function() {
+ 
+    //////tables
+    $("#companyCodeTable").DataTable();
+    $("#accountTypeTable").DataTable();
+    $("#accountGroupTable").DataTable();
+    $("#glSeriesTable").DataTable();
+    $("#usersTable").DataTable();
+    $("#privTable").DataTable();
+    $("#periodTable").DataTable();
+    $("#reportTable").DataTable();
+  
+  
+  
+     //////dates
+     $(".documentDate").prop("max", new Date().toISOString().split("T")[0]);
+  
+     
+    ///// ALERTS
+    function showLabel(alertId, message,alertType){
+      var id = "#" + alertId;
+      $(id).addClass(alertType).removeClass("d-none");
+      $(id).fadeIn();
+      $(id).text(message);
+     
+      window.setTimeout(function() {
+        $(id).fadeOut("slow", "swing");
+        $(id).addClass("d-none").removeClass(alertType).text("");  }, 2000);
+    }
+  
+    ///// show hidden textBox
+    function showDiv(divID,formID){
+      $("#"+formID+" #"+divID).removeClass("d-none");
+    }
+  
+    ///// hide textBox
+    function hideDiv(divID){
+      $(divID).addClass("d-none");
+    }
+    //////validate form
+    function validateForm(formID)
+    {
+      return $("#"+formID).validate();
+    }
+  
+    ///// clear form
+    function clearForm(formID)
+    {
+      $('#'+formID)[0].reset();
+    }
+  
+    /////////users --------------------------------------------------------
+  
+     //////// table on click
+     $("#usersTable").on("click", "tr", function() {
+      clearForm("users-create");
+      showDiv("onSelectDiv","users-create");
+      $("#users-create #userID").val($(this).find("td")[0].innerText);
+      $("#users-create #userCompanyCode").val($(this).find("td")[1].innerText.split(","));
+      $("#users-create #fullname").val($(this).find("td")[2].innerText); 
+      $("#users-create #username").attr('readonly','readonly').val($(this).find("td")[3].innerText); 
+      $("#users-create #position").val($(this).find("td")[4].innerText);
+  
+      
+    });
+  
+    //// clear button
+    $('#users-clearbtn').click(function(e){ 
+      clearForm("users-create");
+      $("#users-create #onSelectDiv").addClass("d-none");
+      $('#users-create #username').removeAttr('readonly');
+      
+    });
+  
+    ////////////// create --------------------------------------------------------
+    $('#users-addbtn').click(function(e){ 
+  
+      if(validateForm("users-create").form()){
+           var fullname = $('#fullname').val();
+           var position = $('#position').val();
+           var username = $('#username').val();
+           var password = $('#password').val();
+           var companyCode = $('#userCompanyCode').val();
+           var retypepassword = $('#retypepassword').val();
+          
+           if(password===retypepassword) {
+              $.ajax({  
+                type: "POST",
+                url:'/us-create', 
+                data: {username:username,fullname:fullname,position:position,password:password,companyCode:companyCode},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("users-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else if (response=="Unauthorized!") {
+                      showLabel("users-label", "Unauthorized user!","alert-danger");
+                  } else {
+                      showLabel("users-label", JSON.stringify(response.errorMessage),"alert-danger");
+                  }
+                },  
+                    error:function(response){  
+                      console.log(response); 
+                    }  
+              });
+           } else {
+             showLabel("users-label", "Passwords does not match!","alert-danger");
+           }
+     
+      } else {
+      }
+      
+    });
+  
+    ////////////// update --------------------------------------------------------
+    $('#users-updatebtn').click(function(e){ 
+  
+      if(validateForm("users-create").form()){
+            var userId = $('#userID').val();
+            var fullname = $('#fullname').val();
+            var position = $('#position').val();
+            var companyCode = $('#userCompanyCode').val();
+            var username = $('#username').val();
+            var password = $('#password').val();
+            var retypepassword = $('#retypepassword').val();
+  
+            if (userId == "")
+             {
+              showLabel("users-label", "Error! Select a user from table.","alert-danger");
+             }
+  
+            else {
+  
+              if(password==retypepassword) {
+                $.ajax({  
+                    type: "PATCH",
+                    url:'/us-create', 
+                    data: {userId:userId,fullname:fullname,position:position,username:username,password:password,companyCode:companyCode},
+                    success:function(response){ 
+                      
+                    if(response.redirect) {
+                        showLabel("users-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else if (response=="Unauthorized!") {
+                        showLabel("users-label", "Unauthorized user!","alert-danger");
+                    } else {
+                        showLabel("users-label", JSON.stringify(response.errorMessage),"alert-danger");
+                    }
+                    },  
+                    error:function(response){  
+                      console.log(response); 
+                    }  
+                  });  
+              }
+  
+              else {
+                showLabel("users-label", "Passwords does not match!","alert-danger");
+              }
+                  
+            }
+  
+  
+      } else {
+  
+      }
+            
+  });
+  
+  /////////privileges --------------------------------------------------------
+  
+     //////// table on click
+     $("#privTable").on("click", "tr", function() {
+      clearForm("privileges-form");
+      $("#privileges-form #positionID").val($(this).find("td")[0].innerText);
+      $("#privileges-form #privPosition").val($(this).find("td")[1].innerText); 
+        if($(this).find("td")[2].innerText=="Yes"){
+          $("#privileges-form #parkPriv").prop("checked", true);
+        } else {
+          $("#privileges-form #parkPriv").prop("checked", false);
+        }
+        if($(this).find("td")[3].innerText=="Yes"){
+          $("#privileges-form #postPriv").prop("checked", true);
+        } else {
+          $("#privileges-form #postPriv").prop("checked", false);
+        }
+    });
+  
+    //// clear button
+    $('#priv-clearbtn').click(function(e){ 
+      clearForm("privileges-form");
+    });
+  
+    ////////////// create --------------------------------------------------------
+    $('#priv-addbtn').click(function(e){ 
+  
+      if(validateForm("privileges-form").form()){
+           var position = $('#privPosition').val().toLowerCase();
+           var post = 0;
+           var park = 0;
+  
+           if($('#postPriv').prop('checked')) {
+             post = 1;
+  
+           }
+           if($('#parkPriv').prop('checked')) {
+             park = 1;
+           }
+          
+  
+              $.ajax({  
+                type: "POST",
+                url:'/us-privilege', 
+                data: {position:position,post:post,park:park},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("privilege-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else if (response=="Unauthorized!") {
+                      showLabel("privilege-label", "Unauthorized user!","alert-danger");
+                  } else {
+                      showLabel("privilege-label", response.errorMessage,"alert-danger");
+                  }
+                },  
+                    error:function(response){  
+                      console.log(response); 
+                    }  
+              });
+     
+      } else {
+      }
+      
+    });
+  
+    ////////////// update --------------------------------------------------------
+    $('#priv-updatebtn').click(function(e){ 
+  
+      if(validateForm("privileges-form").form()){
+        var position = $('#privPosition').val().toLowerCase();
+        var positionID = $('#positionID').val();
+        var post = 0;
+        var park = 0;
+  
+        if (positionID==""){
+          showLabel("privilege-label", "Error! Select a position from table.","alert-danger");
+        }
+  
+        else {
+          if($('#postPriv').prop('checked')) {
+            post = 1;
+    
+          }
+          if($('#parkPriv').prop('checked')) {
+            park = 1;
+          }
+         
+             $.ajax({  
+               type: "PATCH",
+               url:'/us-privilege', 
+               data: {positionID:positionID,position:position,post:post,park:park},
+               success:function(response){ 
+                 
+                 if(response.redirect) {
+                     showLabel("privilege-label",response.message,"alert-success");
+                     window.setTimeout(function() {
+                       window.location = response.redirectURL;}, 1000);
+                 
+                 } else if (response=="Unauthorized!") {
+                     showLabel("privilege-label", "Unauthorized user!","alert-danger");
+                 } else {
+                     showLabel("privilege-label", response.errorMessage,"alert-danger");
+                 }
+               },  
+                   error:function(response){  
+                     console.log(response); 
+                   }  
+             });
+  
+        }
+   } else {
+   }
+            
+  });
+  
+  
+    /////////company code --------------------------------------------------------
+  
+   //////// table on click
+    $("#companyCodeTable").on("click", "tr", function() {
+      showDiv("onSelectDiv","ccode");
+      $("#ccode #selectedCompanyCode").val($(this).find("td")[1].innerText); 
+      $("#ccode #company_codeID").val($(this).find("td")[0].innerText);
+      $("#ccode #company_code").val($(this).find("td")[1].innerText); 
+      $("#ccode #company_name").val($(this).find("td")[2].innerText);
+      $("#ccode #company_country").val($(this).find("td")[3].innerText); 
+      $("#ccode #company_currency").val($(this).find("td")[4].innerText);
+    });
+  
+    //// clear button
+    $('#ccode-clearbtn').click(function(e){ 
+      clearForm("ccode");
+      hideDiv("#ccode #onSelectDiv");
+    });
+  
+    ////////////// create --------------------------------------------------------
+    $('#ccode-addbtn').click(function(e){ 
+  
+      if(validateForm("ccode").form()){
+           var companyCodeID = $('#company_codeID').val();
+           var companyCode = $('#company_code').val();
+           var companyName = $('#company_name').val();
+           var companyCountry = $('#company_country').val();
+           var companyCurrency = $('#company_currency').val();
+  
+                  $.ajax({  
+                    type: "POST",
+                    url:'/gn-companycode', 
+                    data: {company_codeID:companyCodeID,company_code:companyCode,company_name:companyName,company_country:companyCountry,company_currency:companyCurrency},
+                    success:function(response){ 
+                      
+                      if(response.redirect) {
+                          showLabel("ccode-label",response.message,"alert-success");
+                          window.setTimeout(function() {
+                            window.location = response.redirectURL;}, 1000);
+                      
+                      } else {
+                          if(response.error){
+                            showLabel("ccode-label", response.errorMessage,"alert-danger");
+                          }
+                          else {
+                            showLabel("ccode-label", "Company code exists!","alert-danger");
+                          }
+                      }
+                    },  
+                        error:function(response){  
+                          console.log(response); 
+                        }  
+                  });
+  
+      } else {
+       
+      
+      }
+      
+    });
+  
+    ////////////// update --------------------------------------------------------
+    $('#ccode-updatebtn').click(function(e){ 
+  
+      if(validateForm("ccode").form()){
+        var companyCodeID = $('#company_codeID').val();
+            var companyCode = $('#company_code').val();
+            var companyName = $('#company_name').val();
+            var companyCountry = $('#company_country').val();
+            var companyCurrency = $('#company_currency').val();
+  
+            if (companyCodeID == "")
+             {
+              showLabel("ccode-label", "Error! Select company code from table.","alert-danger");
+             }
+  
+            else {
+                  $.ajax({  
+                    type: "PATCH",
+                    url:'/gn-companycode', 
+                    data: {company_codeID:companyCodeID,company_code:companyCode,company_name:companyName,company_country:companyCountry,company_currency:companyCurrency},
+                    success:function(response){ 
+                      
+                      if(response.redirect) {
+                          showLabel("ccode-label",response.message,"alert-success");
+                          window.setTimeout(function() {
+                            window.location = response.redirectURL;}, 1000);
+                          
+                      
+                      } else {
+                        if(response.error){
+                          showLabel("ccode-label", "error " + response.errorMessage,"alert-danger");
+                        } else {
+                          showLabel("ccode-label", response.message,"alert-danger");
+                        }
+                    }
+                    },  
+                    error:function(response){  
+                      console.log(response); 
+                    }  
+                  });  
+            }
+  
+  
+      } else {
+  
+      }
+            
+  });
+    
+   ////////////// delete --------------------------------------------------------
+   $('#ccode-deletebtn').click(function(e){ 
+  
+    if(validateForm("ccode").form()){
+      var companyCodeID = $('#company_codeID').val();
+  
+          if (companyCodeID == "")
+             {
+              showLabel("ccode-label", "Error! Select company code from table.","alert-danger");
+             }
+  
+          else {
+              $.ajax({  
+                type: "DELETE",
+                url:'/gn-companycode', 
+                data: {company_codeID:companyCodeID},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("ccode-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else {
+                    if(response.error){
+                      showLabel("ccode-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+  
+            }
+    }
+          else{
+  
+          }
+  
+  });
+  
+  /////////control on opening and closing period --------------------------------------------------------
+  
+   //////// table on click
+   $("#periodTable").on("click", "tr", function() {
+    // showDiv("onSelectDiv","ccode");
+    // $("#selectedCompanyCode").val($(this).find("td")[1].innerText); 
+    $("#periodID").val($(this).find("td")[0].innerText);
+    $("#period_accountType").val($(this).find("td")[1].innerText); 
+    $("#period_companycode").val($(this).find("td")[3].innerText); 
+    $("#period_fromAccount").val($(this).find("td")[4].innerText);
+    $("#period_toAccount").val($(this).find("td")[5].innerText);
+    $("#period_fromPeriod").val($(this).find("td")[6].innerText);
+    $("#period_toPeriod").val($(this).find("td")[7].innerText);
+    $("#period_year").val($(this).find("td")[8].innerText);
+    $("#period_status").val($(this).find("td")[9].innerText);
+  });
+  
+  //// clear button
+  $('#period-clearbtn').click(function(e){ 
+    clearForm("controlPeriod");
+  });
+  
+  ////////////// create --------------------------------------------------------
+  $('#period-addbtn').click(function(e){ 
+  
+    if(validateForm("controlPeriod").form()){
+         var accountType = $('#period_accountType').val();
+         var companyCode = $('#period_companycode').val();
+         var fromAccount = $('#period_fromAccount').val();
+         var toAccount = $('#period_toAccount').val();
+         var fromPeriod = $('#period_fromPeriod').val();
+         var toPeriod = $('#period_toPeriod').val();
+         var controlYear = $('#period_year').val();
+         var status = $('#period_status').val();
+  
+                $.ajax({  
+                  type: "POST",
+                  url:'/gn-control', 
+                  data: {accountType:accountType,companyCode:companyCode,fromAccount:fromAccount,toAccount:toAccount,fromPeriod:fromPeriod,toPeriod:toPeriod,controlYear:controlYear,status:status},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("period-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                        if(response.error){
+                          showLabel("period-label", response.errorMessage,"alert-danger");
+                        }
+                        else {
+                          showLabel("period-label", "Control exists!","alert-danger");
+                        }
+                    }
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#period-updatebtn').click(function(e){ 
+  
+    if(validateForm("controlPeriod").form()){
+          var periodID = $('#periodID').val();
+          var accountType = $('#period_accountType').val();
+          var companyCode = $('#period_companycode').val();
+          var fromAccount = $('#period_fromAccount').val();
+          var toAccount = $('#period_toAccount').val();
+          var fromPeriod = $('#period_fromPeriod').val();
+          var toPeriod = $('#period_toPeriod').val();
+          var controlYear = $('#period_year').val();
+          var status = $('#period_status').val();
+        
+          if (periodID == "")
+           {
+            showLabel("period-label", "Error! Select period from table.","alert-danger");
+           }
+  
+          else {
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/gn-control', 
+                  data: {periodID:periodID,accountType:accountType,companyCode:companyCode,fromAccount:fromAccount,toAccount:toAccount,fromPeriod:fromPeriod,toPeriod:toPeriod,controlYear:controlYear,status:status},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("period-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                      if(response.error){
+                        showLabel("period-label", "error " + response.errorMessage,"alert-danger");
+                      } else {
+                        showLabel("period-label", response.message,"alert-danger");
+                      }
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          }
+  
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#period-deletebtn').click(function(e){ 
+  
+    if(validateForm("controlPeriod").form()){
+      var periodID = $('#periodID').val();
+  
+      if (periodID == "")
+      {
+       showLabel("period-label", "Error! Select period from table.","alert-danger");
+      }
+  
+          else {
+              $.ajax({  
+                type: "DELETE",
+                url:'/gn-control', 
+                data: {periodID:periodID},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("period-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else {
+                    if(response.error){
+                      showLabel("period-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+  
+            }
+    }
+          else{
+  
+          }
+  
+  });
+  
+  ///////account type
+  
+   //////// table on click
+   $("#accountTypeTable").on("click", "tr", function() {
+    showDiv("onSelectDiv","acctype");
+    $("#acctype #selectedAccountType").val($(this).find("td")[1].innerText); 
+    $("#acctype #accountTypeID").val($(this).find("td")[0].innerText);
+    $("#acctype #account_type").val($(this).find("td")[1].innerText); 
+    $("#acctype #accountTypeRangeFrom").val($(this).find("td")[2].innerText);
+    $("#acctype #accountTypeRangeTo").val($(this).find("td")[3].innerText);
+  
+  });
+  
+   //// clear button
+   $('#acctype-clearbtn').click(function(e){ 
+    clearForm("acctype");
+    hideDiv("#acctype #onSelectDiv");
+  });
+  
+  //////// create
+  $('#acctype-addbtn').click(function(e){ 
+  
+    if(validateForm("acctype").form()){
+            var account_type = $('#account_type').val();
+            var accountTypeRangeFrom = $('#accountTypeRangeFrom').val();
+            var accountTypeRangeTo = $('#accountTypeRangeTo').val();
+                $.ajax({  
+                  type: "POST",
+                  url:'/gl-accounttype', 
+                  data: {account_type:account_type,accountTypeRangeFrom:accountTypeRangeFrom,accountTypeRangeTo:accountTypeRangeTo},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("acctype-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                        if(response.error){
+                          showLabel("acctype-label", response.errorMessage,"alert-danger");
+                        }
+                        else {
+                          showLabel("acctype-label", response.message,"alert-danger");
+                        }
+                    }
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+  
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#acctype-updatebtn').click(function(e){ 
+  
+    if(validateForm("acctype").form()){
+          var account_type = $('#account_type').val();
+          var account_typeID = $('#accountTypeID').val();
+          var accountTypeRangeFrom = $('#accountTypeRangeFrom').val();
+          var accountTypeRangeTo = $('#accountTypeRangeTo').val();
+  
+          if (account_typeID == "")
+           {
+            showLabel("acctype-label", "Error! Select account type from table.","alert-danger");
+           }
+  
+          else {
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/gl-accounttype', 
+                  data: {account_typeID:account_typeID,account_type:account_type,accountTypeRangeFrom:accountTypeRangeFrom,accountTypeRangeTo:accountTypeRangeTo},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("acctype-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                      if(response.error){
+                        showLabel("acctype-label", "error " + response.errorMessage,"alert-danger");
+                      }else {
+                        showLabel("acctype-label", response.message,"alert-danger");
+                      }
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          }
+  
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#acctype-deletebtn').click(function(e){ 
+  
+    if(validateForm("acctype").form()){
+      var account_typeID = $('#accountTypeID').val();
+  
+          if (account_typeID == "")
+             {
+              showLabel("acctype-label", "Error! Select company code from table.","alert-danger");
+             }
+  
+          else {
+              $.ajax({  
+                type: "DELETE",
+                url:'/gl-accounttype', 
+                data: {account_typeID:account_typeID},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("acctype-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else {
+                    if(response.error){
+                      showLabel("acctype-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+  
+            }
+    }
+          else{
+  
+          }
+  
+  });
+  
+  ///////account group
+  
+   //////// table on click
+   $("#accountGroupTable").on("click", "tr", function() {
+    showDiv("onSelectDiv","accgroup");
+    $("#accgroup #selectedAccountGroup").val($(this).find("td")[1].innerText); 
+    $("#accgroup #accountGroupID").val($(this).find("td")[0].innerText);
+    $("#accgroup #accountGroupName").val($(this).find("td")[1].innerText); 
+    $("#accgroup #accGroup_typeID").val($(this).find("td")[2].innerText); 
+  
+  });
+  
+   //// clear button
+   $('#accgroup-clearbtn').click(function(e){ 
+    clearForm("accgroup");
+    hideDiv("#accgroup #onSelectDiv");
+  });
+  
+  //////// create
+  $('#accgroup-addbtn').click(function(e){ 
+  
+    if(validateForm("accgroup").form()){
+            var accountGrouptypeID = $('#accGroup_typeID').val();
+            var accountGroupName = $('#accountGroupName').val();
+            // var accountGroupRangeFrom = $('#accountGroupRangeFrom').val();
+            // var accountGroupRangeTo = $('#accountGroupRangeTo').val();
+  
+                $.ajax({  
+                  type: "POST",
+                  url:'/gl-accountgroup', 
+                  data: {accountGrouptypeID:accountGrouptypeID,accountGroupName:accountGroupName},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("accgroup-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                        if(response.error){
+                          showLabel("accgroup-label", response.errorMessage,"alert-danger");
+                        }
+                        else {
+                          showLabel("accgroup-label", response.message,"alert-danger");
+                        }
+                    }
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+  
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#accgroup-updatebtn').click(function(e){ 
+  
+    if(validateForm("accgroup").form()){
+      var accountGroupID= $('#accountGroupID').val();
+      var accountGrouptypeID = $('#accGroup_typeID').val();
+      var accountGroupName = $('#accountGroupName').val();
+      // var accountGroupRangeFrom = $('#accountGroupRangeFrom').val();
+      // var accountGroupRangeTo = $('#accountGroupRangeTo').val();
+          
+  
+          if (accountGroupID == "")
+           {
+            showLabel("accgroup-label", "Error! Select account type from table.","alert-danger");
+           }
+  
+          else {
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/gl-accountgroup', 
+                  data: {accountGroupID:accountGroupID,accountGrouptypeID:accountGrouptypeID,accountGroupName:accountGroupName},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("accgroup-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                        
+                    
+                    } else {
+                      if(response.error){
+                        showLabel("accgroup-label", "error " + response.errorMessage,"alert-danger");
+                      }else {
+                        showLabel("accgroup-label", response.message,"alert-danger");
+                      }
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          }
+  
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#accgroup-deletebtn').click(function(e){ 
+  
+    if(validateForm("accgroup").form()){
+      var accountGroupID= $('#accountGroupID').val();
+      var accountGrouptypeID = $('#accGroup_typeID').val();
+  
+        if (accountGroupID == "")
+        {
+        showLabel("accgroup-label", "Error! Select account type from table.","alert-danger");
+        }
+  
+  
+          else {
+              $.ajax({  
+                type: "DELETE",
+                url:'/gl-accountgroup', 
+                data: {accountGroupID:accountGroupID,accountGrouptypeID:accountGrouptypeID},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("accgroup-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else {
+                    if(response.error){
+                      showLabel("accgroup-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+  
+            }
+    }
+          else{
+  
+          }
+  
+  });
+  
+  ///////gl series
+  
+  //  //////// table on click
+   $("#glSeriesTable").on("click", "tr", function() {
+    showDiv("onSelectDiv","glSeries");
+    $("#glSeries #selectedGlSeries").val($(this).find("td")[1].innerText); 
+    $("#glSeries #glSeries_id").val($(this).find("td")[0].innerText);
+    $("#glSeries #accountGL").val($(this).find("td")[1].innerText); 
+    $("#glSeries #seriesGL").val($(this).find("td")[2].innerText); 
+  
+  });
+  
+   //// clear button
+   $('#glSeries-clearbtn').click(function(e){ 
+    clearForm("glSeries");
+    hideDiv("#glSeries #onSelectDiv");
+  });
+  
+  //////// create
+  $('#glSeries-addbtn').click(function(e){ 
+  
+    if(validateForm("glSeries").form()){
+            var accountGl = $('#accountGL').val();
+            var seriesGl = $('#seriesGL').val();
+  
+                $.ajax({  
+                  type: "POST",
+                  url:'/gl-series', 
+                  data: {accountGl:accountGl,seriesGl:seriesGl},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("glSeries-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else {
+                        if(response.error){
+                          showLabel("glSeries-label", response.errorMessage,"alert-danger");
+                        }
+                        else {
+                          showLabel("glSeries-label", response.message,"alert-danger");
+                        }
+                    }
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#glSeries-updatebtn').click(function(e){ 
+  
+    if(validateForm("glSeries").form()){
+      var accountGl = $('#accountGL').val();
+      var seriesGl = $('#seriesGL').val();
+      var seriesGl_id = $('#glSeries_id').val();
+  
+          if (seriesGl_id == "")
+           {
+            showLabel("glSeries-label", "Error! Select account from table.","alert-danger");
+           }
+  
+          else {
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/gl-series', 
+                  data: {accountGl:accountGl,seriesGl:seriesGl},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("glSeries-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                        
+                    
+                    } else {
+                      if(response.error){
+                        showLabel("glSeries-label", "error " + response.errorMessage,"alert-danger");
+                      }else {
+                        showLabel("glSeries-label", response.message,"alert-danger");
+                      }
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          }
+  
+  
+    } else {
+  
+    }
+          
+  });
+  
+  
+  ////////////// delete --------------------------------------------------------
+  $('#glSeries-deletebtn').click(function(e){ 
+  
+    if(validateForm("glSeries").form()){
+      var glSeries_id= $('#glSeries_id').val();
+      
+        if (glSeries_id == "")
+        {
+        showLabel("glSeries-label", "Error! Select account from table.","alert-danger");
+        }
+  
+  
+          else {
+              $.ajax({  
+                type: "DELETE",
+                url:'/gl-series', 
+                data: {glSeries_id:glSeries_id},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("glSeries-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else {
+                    if(response.error){
+                      showLabel("glSeries-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+  
+            }
+    }
+          else{
+  
+          }
+  
+  });
+  
+  
+  /////////////////////////////////////// main pages
+  
+  ////////////////////////////////////////////// GL -MASTER DATA
+  
+   $("#gl-create #acc_type").change(function(e) {
+     var selectedAcc_type = $("#gl-create #acc_type").val(); 
+   
+     if (selectedAcc_type){
+          $.ajax({  
+            type: "GET",
+            url:'/get-accountType_list', 
+            data: {},
+            success:function(response){ 
+                var foundAccountType_list = response;
+                $('#gl-create #acc_group').empty();
+                $('#gl-create #acc_group').append('<option selected disabled> Choose... </option>');
+                foundAccountType_list.forEach(function(foundAccountType){
+                  if(foundAccountType._id==selectedAcc_type){
+                    foundAccountType.accountGroup.forEach(function(accountGroup) {
+                      $('#gl-create #acc_group').append('<option value="' + accountGroup._id + '">' + accountGroup.accountGroup + '</option>');
+                    })
+                  }
+                });
+            },  
+            error:function(response){  
+              console.log(response); 
+            }  
+          });  
+     }
+   });
+  
+  
+  //////// create
+  $('#gl-create-btn').click(function(e){ 
+  
+    if(validateForm("gl-create").form()){
+          var glAccount =  $("#gl-create #gl_account").val(); 
+          var companyCode = $("#gl-create #c_code").val();
+          var accountType = $("#gl-create #acc_type").val();
+          var accountGroup = $("#gl-create #acc_group").val();
+          var glName = $("#gl-create #gl_name").val();
+          var accountCurrency = $("#gl-create #acc_currency").val();
+          var taxCategory = $("#gl-create #tax_category").val();
+          var descShort = $("#gl-create #desc_short").val();
+          var descLong = $("#gl-create #desc_long").val();
+         
+                $.ajax({  
+                  type: "POST",
+                  url:'/md-gl', 
+                  data: {glAccount:glAccount,companyCode:companyCode,accountType:accountType,accountGroup:accountGroup,glName:glName,accountCurrency:accountCurrency,taxCategory:taxCategory,descShort:descShort,descLong:descLong},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("gl-create-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                    } else if (response=="Unauthorized!") {
+                          showLabel("gl-create-label", "Unauthorized user!","alert-danger");
+                        }
+  
+                        else{
+                          showLabel("gl-create-label", response.errorMessage,"alert-danger");
+                        }
+                        
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+  
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  
+  //////// modify - on change
+  
+  $("#gl-modify #gl_account").change(function(e) {
+    var selectedGl_account = $("#gl-modify #gl_account").val(); 
+   
+    if (selectedGl_account){
+         $.ajax({  
+           type: "GET",
+           url:'/get-accounts_list', 
+           data: {},
+           success:function(response){ 
+               var foundGlAccount_list = response.glAccount_list;
+               var accountType_list= response.accountType_list; 
+               $('#gl-modify #acc_group').empty().append('<option selected disabled> Choose... </option>');
+              foundGlAccount_list.forEach(function(foundGlAccount) {
+                
+                if(foundGlAccount._id==selectedGl_account) {
+                  $("#gl-modify #c_code").val(foundGlAccount.companyCode); 
+                  $("#gl-modify #acc_type").val(foundGlAccount.accountType);
+                    accountType_list.forEach(function(accountType) {
+                        if(foundGlAccount.accountType==accountType._id){
+                          accountType.accountGroup.forEach(function(accountGroup) {
+                            if(foundGlAccount.accountGroup==accountGroup._id){
+                              $('#gl-modify #acc_group').append('<option value="' + accountGroup._id + '" selected>' + accountGroup.accountGroup + '</option>');
+                            } else {
+                              $('#gl-modify #acc_group').append('<option value="' + accountGroup._id + '">' + accountGroup.accountGroup + '</option>');
+                            }
+                          });
+                        }
+                    });
+                  $("#gl-modify #gl_name").val(foundGlAccount.glName);  
+                  $("#gl-modify #acc_currency").val(foundGlAccount.accountCurrency);
+                  $("#gl-modify #desc_short").val(foundGlAccount.descShort);
+                  $("#gl-modify #desc_long").val(foundGlAccount.descLong);
+                }
+              });
+           },  
+           error:function(response){  
+             console.log(response); 
+           }  
+         });  
+    }
+  });
+  ///on change 
+  $("#gl-modify #acc_type").change(function(e) {
+    var selectedAcc_type = $("#gl-modify #acc_type").val(); 
+  
+    if (selectedAcc_type){
+         $.ajax({  
+           type: "GET",
+           url:'/get-accountType_list', 
+           data: {},
+           success:function(response){ 
+               var foundAccountType_list = response;
+               $('#gl-modify #acc_group').empty();
+               $('#gl-modify #acc_group').append('<option selected disabled> Choose... </option>');
+               foundAccountType_list.forEach(function(foundAccountType){
+                 if(foundAccountType._id==selectedAcc_type){
+                   foundAccountType.accountGroup.forEach(function(accountGroup) {
+                     $('#gl-modify #acc_group').append('<option value="' + accountGroup._id + '">' + accountGroup.accountGroup + '</option>');
+                   })
+                 }
+               });
+           },  
+           error:function(response){  
+             console.log(response); 
+           }  
+         });  
+    }
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#gl-modify #update-btn').click(function(e){ 
+  
+    if(validateForm("gl-modify").form()){
+          var glAccount =  $("#gl-modify #gl_account").val(); 
+          var companyCode = $("#gl-modify #c_code").val();
+          var accountType = $("#gl-modify #acc_type").val();
+          var accountGroup = $("#gl-modify #acc_group").val();
+          var glName = $("#gl-modify #gl_name").val();
+          var accountCurrency = $("#gl-modify #acc_currency").val();
+          var taxCategory = $("#gl-modify #tax_category").val();
+          var descShort = $("#gl-modify #desc_short").val();
+          var descLong = $("#gl-modify #desc_long").val();
+          
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/md-gl', 
+                  data: {glAccount:glAccount,companyCode:companyCode,accountType:accountType,accountGroup:accountGroup,glName:glName,accountCurrency:accountCurrency,taxCategory:taxCategory,descShort:descShort,descLong:descLong},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                      showLabel("gl-modify-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                    } else if (response=="Unauthorized!") {
+                        showLabel("gl-modify-label", "Unauthorized user!","alert-danger");
+                      }
+  
+                      else{
+                        showLabel("gl-modify-label", response.errorMessage,"alert-danger");
+                      }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#gl-modify #delete-btn').click(function(e){ 
+  
+    var glAccount=$("#gl-modify #gl_account").val(); 
+  
+        if (glAccount === null)
+        {
+        showLabel("gl-modify-label", "Error! Please select GL Account you want to delete.","alert-danger");
+        } 
+        else {
+          $.ajax({  
+            type: "DELETE",
+            url:'/md-gl', 
+            data: {glAccount:glAccount},
+            success:function(response){ 
+              
+              if(response.redirect) {
+                  showLabel("gl-modify-label",response.message,"alert-success");
+                  window.setTimeout(function() {
+                    window.location = response.redirectURL;}, 1000);
+              
+                  } else if (response=="Unauthorized!") {
+                    showLabel("gl-modify-label", "Unauthorized user!","alert-danger");
+                  }
+  
+                  else{
+                    showLabel("gl-modify-label", response.errorMessage,"alert-danger");
+                  }
+            },  
+            error:function(response){  
+              console.log(response); 
+            }  
+          });  
+        }
+  
+             
+  });
+  
+  ////////////////////////////////////////////// VENDOR - MASTER DATA
+  //////// create
+  $('#vd-create-btn').click(function(e){ 
+  
+    if(validateForm("vd-create").form()){
+  
+          var vendorCode = $("#vd-create #vd_code").val(); 
+          var vendorName = $("#vd-create #vd_name").val();
+          var vendorCompanyCode = $("#vd-create #vd_companycode").val();
+          var vendorCurrency = $("#vd-create #vd_currency").val();
+          var vendorTaxCategory = $("#vd-create #vd_taxcategory").val();
+          var vendorPaymentTerm = $("#vd-create #vd_term").val();
+          var vendorTax = $("#vd-create #vd_tax").val();
+          var vendorRecon = $("#vd-create #vd_recon").val();
+          var vendorStreet = $("#vd-create #vd_street").val();
+          var vendorCity = $("#vd-create #vd_city").val();
+          var vendorCountry = $("#vd-create #vd_country").val();
+          var vendorPostalCode = $("#vd-create #vd_postalcode").val();
+          var vendorTelephone = $("#vd-create #vd_telephone").val();
+          var vendorEmail = $("#vd-create #vd_email").val();
+          var vendorWebsite = $("#vd-create #vd_website").val();
+         
+                $.ajax({  
+                  type: "POST",
+                  url:'/md-vendor', 
+                  data: {vendorCode:vendorCode,vendorName:vendorName,vendorCompanyCode:vendorCompanyCode,vendorCurrency:vendorCurrency,vendorTaxCategory:vendorTaxCategory,vendorPaymentTerm:vendorPaymentTerm,vendorTax:vendorTax,vendorRecon:vendorRecon,vendorStreet:vendorStreet,vendorCity:vendorCity,vendorCountry:vendorCountry,vendorPostalCode:vendorPostalCode,vendorTelephone:vendorTelephone,vendorEmail:vendorEmail,vendorWebsite:vendorWebsite},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("vd-create-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                    
+                        } else if (response=="Unauthorized!") {
+                          showLabel("vd-create-label", "Unauthorized user!","alert-danger");
+                        } else {
+                          showLabel("vd-create-label", response.errorMessage,"alert-danger");
+                        }
+                        
+                  },  
+                      error:function(response){  
+                        console.log(response); 
+                      }  
+                });
+  
+  
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  //////// modify - on change
+  
+  $("#vd-modify #vd_code").change(function(e) {
+    var selectedVd_code = $("#vd-modify #vd_code").val(); 
+  
+    if (selectedVd_code){
+         $.ajax({  
+           type: "GET",
+           url:'/get-vendor_list', 
+           data: {},
+           success:function(response){ 
+               var foundVendor_list = response;
+              //  $('#vd-modify #vd_companycode').empty().append('<option selected disabled> Choose... </option>');
+               foundVendor_list.forEach(function(foundVendor) {
+                
+                if(foundVendor._id==selectedVd_code) {
+  
+                  $("#vd-modify #vd_name").val(foundVendor.vendorName);
+                  $("#vd-modify #vd_companycode").val(foundVendor.vendorCompanyCode);
+                  $("#vd-modify #vd_currency").val(foundVendor.vendorCurrency);
+                  $("#vd-modify #vd_taxcategory").val(foundVendor.vendorTaxCategory);
+                  $("#vd-modify #vd_term").val(foundVendor.vendorPaymentTerm);
+                  $("#vd-modify #vd_tax").val(foundVendor.vendorTax);
+                  $("#vd-modify #vd_recon").val(foundVendor.vendorRecon);
+                  $("#vd-modify #vd_street").val(foundVendor.vendorStreet);
+                  $("#vd-modify #vd_city").val(foundVendor.vendorCity);
+                  $("#vd-modify #vd_country").val(foundVendor.vendorCountry);
+                  $("#vd-modify #vd_postalcode").val(foundVendor.vendorPostalCode);
+                  $("#vd-modify #vd_telephone").val(foundVendor.vendorTelephone);
+                  $("#vd-modify #vd_email").val(foundVendor.vendorEmail);
+                  $("#vd-modify #vd_website").val(foundVendor.vendorWebsite);
+  
+                }
+              });
+           },  
+           error:function(response){  
+             console.log(response); 
+           }  
+         });  
+    }
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#vd-modify #update-btn').click(function(e){ 
+  
+    if(validateForm("vd-modify").form()){
+  
+        var vendorCode = $("#vd-modify #vd_code").val(); 
+        var vendorName = $("#vd-modify #vd_name").val();
+        var vendorCompanyCode = $("#vd-modify #vd_companycode").val();
+        var vendorCurrency = $("#vd-modify #vd_currency").val();
+        var vendorTaxCategory = $("#vd-modify #vd_taxcategory").val();
+        var vendorPaymentTerm = $("#vd-modify #vd_term").val();
+        var vendorTax = $("#vd-modify #vd_tax").val();
+        var vendorRecon = $("#vd-modify #vd_recon").val();
+        var vendorStreet = $("#vd-modify #vd_street").val();
+        var vendorCity = $("#vd-modify #vd_city").val();
+        var vendorCountry = $("#vd-modify #vd_country").val();
+        var vendorPostalCode = $("#vd-modify #vd_postalcode").val();
+        var vendorTelephone = $("#vd-modify #vd_telephone").val();
+        var vendorEmail = $("#vd-modify #vd_email").val();
+        var vendorWebsite = $("#vd-modify #vd_website").val();
+          
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/md-vendor', 
+                  data: {vendorCode:vendorCode,vendorName:vendorName,vendorCompanyCode:vendorCompanyCode,vendorCurrency:vendorCurrency,vendorTaxCategory:vendorTaxCategory,vendorPaymentTerm:vendorPaymentTerm,vendorTax:vendorTax,vendorRecon:vendorRecon,vendorStreet:vendorStreet,vendorCity:vendorCity,vendorCountry:vendorCountry,vendorPostalCode:vendorPostalCode,vendorTelephone:vendorTelephone,vendorEmail:vendorEmail,vendorWebsite:vendorWebsite},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("vd-modify-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                        
+                    
+                    } else if (response=="Unauthorized!") {
+                      showLabel("vd-modify-label", "Unauthorized user!","alert-danger");
+                    } else {
+                        showLabel("vd-modify-label", "error " + response.errorMessage,"alert-danger");
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#vd-modify #delete-btn').click(function(e){ 
+  
+    var vendor_code =$("#vd-modify #vd_code").val();
+  
+        if (vendor_code == "")
+        {
+         showLabel("vd-modify-label", "Error! Please select Vendor Code you want to delete.","alert-danger");
+        }
+  
+        else {
+  
+          $.ajax({  
+                type: "DELETE",
+                url:'/md-vendor', 
+                data: {vendorCode:vendor_code},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("vd-modify-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else if (response=="Unauthorized!") {
+                    showLabel("vd-modify-label", "Unauthorized user!","alert-danger");
+                  } else {
+                      showLabel("vd-modify-label", "error " + response.errorMessage,"alert-danger");
+                    }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+        }
+  
+              
+  });
+  
+  ///////////////////////////////////////////// CUSTOMER - MASTER DATA
+  //////// create
+  $('#ct-create-btn').click(function(e){ 
+  
+    if(validateForm("ct-create").form()){
+  
+      var customerCode = $("#ct-create #ct_code").val(); 
+      var customerName = $("#ct-create #ct_name").val();
+      var customerCompanyCode = $("#ct-create #ct_companycode").val();
+      var customerCurrency = $("#ct-create #ct_currency").val();
+      var customerTaxCategory = $("#ct-create #ct_taxcategory").val();
+      var customerPaymentTerm = $("#ct-create #ct_term").val();
+      var customerTax = $("#ct-create #ct_tax").val();
+      var customerRecon = $("#ct-create #ct_recon").val();
+      var customerStreet = $("#ct-create #ct_street").val();
+      var customerCity = $("#ct-create #ct_city").val();
+      var customerCountry = $("#ct-create #ct_country").val();
+      var customerPostalCode = $("#ct-create #ct_postalcode").val();
+      var customerTelephone = $("#ct-create #ct_telephone").val();
+      var customerEmail = $("#ct-create #ct_email").val();
+      var customerWebsite = $("#ct-create #ct_website").val();
+     
+            $.ajax({  
+              type: "POST",
+              url:'/md-customer', 
+              data: {customerCode:customerCode,customerName:customerName,customerCompanyCode:customerCompanyCode,customerCurrency:customerCurrency,customerTaxCategory:customerTaxCategory,customerPaymentTerm:customerPaymentTerm,customerTax:customerTax,customerRecon:customerRecon,customerStreet:customerStreet,customerCity:customerCity,customerCountry:customerCountry,customerPostalCode:customerPostalCode,customerTelephone:customerTelephone,customerEmail:customerEmail,customerWebsite:customerWebsite},
+              success:function(response){ 
+                
+                if(response.redirect) {
+                    showLabel("ct-create-label",response.message,"alert-success");
+                    window.setTimeout(function() {
+                      window.location = response.redirectURL;}, 1000);
+                
+                } else if (response=="Unauthorized!") {
+                  showLabel("ct-create-label", "Unauthorized user!","alert-danger");
+                } else {
+                      showLabel("ct-create-label", response.errorMessage,"alert-danger");
+                    }
+                    
+              },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+            });
+  
+  
+  
+    } else {
+     
+    
+    }
+    
+  });
+  
+  //////// modify - on change
+  
+  $("#ct-modify #ct_code").change(function(e) {
+    var selectedCt_code = $("#ct-modify #ct_code").val(); 
+  
+    if (selectedCt_code){
+      $.ajax({  
+        type: "GET",
+        url:'/get-customer_list', 
+        data: {},
+        success:function(response){ 
+            var foundCustomer_list = response;
+           //  $('#ct-modify #ct_companycode').empty().append('<option selected disabled> Choose... </option>');
+           foundCustomer_list.forEach(function(foundCustomer) {
+             
+             if(foundCustomer._id==selectedCt_code) {
+  
+              $("#ct-modify #ct_name").val(foundCustomer.customerName);
+              $("#ct-modify #ct_companycode").val(foundCustomer.customerCompanyCode);
+              $("#ct-modify #ct_currency").val(foundCustomer.customerCurrency);
+              $("#ct-modify #ct_taxcategory").val(foundCustomer.customerTaxCategory);
+              $("#ct-modify #ct_term").val(foundCustomer.customerPaymentTerm);
+              $("#ct-modify #ct_tax").val(foundCustomer.customerTax);
+              $("#ct-modify #ct_recon").val(foundCustomer.customerRecon);
+              $("#ct-modify #ct_street").val(foundCustomer.customerStreet);
+              $("#ct-modify #ct_city").val(foundCustomer.customerCity);
+              $("#ct-modify #ct_country").val(foundCustomer.customerCountry);
+              $("#ct-modify #ct_postalcode").val(foundCustomer.customerPostalCode);
+              $("#ct-modify #ct_telephone").val(foundCustomer.customerTelephone);
+              $("#ct-modify #ct_email").val(foundCustomer.customerEmail);
+              $("#ct-modify #ct_website").val(foundCustomer.customerWebsite);
+  
+             }
+           });
+        },  
+        error:function(response){  
+          console.log(response); 
+        }  
+      });  
+  }
+  });
+  
+  ////////////// update --------------------------------------------------------
+  $('#ct-modify #update-btn').click(function(e){ 
+  
+    if(validateForm("ct-modify").form()){
+  
+      var customerCode = $("#ct-modify #ct_code").val(); 
+      var customerName = $("#ct-modify #ct_name").val();
+      var customerCompanyCode = $("#ct-modify #ct_companycode").val();
+      var customerCurrency = $("#ct-modify #ct_currency").val();
+      var customerTaxCategory = $("#ct-modify #ct_taxcategory").val();
+      var customerPaymentTerm = $("#ct-modify #ct_term").val();
+      var customerTax = $("#ct-modify #ct_tax").val();
+      var customerRecon = $("#ct-modify #ct_recon").val();
+      var customerStreet = $("#ct-modify #ct_street").val();
+      var customerCity = $("#ct-modify #ct_city").val();
+      var customerCountry = $("#ct-modify #ct_country").val();
+      var customerPostalCode = $("#ct-modify #ct_postalcode").val();
+      var customerTelephone = $("#ct-modify #ct_telephone").val();
+      var customerEmail = $("#ct-modify #ct_email").val();
+      var customerWebsite = $("#ct-modify #ct_website").val();
+          
+                $.ajax({  
+                  type: "PATCH",
+                  url:'/md-customer', 
+                  data: {customerCode:customerCode,customerName:customerName,customerCompanyCode:customerCompanyCode,customerCurrency:customerCurrency,customerTaxCategory:customerTaxCategory,customerPaymentTerm:customerPaymentTerm,customerTax:customerTax,customerRecon:customerRecon,customerStreet:customerStreet,customerCity:customerCity,customerCountry:customerCountry,customerPostalCode:customerPostalCode,customerTelephone:customerTelephone,customerEmail:customerEmail,customerWebsite:customerWebsite},
+                  success:function(response){ 
+                    
+                    if(response.redirect) {
+                        showLabel("ct-modify-label",response.message,"alert-success");
+                        window.setTimeout(function() {
+                          window.location = response.redirectURL;}, 1000);
+                        
+                    
+                    } else if (response=="Unauthorized!") {
+                      showLabel("ct-modify-label", "Unauthorized user!","alert-danger");
+                    } else {
+                        showLabel("ct-modify-label", "error " + response.errorMessage,"alert-danger");
+                  }
+                  },  
+                  error:function(response){  
+                    console.log(response); 
+                  }  
+                });  
+          
+  
+    } else {
+  
+    }
+          
+  });
+  
+  ////////////// delete --------------------------------------------------------
+  $('#ct-modify #delete-btn').click(function(e){ 
+  
+    var customer_code =$("#ct-modify #ct_code").val();
+  
+        if (customer_code == "")
+        {
+         showLabel("ct-modify-label", "Error! Please select Customer Code you want to delete.","alert-danger");
+        }
+  
+        else {
+  
+          $.ajax({  
+                type: "DELETE",
+                url:'/md-customer', 
+                data: {customerCode:customer_code},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      showLabel("ct-modify-label",response.message,"alert-success");
+                      window.setTimeout(function() {
+                        window.location = response.redirectURL;}, 1000);
+                  
+                  } else if (response=="Unauthorized!") {
+                    showLabel("ct-modify-label", "Unauthorized user!","alert-danger");
+                  } else {
+                      showLabel("ct-modify-label", "error " + response.errorMessage,"alert-danger");
+                }
+                },  
+                error:function(response){  
+                  console.log(response); 
+                }  
+              });  
+        }
+  
+              
+  });
+  
+  /////////////// TRANSACTIONS
+  // Denotes total number of rows
+  // var rowIdx = 1;
+  
+  // default values
+  $('#acgl-create #totalDebit').val(parseFloat(0).toFixed(2));
+  $('#acgl-create #totalCredit').val(parseFloat(0).toFixed(2));
+  $('#apvi-create #totalDebit').val(parseFloat(0).toFixed(2));
+  $('#apvi-create #totalCredit').val(parseFloat(0).toFixed(2));
+  $('#arci-create #totalDebit').val(parseFloat(0).toFixed(2));
+  $('#arci-create #totalCredit').val(parseFloat(0).toFixed(2));
+  
+  function onChangeCompanyCode(details) {
+  
+    var selectedCompanyCode = details.selectedCompanyCode;
+  
+    var formID = details.formID;
+    var account = details.account;
+  
+    if (selectedCompanyCode){
+         $.ajax({  
+           type: "GET",
+           url:'/get-changecompanycode_list', 
+           data: {},
+           success:function(response){ 
+             var foundGlAccount_list = response.glAccount_list;
+             if(account=="customer"){
+              var foundList = response.customer_List;
+               $("#"+formID+" #companyName").empty();
+               $("#"+formID+" #companyName").append('<option selected disabled> Choose... </option>');
+               foundList.forEach(function(foundItem){
+                
+                 if(foundItem.customerCompanyCode==selectedCompanyCode){
+                     $("#"+formID+" #companyName").append('<option value="' + foundItem._id + '">' + foundItem.customerCode + " -  "+ foundItem.customerName +'</option>');
+                 }
+               });
+             }
+             else if(account=="vendor"){
+              var foundList = response.vendor_List;
+               $("#"+formID+" #companyName").empty();
+               $("#"+formID+" #companyName").append('<option selected disabled> Choose... </option>');
+               foundList.forEach(function(foundItem){
+                 if(foundItem.vendorCompanyCode==selectedCompanyCode){
+                     $("#"+formID+" #companyName").append('<option value="' + foundItem._id + '">' + foundItem.vendorCode + " -  "+ foundItem.vendorName +'</option>');
+                 }
+               });
+             }
+             else if(account=="gl"){
+              var customerfoundList = response.customer_List;
+              var vendorfoundList = response.vendor_List;
+               $("#"+formID+" #companyName").empty();
+               $("#"+formID+" #companyName").append('<option selected disabled> Choose... </option>');
+               
+               customerfoundList.forEach(function(cfoundItem){
+                 if(cfoundItem.customerCompanyCode==selectedCompanyCode){
+                     $("#"+formID+" #companyName").append('<option value="' + cfoundItem._id + '">' + cfoundItem.customerCode + " -  "+ cfoundItem.customerName +'</option>');
+                 }
+               });
+               vendorfoundList.forEach(function(vfoundItem){
+                if(vfoundItem.vendorCompanyCode==selectedCompanyCode){
+                    $("#"+formID+" #companyName").append('<option value="' + vfoundItem._id + '">' + vfoundItem.vendorCode + " -  "+ vfoundItem.vendorName +'</option>');
+                }
+              });
+             }
+  
+             if(details.companyName)
+              {
+                $("#rpvd-create #companyName").val(details.companyName);
+              } else {
+                $("#"+formID+"-tbody").find("tr:first").find("input,select").val("");
+                $("#"+formID+"-tbody").find("tr:gt(0)").remove();
+                $("#"+formID+"-tbody").find("tr:first").find(".gl_Account").empty().append('<option selected disabled>Choose..</option>');
+                if(formID != "rpvd-create") {
+                 $("#"+formID+"-table-form")[0].reset();
+                 $('#'+formID+' #totalDebit').val(parseFloat(0).toFixed(2));
+                 $('#'+formID+' #totalCredit').val(parseFloat(0).toFixed(2));
+                
+                }
+              }
+           
+            //  $("#"+formID+"-tbody #gl_Account_td").empty();
+            //  $("#"+formID+"-tbody #gl_Account_td").append('<option selected disabled>Choose..</option>');
+            
+             foundGlAccount_list.forEach(function(glAccount){ 
+                glAccount.companyCode.forEach(function(accCompanyCode){
+                  if(selectedCompanyCode == accCompanyCode) {
+                    $("#"+formID+"-tbody").find("tr:first").find(".gl_Account").append("<option value='" + glAccount._id +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>");
+                    console.log("this "+glAccount.glAccount);
+                  }
+                });
+            });
+           },  
+           error:function(response){  
+             console.log(response); 
+           }  
+         });  
+    }
+  };
+  
+  // $("#acgl-create #companyCode").change(function(e) {
+  //     var details = {};
+  //     details.formID = "acgl-create";
+  //     details.selectedCompanyCode = $("#acgl-create #companyCode").val();
+  //     details.account = "customer";
+  //     // companyName
+  //     onChangeCompanyCode(details);
+  // });
+  
+  $("#acgl-create #companyCode").change(function(e) {
+   
+    var details = {};
+    details.formID = "acgl-create";
+    details.selectedCompanyCode = $("#acgl-create #companyCode").val();
+    details.account = "gl";
+    // companyName
+    onChangeCompanyCode(details);
+  });
+  
+  $("#arci-create #companyCode").change(function(e) {
+    var details = {};
+    details.formID = "arci-create";
+    details.selectedCompanyCode = $("#arci-create #companyCode").val();
+    details.account = "customer";
+    
+    // companyName
+    onChangeCompanyCode(details);
+  });
+  
+  $("#apvi-create #companyCode").change(function(e) {
+    var details = {};
+    details.formID = "apvi-create";
+    details.selectedCompanyCode = $("#apvi-create #companyCode").val();
+    details.account = "vendor";
+    // companyName
+    onChangeCompanyCode(details);
+  });
+  
+  $("#rpvd-create #companyCode").change(function(e) {
+    var details = {};
+    details.formID = "rpvd-create";
+    details.selectedCompanyCode = $("#rpvd-create #companyCode").val();
+    details.account = $("#rpvd-create #transactionType").val();
+    // companyName
+    onChangeCompanyCode(details);
+  
+  });
+  
+  
+  
+  ////FUNCTIONS
+  
+  // add item/row
+  function addRow(formID,selectedCompanyCode) {
+  
+    $.ajax({  
+      type: "GET",
+      url:'/get-glUser_list', 
+      data: {},
+      success:function(response){ 
+          var chunk = {};
+          chunk.selectedCompanyCode=selectedCompanyCode;
+          chunk.foundGlAccount_list = response.glAccount_list;
+          chunk.user = response.user;
+          $("#"+formID+"-create-tbody").append(
+            buildGLTable(chunk));
+           
+      },  
+      error:function(response){  
+        console.log(response); 
+      }  
+    });  
+  
+  };
+  
+  // append row in table
+  function buildGLTable (chunk) {
+    var tblRow="";
+    tblRow +=  "<tr id='R'>";
+    tblRow += "<td class='row-gl'>";
+    tblRow += "<select name='' class='gl_Account' > ";
+    tblRow += "<option selected disabled>Choose..</option>";
+   
+    chunk.foundGlAccount_list.forEach(function(glAccount){ 
+      if(chunk.user.position == "admin") {
+        tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>";
+      } else {
+        glAccount.companyCode.forEach(function(accCompanyCode){
+          if(chunk.selectedCompanyCode.toString() == accCompanyCode.toString()) {
+            tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>";
+          }
+        });
+      }
+    });
+    
+      
+    
+    tblRow += "</td>";
+    tblRow += "<td class='row-index'><input type='text' readonly/></td>";
+    tblRow += "<td class='row-dc'> <select class='dc'>";
+    tblRow += "<option value='debit'>Debit</option> <option value='credit'>Credit</option>";
+    tblRow += "</select></td>";
+    tblRow += "<td class='row-amount'><input type='text' class='gl_Amount' /></td>";
+    tblRow += "<td class='row-cost'><input type='text' /></td>";
+    tblRow += "</tr>";
+  
+    return tblRow;
+  }
+  
+  // populate table 
+  function populateGLTable (details,foundGLAccount_list) {
+  
+    var foundJentry = details.transaction.jEntry;
+    var jEntry_length = foundJentry.length;
+    var tableRows = [];
+    var i=0;
+  
+    
+    foundJentry.forEach(function(jentry) {
+        var tblRow="";
+        tblRow +=  "<tr>";
+        tblRow += "<td class='row-gl'>";
+        tblRow += "<select name='' class='gl_Account' > ";
+        tblRow +=  "<option selected disabled>Choose..</option>";
+  
+        foundGLAccount_list.forEach(function(glAccount){ 
+          if(details.userDetails.position == "admin") {
+            tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>";
+            if(jentry.glID == glAccount._id) {
+              tblRow +=  "<option selected  value='" + jentry.glID +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>"; }
+          } else {
+            glAccount.companyCode.forEach(function(accCompanyCode){
+              if(details.transaction.companyCode.toString() == accCompanyCode.toString()) {
+                if(jentry.glID == glAccount._id) {
+                  tblRow +=  "<option selected  value='" + jentry.glID +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>"; 
+                }
+               else {
+                tblRow +=  "<option value='" + glAccount._id +"' >" + glAccount.glAccount + " - " + glAccount.glName +  "</option>";
+              }
+            }
+            });
+          }
+         
+        });
+        tblRow += "</td>";
+  
+        foundGLAccount_list.forEach(function(gl){
+          if(gl._id == jentry.glID)
+          tblRow += "<td class='row-index'><input type='text' value='"+ gl.glName+"' /></td>";
+         });
+  
+        tblRow += "<td class='row-dc'> <select class='dc'>";
+        if (jentry.dcEntry=="debit") {
+          tblRow += "<option value='debit' selected>Debit</option> <option value='credit'>Credit</option></select></td>";
+        } else if(jentry.dcEntry=="credit") {
+          tblRow += "<option value='debit' >Debit</option> <option value='credit' selected>Credit</option></select></td>";
+        }
+        // tblRow += "</select></td>";
+        tblRow += "<td class='row-amount'><input type='text' class='gl_Amount' value='"+ jentry.jAmount+"' /></td>";
+        tblRow += "<td class='row-cost'><input type='text' value='"+ jentry.costCenter+"' /></td>";
+        tblRow += "</tr>";
+  
+        tableRows[i] = tblRow;
+        i++;
+        
+      })
+      return tableRows;
+  
+   
+  
+  }
+  
+  // populate table 
+  function populateGLTable_approver(foundJentry_list,foundGLAccount_list) {
+  
+    var jEntry_length = foundJentry_list.length;
+    var tableRows = [];
+    var i=0;
+  
+    
+      foundJentry_list.forEach(function(jentry) {
+        var tblRow="";
+        tblRow +=  "<tr>";
+        tblRow += "<td class='row-gl'>";
+        tblRow += "<select class='form-select p-1' disabled > ";
+        foundGLAccount_list.forEach(function(glAccount) {
+          if(jentry.glID == glAccount._id)
+          {
+            tblRow +=  "<option selected  value='" + jentry.glID +"' >" + glAccount.glAccount + "</option>";
+            tblRow += "</td>";
+            tblRow += "<td class='row-index'><input type='text' value='"+glAccount.glName+"' readonly/></td>";
+          }
+        })
+        
+        tblRow += "<td class='row-dc'> <select class='form-select p-1' disabled>";
+        tblRow += "<option selected  value='" + jentry.dcEntry +"' >" + jentry.dcEntry.charAt(0).toUpperCase() + jentry.dcEntry.slice(1) + " </option>";
+        tblRow += "</select></td>";
+        tblRow += "<td class='row-amount'><input type='text' value='"+ jentry.jAmount+"' readonly/></td>";
+        tblRow += "<td class='row-cost'><input type='text' value='"+ jentry.costCenter+"' readonly/></td>";
+        tblRow += "</tr>";
+  
+        tableRows[i] = tblRow;
+        i++;
+        
+      })
+      return tableRows;
+  
+   
+  
+  }
+  
+  // on change in GL ACCOUNT
+  function onGlAccountChange(formID,items) {
+    var child = items.child;
+    var theValue = items.theValue;
+  
+    $.ajax({  
+      type: "GET",
+      url:'/get-glaccount_list', 
+      data: {},
+      success:function(response){ 
+        var foundGlAccount_list = response;
+        
+        child.each(function () {
+          // var id = $(this).attr('id');
+          var glNameRow = $(this).children('.row-index').children('input');
+  
+          foundGlAccount_list.forEach(function(glAccount) {
+            if(glAccount._id==theValue) {
+              glNameRow.val(glAccount.glName);
+            }
+          });
+        });
+      },  
+      error:function(response){  
+        console.log(response); 
+      }  
+    });
+  };
+  
+  
+  // on input in amount
+  function tableAmountChange(formID,lineItem){
+    var debitTotal = parseFloat(0);
+    var creditTotal = parseFloat(0);
+  
+    $("#"+formID+"-create-tbody tr").each(async function(index, tr) {
+        var dc = $(tr).find('td').children('.dc').val();
+        var tdAmount = parseFloat($(tr).find('td').children('.gl_Amount').val());
+        console.log(tdAmount);
+          if (dc=="debit") {
+            if(tdAmount){
+              debitTotal = parseFloat(debitTotal + tdAmount);
+            }
+          } else {
+            if(tdAmount){
+              creditTotal = parseFloat(creditTotal + tdAmount);
+            }
+          }
+    });
+    if (lineItem) {
+      $("#"+lineItem+" #totalDebit").val(parseFloat(debitTotal).toFixed(2));
+      $("#"+lineItem+" #totalCredit").val(parseFloat(creditTotal).toFixed(2));
+    } else {
+      $("#"+formID+"-create #totalDebit").val(parseFloat(debitTotal).toFixed(2));
+      $("#"+formID+"-create #totalCredit").val(parseFloat(creditTotal).toFixed(2));
+    }
+    
+  
+  };
+  
+  //check periods
+  function checkPeriod(details){
+    var formID = details.formID;
+    var accountVal = details.account;
+    var postingDate =new Date($("#"+formID+"-create #postingDate").val()); 
+    var companyCode = $("#"+formID+"-create #companyCode").val();
+    var postingYear = postingDate.getFullYear();
+    
+  
+    $.ajax({  
+      type: "GET",
+      url:'/get-controlperiod_list', 
+      data: {},
+      success:function(response){ 
+        var controlPeriod_List = response;
+          controlPeriod_List.forEach(function(period) {
+            if((accountVal==period.accountType) && (companyCode==period.companyCode) && (period.status=="open") && (period.controlYear==postingYear)) {
+                var date1 = new Date(period.fromPeriod);
+                var date2 = new Date(period.toPeriod);
+                var dateFrom = date1.getTime();
+                var dateTo = date2.getTime();
+                var postDate = postingDate.getTime();
+                if((postDate <= dateTo) && (postDate >= dateFrom)) {
+                    saveTransaction(details);
+                } else {
+                  showLabel(formID+"-create-label", "Posting for the period is close.","alert-danger");
+                }
+            } 
+          });
+  
+          
+        
+      },  
+      error:function(response){  
+            console.log(response); 
+          }  
+    });
+    
+  }
+  
+  // save transaction
+  function saveTransaction(details){
+  
+    var formID = details.formID;
+    var accountVal = details.account;
+    var docID = details.docID || "";
+  
+    var f1 =  formID.substring(0,2);
+    var f2 =  formID.substring(2);
+  
+    if(validateForm(formID +"-create").form()){
+  
+      var documentDate = $("#"+formID+"-create #documentDate").val(); 
+      var postingDate = $("#"+formID+"-create #postingDate").val(); 
+      var reference = $("#"+formID+"-create #reference").val(); 
+      var amount = parseFloat($("#"+formID+"-create #amount").val()).toFixed(2);
+      var text = $("#"+formID+"-create #text").val();
+      var companyCode = $("#"+formID+"-create #companyCode").val();
+      var companyName = $("#"+formID+"-create #companyName").val();
+      var currency = $("#"+formID+"-create #currency").val();
+  
+      var totalDebit= $("#"+formID+"-create #totalDebit").val();
+      var totalCredit= $("#"+formID+"-create #totalCredit").val();
+  
+      var glTransaction=[];
+      var child = $("#"+formID+"-create-tbody").children("tr");
+  
+        child.each(function () {
+            var items = {};
+            items.glID = $(this).children('.row-gl').children('select').val();
+            items.dcEntry = $(this).children('.row-dc').children('select').val();
+            items.jAmount = $(this).children('.row-amount').children('input').val();
+            items.costCenter = $(this).children('.row-cost').children('input').val();
+            
+  
+              if(items.jAmount) {
+                if((items.glID) && (items.dcEntry) && (items.costCenter)){
+                  console.log(items);
+                  glTransaction.push(items);
+                } else {
+                  glTransaction=[];
+                } 
+              } 
+        });
+  
+        if((totalDebit==totalCredit) && (totalCredit==amount)){
+           
+          if(glTransaction.length){
+              $.ajax({  
+                type: "POST",
+                url:'/'+f1+'-'+f2, 
+                data: {account:accountVal,documentDate:documentDate,postingDate:postingDate,reference:reference,amount:amount,text:text,companyCode:companyCode,companyName:companyName,currency:currency,debit:totalDebit,credit:totalCredit,transactionType:accountVal,jlEntry:glTransaction,docID:docID},
+                success:function(response){ 
+                  
+                  if(response.redirect) {
+                      $("#"+formID+"-create-label").removeClass('d-none').addClass('alert-success').fadeIn().text(response.message);
+                      $("#"+formID+"-save-btn").addClass('d-none');
+                      $("#"+formID+"-back-btn").removeClass('d-none');
+                      // window.setTimeout(function() {
+                      //   window.location = response.redirectURL;}, 2000);
+                  
+                  } else {
+                        showLabel(formID+"-create-label", JSON.stringify(response.errorMessage),"alert-danger");
+                      }
+                      
+                },  
+                    error:function(response){  
+                      console.log(response); 
+                    }  
+              });
+          } else {
+            showLabel(formID+"-create-label", "Incomplete row found!","alert-danger");
+          }
+          
+        } 
+   
+      else {
+        console.log("Not equal");
+        showLabel(formID+"-create-label", "Total Amount, Debit and Credit Values are not equal","alert-danger");
+      }
+  
+    } else {
+  
+    }
+  }
+  
+  // function fill document 
+  function fillViewedDocument(details,foundGLAccount_list){
+    $("#showTransaction").removeClass("d-none");
+  
+    if((details.transaction.parker==details.userDetails._id) || (details.userDetails.position=="admin")){
+       if(details.transaction.poster==""){
+        $("#rpvd-update-btn").removeClass("d-none");
+       } 
+    } 
+    if((details.userDetails.position=="approver") || (details.userDetails.position=="admin")){
+      if(details.transaction.poster==""){
+        $("#rpvd-approve-btn").removeClass("d-none");
+      }
+    }
+    if(details.transaction.poster!=""){
+      details.userList.forEach(function(userInfo){
+        if(userInfo._id==details.transaction.poster){
+            $("#rpvd-posted").removeClass("d-none").text("Posted by: " + userInfo.fullname);
+        }
+      });
+    } 
+  
+    details.userList.forEach(function(userInfo){
+      if(userInfo._id==details.transaction.parker){
+        $("#rpvd-parked").text("Parked by: " + userInfo.fullname);
+      }
+    });
+  
+    $("#rpvd-create #transactionType").val(details.transaction.transactionType.toLowerCase());
+    $("#rpvd-create #reference").val(details.transaction.reference);
+    $("#rpvd-create #currency").val(details.transaction.currency);
+    $("#rpvd-create #documentDate").val(details.transaction.documentDate.substring(0, 10));
+    $("#rpvd-create #postingDate").val(details.transaction.postingDate.substring(0, 10));
+    $("#rpvd-create #amount").val(details.transaction.amount);
+    $("#rpvd-create #text").val(details.transaction.text);
+    $("#rpvd-create #documentNumber").val(details.transaction.documentNumber).prop('readonly', true);
+    $("#rpvd-create #documentID").val(details.transaction._id);
+    $("#rpvd-create #companyCode").val(details.transaction.companyCode);
+    var details_v2 = {};
+    details_v2.formID = "rpvd-create";
+    details_v2.selectedCompanyCode = $("#rpvd-create #companyCode").val();
+    details_v2.account = $("#rpvd-create #transactionType").val();
+    details_v2.companyName = details.transaction.companyName;
+    // companyName
+    onChangeCompanyCode(details_v2);
+    // alert(details.transaction.companyName);
+    // $("#rp-viewDoc #companyName").val("6100e5878d9624d3d9ea88a8");
+    $("#vdTable-form").removeClass("d-none");
+    $("#dcForm").removeClass("d-none");
+    $("#dcForm #totalDebit").val(parseFloat(details.transaction.debit).toFixed(2));
+    $("#dcForm #totalCredit").val(parseFloat(details.transaction.credit).toFixed(2));
+    //  $("#dcForm #totalCredit").val(details.transaction.credit.toLocaleString(undefined, {minimumFractionDigits: 2}));
+    $("#rpvd-create-tbody").append(populateGLTable(details,foundGLAccount_list));
+  }
+  
+  
+  
+  //////// onchange GL Account
+  $('#acgl-create-tbody').on('change', '.gl_Account', function () {
+    var formID ="acgl";
+    var items = {};
+    items.child = $(this).closest('tr');
+    items.theValue = $(this).val();
+    onGlAccountChange(formID,items);
+  });
+  
+  $('#arci-create-tbody').on('change', '.gl_Account', function () {
+    var formID ="arci";
+    var items = {};
+    items.child = $(this).closest('tr');
+    items.theValue = $(this).val();
+    onGlAccountChange(formID,items);
+  });
+  
+  $('#apvi-create-tbody').on('change', '.gl_Account', function () {
+    var formID ="apvi";
+    var items = {};
+    items.child = $(this).closest('tr');
+    items.theValue = $(this).val();
+    onGlAccountChange(formID,items);
+  });
+  
+  $('#rpvd-create-tbody').on('change', '.gl_Account', function () {
+    var formID ="rpvd-create";
+    var items = {};
+    items.child = $(this).closest('tr');
+    items.theValue = $(this).val();
+    onGlAccountChange(formID,items);
+  });
+  
+  /////// on input in amount
+  $('#acgl-create-tbody').on('keyup', '.gl_Amount', function () {
+    var formID = "acgl";
+    tableAmountChange(formID);
+  });
+  
+  $('#arci-create-tbody').on('keyup', '.gl_Amount', function () {
+    var formID = "arci";
+    tableAmountChange(formID);
+  });
+  
+  $('#apvi-create-tbody').on('keyup', '.gl_Amount', function () {
+    var formID = "apvi";
+    tableAmountChange(formID);
+  });
+  
+  $('#rpvd-create-tbody').on('keyup', '.gl_Amount', function () {
+    var formID = "rpvd";
+    var lineItem = "dcForm";
+    tableAmountChange(formID,lineItem);
+  });
+  
+  //////// add row/item
+  $('#acgl-addItem').on('click', function () {
+    var formID = "acgl";
+    var selectedCompanyCode = $("#acgl-create #companyCode").val();
+    addRow(formID,selectedCompanyCode);
+  });
+  
+  $('#arci-addItem').on('click', function () {
+    var formID = "arci";
+    var selectedCompanyCode = $("#arci-create #companyCode").val();
+    addRow(formID,selectedCompanyCode);
+  });
+  
+  $('#apvi-addItem').on('click', function () {
+    var formID = "apvi";
+    var selectedCompanyCode = $("#apvi-create #companyCode").val();
+    addRow(formID,selectedCompanyCode);
+  });
+  
+  $('#rpvd-addItem').on('click', function () {
+    var formID = "rpvd";
+    var selectedCompanyCode = $("#rpvd-create #companyCode").val();
+    addRow(formID,selectedCompanyCode);
+  });
+  
+  //////// create GL transaction (GL)
+  $('#acgl-save-btn').click(function(e){ 
+    var details = {};
+    details.formID ="acgl";
+    details.account = "gl";
+    if(validateForm(details.formID +"-create").form()){
+      checkPeriod(details);
+    } 
+    // saveTransaction(details);
+    
+  });
+  
+  $('#arci-save-btn').click(function(e){ 
+    var details = {};
+    details.formID ="arci";
+    details.account = "customer";
+    if(validateForm(details.formID +"-create").form()){
+      checkPeriod(details);
+    }
+  });
+  
+  $('#apvi-save-btn').click(function(e){ 
+    var details = {};
+    details.formID ="apvi";
+    details.account = "vendor";
+    if(validateForm(details.formID +"-create").form()){
+      checkPeriod(details);
+    }
+  });
+  
+  ////////BACK BUTTON
+  $("#acgl-back-btn").click(function(e){
+    location.reload();
+  });
+  $("#arci-back-btn").click(function(e){
+    location.reload();
+  });
+  $("#apvi-back-btn").click(function(e){
+    location.reload();
+  });
+  
+  //////// view document 1 (GL)
+  $('#rp-searchDocKeys #search-btn').click(function(e){ 
+  
+    if(validateForm("rp-searchDocKeys").form()){ 
+      var docNumber = $('#rp-searchDocKeys #searchdocumentNumber').val();
+      var companyCode = $('#rp-searchDocKeys #searchcompanyCode').val();
+      var year = $('#rp-searchDocKeys #searchyear').val();
+      var checker = 0;
+      var details = {};
+      
+        $.ajax({  
+          type: "GET",
+          url:'/get-search_list', 
+          data: {},
+          success:function(response){ 
+            console.log(response);
+            var foundTransaction_list = response.glTransaction_List;
+            var foundGLAccount_list = response.glAccount_list;
+            details.userList = response.user_List;
+            details.userDetails = response.user;
+            foundTransaction_list.forEach(function(transaction){
+              
+              if ((docNumber==transaction.documentNumber) && (year==new Date(transaction.documentDate).getFullYear()) && (companyCode==transaction.companyCode))
+              {
+                checker = 1;
+                details.transaction = transaction;
+              }
+            });
+  
+            if(checker){
+              $("#searchForm").addClass("d-none");
+              fillViewedDocument(details,foundGLAccount_list);
+            } else {
+                showLabel("rp-searchDocKeys-label","No document found.","alert-danger");
+            }
+          },  
+              error:function(response){  
+                console.log(response); 
+              }  
+        });
+    } 
+  });
+  
+  //////// view document 2 (GL)
+  $('#rp-searchDocRef #refsearch-btn').click(function(e){ 
+  
+    if(validateForm("rp-searchDocRef").form()){ 
+      var documentReference = $('#rp-searchDocRef #documentReference').val();
+      var checker = 0;
+      var details = {};
+      
+        $.ajax({  
+          type: "GET",
+          url:'/get-search_list', 
+          data: {},
+          success:function(response){ 
+            var foundTransaction_list = response.glTransaction_List;
+            var foundGLAccount_list = response.glAccount_list;
+            details.userList = response.user_List;
+            details.userDetails = response.user;
+            foundTransaction_list.forEach(function(transaction){
+              
+              if (documentReference==transaction.reference)
+              {
+                checker++;
+                details.transaction = transaction;
+              }
+            });
+  
+            if(checker==1){
+              $("#searchForm").addClass("d-none");
+              fillViewedDocument(details,foundGLAccount_list);
+            } 
+            else if(checker>1) {
+              showLabel("rp-searchDocRef-label","Duplicate reference found.Please try using other search method.","alert-danger");
+            }
+            else {
+                showLabel("rp-searchDocRef-label","No document found.","alert-danger");
+            }
+          },  
+              error:function(response){  
+                console.log(response); 
+              }  
+        });
+    }
+  });
+  
+  
+  // update document
+  $('#rpvd-update-btn').click(function(e){ 
+    var details = {};
+    details.formID = "rpvd";
+    details.account = $("#rpvd-create #transactionType").val();
+    details.docID = $("#rpvd-create #documentID").val();
+  
+      if(validateForm(details.formID +"-create").form()){
+        checkPeriod(details);
+      }
+   
+  
+    // var reference = $("#rp-viewDoc #reference").val(); 
+    // var currency = $("#rp-viewDoc #currency").val();
+    // var documentID = $("#rp-viewDoc #documentID").val();
+    // var transactionType = $("#rp-viewDoc #transactionType").val();
+  
+    // var glTransaction=[];
+    // var child = $("#rp-viewDoc-create-tbody").children("tr");
+  
+    //     child.each(function () {
+    //         var items = {};
+    //         items.glID = $(this).children('.row-gl').children('select').val();
+    //         items.dcEntry = $(this).children('.row-dc').children('select').val();
+    //         items.jAmount = $(this).children('.row-amount').children('input').val();
+    //         items.costCenter = $(this).children('.row-cost').children('input').val();
+  
+    //         glTransaction.push(items); 
+    //     });
+  
+    //     $.ajax({  
+    //       type: "POST",
+    //       url:"/rp-vd", 
+    //       data: {reference:reference,currency:currency,documentID:documentID,glTransaction:glTransaction},
+    //       success:function(response){ 
+            
+    //         if(response.redirect) {
+    //             showLabel("rpvd-label",response.message,"alert-success");
+    //             window.setTimeout(function() {
+    //               window.location = response.redirectURL;}, 1000);
+    //         } else {
+    //               showLabel("rpvd-label", response.errorMessage,"alert-danger");
+    //             }
+    //       },  
+    //           error:function(response){  
+    //             console.log(response); 
+    //           }  
+    //     });
+  });
+  
+  // post document
+  $('#rpvd-approve-btn').click(function(e){ 
+  
+    var documentID = $("#rpvd-create #documentID").val();
+  
+        $.ajax({  
+          type: "PATCH",
+          url:"/rp-vd", 
+          data: {documentID:documentID},
+          success:function(response){ 
+            if(response.redirect) {
+                showLabel("rpvd-create-label",response.message,"alert-success");
+                window.setTimeout(function() {
+                  window.location = response.redirectURL;}, 1000);
+            } else {
+                  showLabel("rpvd-create-label", response.errorMessage,"alert-danger");
+                }
+          },  
+              error:function(response){  
+                console.log(response); 
+              }  
+        });
+  });
+  
+  //generate document sequence
+  $('#genDocSeq-btn').click(function(e){ 
+  
+    if(validateForm("genDocSeq").form()){ 
+      var year = $('#genDocSeq #genYear').val();
+        $.ajax({  
+          type: "POST",
+          url:'/gl-sequence', 
+          data: {year:year},
+          success:function(response){ 
+            if(response.redirect) {
+              showLabel("docSeq-label",response.message,"alert-success");
+              window.setTimeout(function() {
+                window.location = response.redirectURL;}, 1000);
+          } else {
+                showLabel("docSeq-label", response.errorMessage,"alert-danger");
+              }
+          },  
+              error:function(response){  
+                console.log(response); 
+              }  
+        });
+    }
+  
+    
+  });
+  
+  //click back
+  $('#rpvd-back-btn').click(function(e){ 
+    location.reload();
+  });
+  
+  //view master data
+  $("#rpmd-select").change(function (e) {
+    var selectedData = e.target.value;
+    var info = {};
+    var glArray =[{title: "#"}, {title: "GL Account"}, {title: "GL Name"},{title: "Company Code"}];
+    var vendorArray =[{title: "#"}, {title: "Vendor Code"}, {title: "Vendor Name"},{title: "Company Code"}];
+    var customerArray =[{title: "#"}, {title: "Customer Code"}, {title: "Customer Name"},{title: "Company Code"}];
+  
+    $.ajax({
+      type: "GET",
+      url:"/get-masterdata_list",
+      success: function(response) {
+        if (selectedData == "GL") {
+          if ( $.fn.DataTable.isDataTable('#vendorReportTable')) {
+            $('#vendorReportTable').DataTable().destroy();
+          }
+          if ( $.fn.DataTable.isDataTable('#customerReportTable')) {
+            $('#customerReportTable').DataTable().destroy();
+          }
+          $("#rpmd-table").removeClass("d-none");
+          $("#vendorReportTable").addClass("d-none");
+          $("#customerReportTable").addClass("d-none");
+          $("#glReportTable").removeClass("d-none");
+          info.glAccount =  response.glAccount_list;
+          info.companyCode =  response.companyCode_list;
+          $('#glReportTable').DataTable({ "columns": glArray, "data" : reportGLBody(info),retrieve:true});
+        } else if (selectedData == "Vendor") {
+          if ( $.fn.DataTable.isDataTable('#glReportTable')) {
+            $('#glReportTable').DataTable().destroy();
+          }
+          if ( $.fn.DataTable.isDataTable('#customerReportTable')) {
+            $('#customerReportTable').DataTable().destroy();
+          }
+          $("#rpmd-table").removeClass("d-none");
+          $("#glReportTable").addClass("d-none");
+          $("#customerReportTable").addClass("d-none");
+          $("#vendorReportTable").removeClass("d-none");
+          info.vendor =  response.vendor_List;
+          info.companyCode =  response.companyCode_list;
+          $('#vendorReportTable').DataTable({ "columns": vendorArray, "data" : reportVendorBody(info),retrieve:true});
+        } else if (selectedData == "Customer") {
+          if ( $.fn.DataTable.isDataTable('#glReportTable')) {
+            $('#glReportTable').DataTable().destroy();
+          }
+          if ( $.fn.DataTable.isDataTable('#vendorReportTable')) {
+            $('#vendorReportTable').DataTable().destroy();
+          }
+          $("#rpmd-table").removeClass("d-none");
+          $("#glReportTable").addClass("d-none");
+          $("#vendorReportTable").addClass("d-none");
+          $("#customerReportTable").removeClass("d-none");
+          info.customer =  response.customer_List;
+          info.companyCode =  response.companyCode_list;
+          $('#customerReportTable').DataTable({ "columns": customerArray, "data" : reportCustomerBody(info),retrieve:true});
+        }
+      },
+      error:function(response){
+        console.log(response);
+      }
+      
+    });
+  });
+  
+  function reportGLBody (data)
+  {
+    var tblRow = [];
+    var i = 0;
+    data.glAccount.forEach(function(item) {
+     i++;
+     var companies = [];
+     item.companyCode.forEach(function(itemCode) {
+        data.companyCode.forEach(async function(ccode){
+            if(itemCode == ccode._id){
+              companies.push(ccode.code);
+            }
+        });
+     });
+     tblRow.push([i,item.glAccount,item.glName,companies]);
+    });  
+    return tblRow;
+  }
+  
+  function reportVendorBody (data)
+  {
+    var tblRow = [];
+    var i = 0;
+    data.vendor.forEach(function(item) {
+     i++;
+     var companies = [];
+     item.vendorCompanyCode.forEach(function(itemCode) {
+        data.companyCode.forEach(async function(ccode){
+            if(itemCode == ccode._id){
+              companies.push(ccode.code);
+            }
+        });
+     });
+     tblRow.push([i,item.vendorCode,item.vendorName,companies]);
+    });  
+    return tblRow;
+  }
+  
+  function reportCustomerBody (data)
+  {
+    var tblRow = [];
+    var i = 0;
+    data.customer.forEach(function(item) {
+     i++;
+     var companies = [];
+     item.customerCompanyCode.forEach(function(itemCode) {
+        data.companyCode.forEach(async function(ccode){
+            if(itemCode == ccode._id){
+              companies.push(ccode.code);
+            }
+        });
+     });
+     tblRow.push([i,item.customerCode,item.customerName,companies]);
+    });  
+    return tblRow;
+  }
+
+  $(window).on('load', function () {
+    $('.se-pre-con').hide();
+  }) 
+  
+    // var child = $(this).closest('tr');
+    // var theValue = parseFloat($(this).val());
+    
+    // console.log(theValue);
+    
+    // child.each(function () {
+  
+    //   // Getting <tr> id.
+    //   // var id = $(this).attr('id');
+  
+    //   // Getting the <p> inside the .row-index class.
+    //   var idx = $(this).children('.row-dc').children('select').val();
+    //   // Gets the row number from <tr> id.
+    //   // var dig = parseInt(id.substring(1));
+    //   if (idx=="debit") {
+    //     // debitTotal = debitTotal + theValue;
+    //     // console.log(debitTotal);
+    //     $("#totalDebit").val(theValue);
+    //   } 
+    //   else if (idx=="credit") {
+    //     $("#totalCredit").val(theValue);
+    //   } 
+    //   // console.log(idx);
+  
+    //   // Modifying row index.
+    // });
+  
+    
+  
+      // Modifying row id.
+      // $(this).attr('id', `R${dig - 1}`);
+  
+    // // Removing the current row.
+    // $(this).closest('tr').remove();
+  
+    // Decreasing total number of rows by 1.
+    // rowIdx--;
+   
+  
+  ///remove button
+  
+  // // jQuery button click event to remove a row.
+  // $('#tbody').on('click', '.remove', function () {
+    
+  //   // Getting all the rows next to the row
+  //   // containing the clicked button
+  //   var child = $(this).closest('tr').nextAll();
+  
+  //   // Iterating across all the rows 
+  //   // obtained to change the index
+  //   child.each(function () {
+  
+  //     // Getting <tr> id.
+  //     var id = $(this).attr('id');
+  
+  //     // Getting the <p> inside the .row-index class.
+  //     var idx = $(this).children('.row-index').children('p');
+  
+  //     // Gets the row number from <tr> id.
+  //     var dig = parseInt(id.substring(1));
+  
+  //     // Modifying row index.
+  //     idx.html(`Row ${dig - 1}`);
+  
+  //     // Modifying row id.
+  //     $(this).attr('id', `R${dig - 1}`);
+  //   });
+  
+  //   // Removing the current row.
+  //   $(this).closest('tr').remove();
+  
+  //   // Decreasing total number of rows by 1.
+  //   rowIdx--;
+  // });
+//   });
+   
+ 
