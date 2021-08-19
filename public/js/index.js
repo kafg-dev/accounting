@@ -2645,9 +2645,6 @@
     return tblRow;
   }
 
-  $(window).on('load', function () {
-    $('.se-pre-con').hide();
-  }) 
   
     // var child = $(this).closest('tr');
     // var theValue = parseFloat($(this).val());
