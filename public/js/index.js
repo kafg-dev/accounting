@@ -1682,10 +1682,10 @@ $(document).ready(function() {
     if (selectedCompanyCode){
          $.ajax({  
            type: "GET",
-           url:'/get-glaccount_list', 
+           url:'/get-changecompanycode_list', 
            data: {},
            success:function(response){ 
-             var foundGlAccount_list = response;
+             var foundGlAccount_list = response.glAccount_list;
              if(account=="customer"){
               var foundList = response.customer_List;
                $("#"+formID+" #companyName").empty();
