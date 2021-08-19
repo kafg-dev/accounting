@@ -1179,6 +1179,72 @@ app.route("/main-list")
 
 });
 
+app.get("/get-accountType_list", (req,res) => {
+    const accountType_list= await accType.getAccountType();
+    res.send(accountType_list);
+});
+
+app.get("/get-vendor-list",(req,res) => {
+    const vendor_list = await vendor.getVendor();
+    res.send(vendor_list);
+});
+
+app.get("/get-customer-list",(req,res) => {
+    const customer_list = await customer.getCustomer();
+    res.send(customer_list);
+});
+
+app.get("/get-glaccount_list",(req,res) => {
+    const glAccount_list= await glAcc.getGlAccount();
+    res.send(glAccount_list);
+});
+
+app.get("/get-controlperiod_list",(req,res) => {
+    const controlPeriod_list = await controlPeriod.getControlPeriod();
+    res.send(controlPeriod_list);
+});
+
+
+//get accountType_list and glAccount_list
+app.get("/get-accounts_list", (req,res) => {
+    var list = {};
+    list.accountType_list= await accType.getAccountType();
+    list.glAccount_list= await glAcc.getGlAccount(); 
+    res.send(list);
+});
+
+//get glAccount_list and user
+app.get("/get-glUser_list", (req,res) => {
+    var list = {};
+    list.user=req.user;
+    list.glAccount_list= await glAcc.getGlAccount(); 
+    list.companyCode_list= await companyCode.getCompanyCode(); 
+    res.send(list);
+});
+
+//get masterdata_list
+app.get("/get-masterdata_list", (req,res) => {
+    var list = {};
+    list.companyCode_list= await companyCode.getCompanyCode(); 
+    list.glTransaction_List = await glTransaction.getGlTransaction();
+    list.customer_List = await customer.getCustomer();
+    list.vendor_List = await vendor.getVendor();
+    res.send(list);
+});
+
+//get search_list
+app.get("/get-search_list", (req,res) => {
+    var list = {};
+    list.user=req.user;
+    list.glAccount_list= await glAcc.getGlAccount(); 
+    list.glTransaction_List = await glTransaction.getGlTransaction();
+    list.user_List= await usersDB.getUser();
+    res.send(list);
+});
+
+
+
+
 app.route("/md-gl")
 
 .get(async function(req,res) {
