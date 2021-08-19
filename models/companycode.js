@@ -20,7 +20,6 @@ const companyCodeSchema = new mongoose.Schema({
       }
 })
 
-
 exports.cCode = mongoose.model("companycode", companyCodeSchema);
 
 exports.getCompanyCode = async function () {
